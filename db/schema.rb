@@ -12,17 +12,17 @@
 ActiveRecord::Schema.define(:version => 20090101214449) do
 
   create_table "devices", :force => true do |t|
-    t.string   "unique_id"
-    t.datetime "last_activation"
-    t.integer  "user_id"
+    t.string   "unique_id",       :limit => 40, :null => false
+    t.datetime "last_activation",               :null => false
+    t.integer  "user_id",                       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "users", :force => true do |t|
-    t.string   "name"
-    t.string   "password_hash"
-    t.string   "password_salt"
+    t.string   "name",          :limit => 16, :null => false
+    t.string   "password_hash", :limit => 64, :null => false
+    t.string   "password_salt", :limit => 4,  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
