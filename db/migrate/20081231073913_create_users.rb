@@ -1,9 +1,9 @@
 class CreateUsers < ActiveRecord::Migration
   def self.up
     create_table :users do |t|
-      t.string :name
-      t.string :password_hash
-      t.string :password_salt
+      t.string :name, :limit => 16, :null => false
+      t.string :password_hash, :limit => 64, :null => false
+      t.string :password_salt, :limit => 4, :null => false
 
       t.timestamps
     end
