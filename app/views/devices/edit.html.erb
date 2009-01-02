@@ -1,0 +1,24 @@
+<h1>Editing device</h1>
+
+<% form_for(@device) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :unique_id %><br />
+    <%= f.text_field :unique_id %>
+  </p>
+  <p>
+    <%= f.label :last_activation %><br />
+    <%= f.datetime_select :last_activation %>
+  </p>
+  <p>
+    <%= f.label :user_id %><br />
+    <%= f.text_field :user_id %>
+  </p>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @device %> |
+<%= link_to 'Back', devices_path %>
