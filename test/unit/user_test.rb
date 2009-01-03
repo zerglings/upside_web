@@ -60,7 +60,7 @@ class UserTest < ActiveSupport::TestCase
   def test_different_salts_have_different_hashes
     num_salts = 1024
     password = 'secret_password'
-    salts = (0...1024).map { |i| [i].pack('N') }
+    salts = (0...num_salts).map { |i| [i].pack('N') }
     hashes = salts.map { |s| User.hash_password password, s }
     assert_equal num_salts, hashes.uniq.length
   end
