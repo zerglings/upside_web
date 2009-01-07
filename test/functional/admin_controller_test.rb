@@ -28,6 +28,7 @@ class AdminControllerTest < ActionController::TestCase
     post :login, :name => one.name, :password => 'wrong'
     assert_template "login"
     assert_equal "Invalid user/password combination", flash[:error]
+    assert_equal nil, session[:user_id]
   end
   
   def test_bad_user

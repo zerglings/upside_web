@@ -55,4 +55,12 @@ class User < ActiveRecord::Base
   def self.hash_password(password, salt)
     Digest::SHA256.hexdigest salt + password
   end  
+  
+  def self.new_pseudo_user(device_id)
+     user = self.new
+     user.name = device_id
+     user.password = device_id
+     user.save!
+     return user
+  end
 end

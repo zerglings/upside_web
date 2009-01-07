@@ -93,16 +93,12 @@ class DevicesController < ApplicationController
         format.html { redirect_to(@device) }
         format.xml { render :xml => @device, :status => :success }  
       else
-        @user = User.new
-        @user.name = params[:unique_id]
-        @user.password = params[:unique_id]
-        @user.save!
+        @user = User.new_pseudo_user(params[:unique_id])
         @device = Device.new
         @device.unique_id = params[:unique_id]
         @device.last_activation = Time.now 
         @device.user = @user
         @device.save!
-        format.html { render :action }
         format.xml { render :xml => @device, :status => :success }
       end
     end
