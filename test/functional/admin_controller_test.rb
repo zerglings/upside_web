@@ -28,19 +28,20 @@ class AdminControllerTest < ActionController::TestCase
     post :login, :name => one.name, :password => 'wrong'
     assert_template "login"
     assert_equal "Invalid user/password combination", flash[:error]
-    assert_equal nil, session[:user_id]
+    assert_equal nil, session[:user_id], "User entered incorrect password but session was still set"
   end
   
   def test_bad_user
     post :login, :name => "wrong", :password => 'wrong'
     assert_template "login"
     assert_equal "Invalid user/password combination", flash[:error]
+    assert_equal nil, session[:user_id], "Nonexistent user but session was still set"
   end
   
   def test_logout
     get :logout
     assert_redirected_to :action=> "login"
-    assert_equal session[:user_id], nil
+    assert_equal nil, session[:user_id], "Session not set to nil even though user logged out"
     assert_equal "Logged out", flash[:notice]
   end
 end
