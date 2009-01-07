@@ -12,7 +12,7 @@
 ActiveRecord::Schema.define(:version => 20090101214449) do
 
   create_table "devices", :force => true do |t|
-    t.string   "unique_id",       :limit => 40, :null => false
+    t.string   "unique_id",       :limit => 64, :null => false
     t.datetime "last_activation",               :null => false
     t.integer  "user_id",                       :null => false
     t.datetime "created_at"
@@ -20,9 +20,10 @@ ActiveRecord::Schema.define(:version => 20090101214449) do
   end
 
   create_table "users", :force => true do |t|
-    t.string   "name",          :limit => 16, :null => false
-    t.string   "password_hash", :limit => 64, :null => false
-    t.string   "password_salt", :limit => 4,  :null => false
+    t.string   "name",          :limit => 64,                   :null => false
+    t.string   "password_hash", :limit => 64,                   :null => false
+    t.string   "password_salt", :limit => 4,                    :null => false
+    t.boolean  "pseudo_user",                 :default => true, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

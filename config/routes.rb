@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :devices
+  map.resources :devices, :collection => { :register => :any }
 
   map.resources :users
 

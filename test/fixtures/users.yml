@@ -2,10 +2,12 @@
 
 one:
   name: MyString
-  password_hash: MyString
-  password_salt: MyString
+  password_hash: <%= User.hash_password 'password', '1234' %>
+  password_salt: 1234
+  pseudo_user: false
 
 two:
   name: MyString2
   password_hash: MyString
   password_salt: MyString
+  pseudo_user: true

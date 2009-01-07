@@ -5,11 +5,19 @@ class User < ActiveRecord::Base
   
   # user name
   validates_length_of :name, :in => 4..16,
+                      :unless => Proc.new{ |u| u.pseudo_user? },
                       :message => "The user name should have between 4 and 16 characters.",
                       :allow_nil => false
+  validates_length_of :name, :is => 40,
+                      :if => Proc.new{ |u| u.pseudo_user? },
+                      :message => "The user name should be 40 characters.",
+                      :allow_nil => false
   validates_format_of :name,
-                      :with => /^[^\s]$/
+                      :with => /^[^\s]+$/
   validates_uniqueness_of :name                    
+  
+  # password confirmation
+  validates_confirmation_of :password
   
   # SHA-256 of password_salt + user's password
   validates_presence_of :password_hash
@@ -17,8 +25,19 @@ class User < ActiveRecord::Base
   # random salt to prevent match attacks on the password db
   validates_presence_of :password_salt
   
-  attr_accessor :password_confirm
+  attr_accessor :password_confirmation
   attr_reader :password
+  
+  def self.authenticate(name, password)
+    user = self.find_by_name(name)
+    if user
+      expected_password = hash_password(password, user.password_salt)
+      if user.password_hash != expected_password
+        user = nil
+      end
+    end
+    user
+  end
   
   def password=(new_password)
     @password = new_password

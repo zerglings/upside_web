@@ -82,4 +82,29 @@ class DevicesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+  
+  # registering a device
+  def register
+    @device = Device.find(:first, 
+              :conditions => {:unique_id => params[:unique_id]})
+    
+    respond_to do |format|
+      if @device
+        format.html { redirect_to(@device) }
+        format.xml { render :xml => @device, :status => :success }  
+      else
+        @user = User.new
+        @user.name = params[:unique_id]
+        @user.password = params[:unique_id]
+        @user.save!
+        @device = Device.new
+        @device.unique_id = params[:unique_id]
+        @device.last_activation = Time.now 
+        @device.user = @user
+        @device.save!
+        format.html { render :action }
+        format.xml { render :xml => @device, :status => :success }
+      end
+    end
+  end
 end
