@@ -19,6 +19,8 @@ ActiveRecord::Schema.define(:version => 20090101214449) do
     t.datetime "updated_at"
   end
 
+  add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true
+
   create_table "users", :force => true do |t|
     t.string   "name",          :limit => 64,                   :null => false
     t.string   "password_hash", :limit => 64,                   :null => false

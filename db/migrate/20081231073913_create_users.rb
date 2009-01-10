@@ -9,8 +9,8 @@ class CreateUsers < ActiveRecord::Migration
       t.timestamps
     end
     
-    # find the device with some given device ID (at activation)
-    add_index :users, :name, :unique => true   
+    # speed up User.authenticate (login)
+    add_index :users, :name, :unique => true, :null => false
   end
 
   def self.down
