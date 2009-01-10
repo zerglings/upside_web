@@ -10,8 +10,6 @@ module YahooFetcher
 
   # Pulls and returns stock data from Yahoo finance
   #  Parameters:
-  #    different codes to pull data for stock tickers 
-  #      ex. "a" = Ask, "e" = Earnings per share, etc.
   #    an array of stock tickers 
   #      ex. ["GOOG","MSFT"] 
   #  Output:
@@ -32,7 +30,6 @@ module YahooFetcher
   #    an array of hashes with each hash accounting for one of the stock tickers  
   #    ex. [{:ask=>316.18, :bid=>315.0}, {:ask=>19.6, :bid=>19.58}]  
   def self.parse_response(response)
-    print response
     results = CSV.parse(response)
  
     results.map do |result|
@@ -47,5 +44,8 @@ module YahooFetcher
     end 
   end
 end
- p YahooFetcher.fetch_data(["GOOG","XXXX","MSFT","ZZZZ"])
- p YahooFetcher.stock_data_for_tickers(["GOOG","XXXX","MSFT","ZZZZ"])
+
+if __FILE__ == $0
+  p YahooFetcher.fetch_data(["GOOG","XXXX","MSFT","ZZZZ"])
+  p YahooFetcher.stock_data_for_tickers(["GOOG","XXXX","MSFT","ZZZZ"])
+end
