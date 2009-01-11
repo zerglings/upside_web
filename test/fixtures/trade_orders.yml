@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  portfolio_id: 1
+  stock_id: 1
+  is_buy: false
+  is_long: false
+  stop_price: 9.99
+  limit_price: 9.99
+  expiration_time: 2020-01-10 14:42:17
+
+two:
+  portfolio_id: 1
+  stock_id: 1
+  is_buy: false
+  is_long: false
+  stop_price: 9.99
+  limit_price: 9.99
+  expiration_time: 2020-01-10 14:42:17

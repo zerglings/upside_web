@@ -1,0 +1,19 @@
+class CreateTradeOrders < ActiveRecord::Migration
+  def self.up
+    create_table :trade_orders do |t|
+      t.integer :portfolio_id, :limit => 64, :null => false
+      t.integer :stock_id, :limit => 64, :null => false
+      t.boolean :is_buy, :default => true, :null => false
+      t.boolean :is_long, :default => true, :null => false
+      t.decimal :stop_price, :precision => 8, :scale => 2, :null => true
+      t.decimal :limit_price, :precision => 8, :scale => 2, :null => true
+      t.datetime :expiration_time, :null => true
+
+      t.timestamps
+    end
+  end
+
+  def self.down
+    drop_table :trade_orders
+  end
+end
