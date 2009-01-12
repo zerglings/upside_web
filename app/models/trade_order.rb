@@ -22,18 +22,18 @@ class TradeOrder < ActiveRecord::Base
                         
   # stop price and limit price
   [:stop_price, :limit_price].each do |field|
-  validates_numericality_of field,
-                            :greater_than_or_equal_to => -MAX_PRICE,
-                            :less_than_or_equal_to => MAX_PRICE,
-                            :allow_nil => true   
-  
-  validates_format_of field,
-                      :with => /\.\d{0,2}$/,
-                      :allow_nil => true
+    validates_numericality_of field,
+                              :greater_than_or_equal_to => -MAX_PRICE,
+                              :less_than_or_equal_to => MAX_PRICE,
+                              :allow_nil => true   
+    
+    validates_format_of field,
+                        :with => /\.\d{0,2}$/,
+                        :allow_nil => true
   end
   
   # expiration time of trade order
-  validates_date_time :expiration_time,
-                      :allow_nil => true,
-                      :after => Proc.new { Time.now }
+  validates_datetime :expiration_time,
+                     :allow_nil => true,
+                     :after => Proc.new { Time.now }
 end

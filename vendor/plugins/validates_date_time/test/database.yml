@@ -1,4 +1,0 @@
-plugin_test:
-  adapter: sqlite3
-  database: db/plugin_test.sqlite3
-  timeout: 5000
