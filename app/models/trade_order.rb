@@ -5,22 +5,20 @@ class TradeOrder < ActiveRecord::Base
   has_many :trades, :dependent => :nullify
   
   # portfolio id 
-  validates_presence_of :portfolio_id,
-                        :allow_nil => false
+  validates_presence_of :portfolio_id
   
   # stock id
-  validates_presence_of :stock_id,
-                        :allow_nil => false
+  validates_presence_of :stock_id
                         
   # buy / sell
   validates_inclusion_of :is_buy,
                          :in => [true, false],
-                         :message => 'Is_buy boolean should be true or false'
+                         :message => 'is_buy must be specified'
                         
   # long / short
   validates_inclusion_of :is_long,
                          :in => [true, false],
-                         :message => 'Is_long boolean should be true or false'
+                         :message => 'is_long must be specified'
                         
   # stop price and limit price
   [:stop_price, :limit_price].each do |field|
@@ -30,7 +28,8 @@ class TradeOrder < ActiveRecord::Base
                             :allow_nil => true   
   
   validates_format_of field,
-                      :with => /\.\d{0,2}$/
+                      :with => /\.\d{0,2}$/,
+                      :allow_nil => true
   end
   
   # expiration time of trade order

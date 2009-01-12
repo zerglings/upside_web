@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + '/abstract_unit'
 
 class DateTimeTest < Test::Unit::TestCase
+  def setup
+    super
+    ValidatesDateTime.us_date_format = false    
+  end
+  
   def test_various_formats
     formats = {
       '2006-01-01 01:01:01' => /Jan 01 01:01:01 [\+-]?[\w ]+ 2006/,
