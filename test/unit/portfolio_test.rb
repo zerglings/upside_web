@@ -40,16 +40,4 @@ class PortfolioTest < ActiveSupport::TestCase
     assert !@portfolio.valid?
   end
   
-  def test_portfolio_dependent_on_user
-    user = User.new(:name => 'angry',
-                    :password => 'blah',
-                    :password_confirmation => 'blah',
-                    :pseudo_user => false) 
-    user.save!
-    portfolio = Portfolio.new(:user_id => user.id, :cash => 40)
-    portfolio.save!
-    user.destroy
-    assert_equal nil, Portfolio.find(:first, 
-                                     :conditions => {:user_id => user.id})
-  end
 end
