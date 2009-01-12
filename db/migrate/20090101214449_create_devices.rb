@@ -7,9 +7,13 @@ class CreateDevices < ActiveRecord::Migration
 
       t.timestamps
     end
+    
+    # find the device with some given device ID (at activation)
+    add_index :devices, :unique_id, :unique => true, :null => false
   end
 
   def self.down
+    remove_index :devices, :unique_id
     drop_table :devices
   end
 end
