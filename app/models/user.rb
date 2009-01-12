@@ -2,6 +2,7 @@ require 'digest/sha2'
 
 class User < ActiveRecord::Base
   has_many :devices
+  has_one :portfolio, :dependent => :destroy
   
   # user name
   validates_length_of :name, :in => 4..16,
