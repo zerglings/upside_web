@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + '/abstract_unit'
 
 class DateTest < Test::Unit::TestCase
+  def setup
+    super
+    ValidatesDateTime.us_date_format = false    
+  end
+  
   def test_valid_when_nil
     assert p.update_attributes!(:date_of_birth => nil, :date_of_death => nil)
   end
