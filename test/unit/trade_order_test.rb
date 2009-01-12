@@ -54,7 +54,7 @@ class TradeOrderTest < ActiveSupport::TestCase
   end
   
   def test_stop_price_precision
-    @trade_order.stop_price = 10**20
+    @trade_order.stop_price = (TradeOrder::MAX_PRICE + 0.01)
     assert !@trade_order.valid?
   end
   
@@ -69,8 +69,9 @@ class TradeOrderTest < ActiveSupport::TestCase
   end
   
   def test_limit_price_precision
-    @trade_order.limit_price = -10**20
+    @trade_order.limit_price = -(TradeOrder::MAX_PRICE + 0.01)
     assert !@trade_order.valid?
+    
   end
   
   def test_limit_price_scale
@@ -83,9 +84,13 @@ class TradeOrderTest < ActiveSupport::TestCase
     assert !@trade_order.valid?
   end
   
-  def test_expiration_time_format
-    @trade_order.expiration_time = 'timetime'
-    p @trade_order.expiration_time
-    assert !@trade_order.valid?
-  end
+ # def test_expiration_time_format
+ #   @trade_order.expiration_time = 'timetime'
+ #   p @trade_order.expiration_time
+ #   assert !@trade_order.valid?
+ # end
+ 
+ def test_trade_order_nil_if_trade_deleted
+   
+ end
 end

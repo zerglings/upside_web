@@ -1,6 +1,8 @@
 class TradeOrder < ActiveRecord::Base
+  MAX_PRICE = (10*6 -0.01)
+  
   belongs_to :portfolio
-  has_many :trades
+  has_many :trades, :dependent => :nullify
   
   # portfolio id 
   validates_presence_of :portfolio_id,
@@ -23,8 +25,8 @@ class TradeOrder < ActiveRecord::Base
   # stop price and limit price
   [:stop_price, :limit_price].each do |field|
   validates_numericality_of field,
-                            :greater_than_or_equal_to => -(10**6 - 0.01),
-                            :less_than_or_equal_to => (10**6 - 0.01),
+                            :greater_than_or_equal_to => -MAX_PRICE,
+                            :less_than_or_equal_to => MAX_PRICE,
                             :allow_nil => true   
   
   validates_format_of field,
