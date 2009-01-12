@@ -10,7 +10,7 @@ end
 
 # Search for fixtures first
 fixture_path = File.dirname(__FILE__) + '/fixtures/'
-Dependencies.load_paths.insert(0, fixture_path)
+ActiveSupport::Dependencies.load_paths.insert(0, fixture_path)
 
 require 'active_record/fixtures'
 
@@ -18,7 +18,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/validates_date_time')
 
 ActiveRecord::Base.configurations = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
 ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + '/debug.log')
-ActiveRecord::Base.establish_connection(ENV['DB'] || 'mysql')
+ActiveRecord::Base.establish_connection(ENV['DB'] || 'plugin_test')
 
 load(File.dirname(__FILE__) + '/schema.rb')
 
