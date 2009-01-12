@@ -9,12 +9,29 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090101214449) do
+ActiveRecord::Schema.define(:version => 20090111010751) do
 
   create_table "devices", :force => true do |t|
     t.string   "unique_id",       :limit => 64, :null => false
     t.datetime "last_activation",               :null => false
     t.integer  "user_id",                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "portfolios", :force => true do |t|
+    t.integer  "user_id",                                   :null => false
+    t.decimal  "cash",       :precision => 20, :scale => 2, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "trades", :force => true do |t|
+    t.datetime "time",                                                       :null => false
+    t.integer  "quantity",       :limit => 16,                               :null => false
+    t.integer  "trade_order_id", :limit => 16,                               :null => false
+    t.integer  "counterpart_id", :limit => 16,                               :null => false
+    t.decimal  "price",                        :precision => 8, :scale => 2, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
