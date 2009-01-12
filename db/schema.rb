@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090101214449) do
+ActiveRecord::Schema.define(:version => 20090110193224) do
 
   create_table "devices", :force => true do |t|
     t.string   "unique_id",       :limit => 40, :null => false
@@ -18,6 +18,40 @@ ActiveRecord::Schema.define(:version => 20090101214449) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "markets", :force => true do |t|
+    t.string   "name",       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "positions", :force => true do |t|
+    t.integer  "portfolio_id",                                        :null => false
+    t.integer  "stock_id",                                            :null => false
+    t.boolean  "is_long?",                                            :null => false
+    t.integer  "quantity",                             :default => 0, :null => false
+    t.integer  "average_base_cost", :limit => 1000000
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "positions", ["portfolio_id"], :name => "index_positions_on_portfolio_id", :unique => true
+
+  create_table "stock_infos", :force => true do |t|
+    t.integer  "stock_id",     :null => false
+    t.string   "company_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "stocks", :force => true do |t|
+    t.string   "ticker",     :null => false
+    t.integer  "market_id",  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "users", :force => true do |t|
     t.string   "name",          :limit => 16, :null => false
