@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090110194217) do
+ActiveRecord::Schema.define(:version => 20090111010751) do
 
   create_table "devices", :force => true do |t|
     t.string   "unique_id",       :limit => 64, :null => false
@@ -36,6 +36,16 @@ ActiveRecord::Schema.define(:version => 20090110194217) do
     t.decimal  "stop_price",                    :precision => 8, :scale => 2
     t.decimal  "limit_price",                   :precision => 8, :scale => 2
     t.datetime "expiration_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "trades", :force => true do |t|
+    t.datetime "time",                                                       :null => false
+    t.integer  "quantity",       :limit => 22,                               :null => false
+    t.integer  "trade_order_id", :limit => 16,                               :null => false
+    t.integer  "counterpart_id", :limit => 16,                               :null => false
+    t.decimal  "price",                        :precision => 8, :scale => 2, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
