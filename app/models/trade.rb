@@ -19,8 +19,8 @@ class Trade < ActiveRecord::Base
                         :allow_nil => false
   
   # trade order id of counter-party                      
-  validates_presence_of :counterpart_id,
-                        :allow_nil => false
+  validates_numericality_of :counterpart_id,
+                        :allow_nil => true
   
   # price per share
   validates_numericality_of :price,

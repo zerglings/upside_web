@@ -2,11 +2,11 @@ require 'test_helper'
 
 class TradeTest < ActiveSupport::TestCase
  def setup
-   @trade = Trade.new(:quantity => trades(:one).quantity,
-                      :trade_order_id => trades(:one).trade_order_id,
-                      :counterpart_id => trades(:one).counterpart_id,
-                      :price => trades(:one).price,
-                      :time => trades(:one).time)
+   @trade = Trade.new(:quantity => trades(:normal_trade).quantity,
+                      :trade_order_id => trades(:normal_trade).trade_order_id,
+                      :counterpart_id => trades(:normal_trade).counterpart_id,
+                      :price => trades(:normal_trade).price,
+                      :time => trades(:normal_trade).time)
  end
  
  def test_setup_valid
@@ -23,9 +23,9 @@ class TradeTest < ActiveSupport::TestCase
    assert !@trade.valid?
  end
  
- def test_counterpart_id_presence
+ def test_counterpart_id_nil_ok
    @trade.counterpart_id = nil
-   assert !@trade.valid?
+   assert @trade.valid?
  end
  
  def test_price_presence
@@ -70,7 +70,7 @@ class TradeTest < ActiveSupport::TestCase
    assert !@trade.valid?
  end
  
- def test_quantity_precision
+ def test_quantity_upper_bound
    @trade.quantity = TradeOrder::MAX_QUANTITY_SHARES_PER_TRADE + 1
    assert !@trade.valid?
  end

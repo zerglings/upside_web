@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
     t.datetime "time",                                                       :null => false
     t.integer  "quantity",       :limit => 22,                               :null => false
     t.integer  "trade_order_id", :limit => 16,                               :null => false
-    t.integer  "counterpart_id", :limit => 16,                               :null => false
+    t.integer  "counterpart_id", :limit => 16
     t.decimal  "price",                        :precision => 8, :scale => 2, :null => false
     t.datetime "created_at"
   end
