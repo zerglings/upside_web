@@ -6,6 +6,8 @@ class CreateStockInfos < ActiveRecord::Migration
 
       t.timestamps
     end
+    
+    add_index :stock_infos, :stock_id, :unique => true
   end
 
   def self.down

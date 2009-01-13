@@ -7,4 +7,12 @@ class Stock < ActiveRecord::Base
   
   validates_numericality_of :market_id, :greater_than => 0, :allow_nil => false
   
+  def self.find_stock_by_ticker(ticker)
+    find(:first, :conditions => "ticker = ticker")
+  end
+  
+  def self.find_all_stocks_for_market_id(m_ID)
+    find(:all, :conditions => "market_id = m_ID")
+  end
+  
 end

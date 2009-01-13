@@ -2,6 +2,8 @@ require 'test_helper'
 
 class StockTest < ActiveSupport::TestCase
   
+  fixtures :stocks
+  
   def setup
     @stock = Stock.new(:ticker => "A", :market_id => 2)
   end
@@ -23,7 +25,8 @@ class StockTest < ActiveSupport::TestCase
   end
   
   def test_stock_ticker_uniqueness
-    
+    @stock.ticker = "GS"
+    assert !@stock.valid?
   end
   
   def test_stock_market_id_presence
@@ -36,10 +39,6 @@ class StockTest < ActiveSupport::TestCase
     assert !@stock.valid?
     @stock.market_id = -1
     assert !@stock.valid?
-  end
-  
-  def test_stock_market_id_uniqueness
-    
   end
   
 end
