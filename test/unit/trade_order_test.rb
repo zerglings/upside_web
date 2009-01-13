@@ -1,15 +1,18 @@
 require 'test_helper'
 
 class TradeOrderTest < ActiveSupport::TestCase
+  
   def setup 
-    @trade_order = TradeOrder.new(:portfolio_id => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).portfolio_id,
-                                  :stock_id => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).stock_id,
-                                  :is_buy => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).is_buy,
-                                  :is_long => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).is_long,
-                                  :stop_price => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).stop_price,
-                                  :limit_price => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).limit_price,
-                                  :expiration_time => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).expiration_time,
-                                  :quantity => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).quantity)
+    fixture_case = trade_orders(:buy_to_cover_short_with_stop_and_limit_orders)
+    
+    @trade_order = TradeOrder.new(:portfolio_id => fixture_case.portfolio_id,
+                                  :stock_id => fixture_case.stock_id,
+                                  :is_buy => fixture_case.is_buy,
+                                  :is_long => fixture_case.is_long,
+                                  :stop_price => fixture_case.stop_price,
+                                  :limit_price => fixture_case.limit_price,
+                                  :expiration_time => fixture_case.expiration_time,
+                                  :quantity => fixture_case.quantity)
   end
   
   def test_setup_valid
