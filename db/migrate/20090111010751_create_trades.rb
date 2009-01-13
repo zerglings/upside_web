@@ -7,7 +7,7 @@ class CreateTrades < ActiveRecord::Migration
       t.integer :counterpart_id, :null => false, :limit => 16
       t.decimal :price, :null => false, :precision => 8, :scale => 2
 
-      t.timestamps
+      t.datetime :created_at
     end
   end
 

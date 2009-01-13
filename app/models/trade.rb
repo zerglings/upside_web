@@ -1,6 +1,4 @@
 class Trade < ActiveRecord::Base
-  MAX_SHARES = (10**16)
-  MAX_PRICE = (10**7)
   
   belongs_to :trade_order
   
@@ -13,23 +11,24 @@ class Trade < ActiveRecord::Base
                         :allow_nil => false
   validates_numericality_of :quantity,
                             :only_integer => true,
-                            :greater_than => -MAX_SHARES,
-                            :less_than => MAX_SHARES
+                            :greater_than => 0,
+                            :less_than => TradeOrder::MAX_QUANTITY_SHARES_PER_TRADE
   
   # trade order id 
   validates_presence_of :trade_order_id,
                         :allow_nil => false
   
-  # trade counter-party id                       
+  # trade order id of counter-party                      
   validates_presence_of :counterpart_id,
                         :allow_nil => false
   
-  # trading price
+  # price per share
   validates_numericality_of :price,
                             :allow_nil => false,
-                            :greater_than_or_equal_to => -MAX_PRICE,
-                            :less_than_or_equal_to => MAX_PRICE
+                            :greater_than => 0,
+                            :less_than_or_equal_to => TradeOrder::MAX_PRICE_PER_SHARE
                             
   validates_format_of :price,
-                      :with => /\.\d{0,2}$/
+                      :with => /\.\d{0,2}$/,
+                      :allow_nil => false
 end

@@ -13,6 +13,11 @@ class TradeTest < ActiveSupport::TestCase
    assert @trade.valid?
  end
  
+ def test_quantity_presence
+   @trade.quantity = nil
+   assert !@trade.valid?
+ end
+ 
  def test_trade_order_id_presence
    @trade.trade_order_id = nil
    assert !@trade.valid?
@@ -34,7 +39,17 @@ class TradeTest < ActiveSupport::TestCase
  end
  
  def test_price_precision
-   @trade.price = Trade::MAX_PRICE + 0.01
+   @trade.price = TradeOrder::MAX_PRICE_PER_SHARE  + 0.01
+   assert !@trade.valid?
+ end
+ 
+ def test_price_not_negative
+   @trade.price = -9.90
+   assert !@trade.valid?
+ end
+ 
+ def test_price_not_zero
+   @trade.price = 0
    assert !@trade.valid?
  end
  
@@ -56,7 +71,17 @@ class TradeTest < ActiveSupport::TestCase
  end
  
  def test_quantity_precision
-   @trade.quantity = Trade::MAX_SHARES + 1
+   @trade.quantity = TradeOrder::MAX_QUANTITY_SHARES_PER_TRADE + 1
+   assert !@trade.valid?
+ end
+ 
+ def test_trade_quantity_non_negative
+   @trade.quantity = -9
+   assert !@trade.valid?
+ end
+ 
+ def test_trade_quantity_not_zero
+   @trade.quantity = 0
    assert !@trade.valid?
  end
  
