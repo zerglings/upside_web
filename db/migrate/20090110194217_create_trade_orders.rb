@@ -8,6 +8,7 @@ class CreateTradeOrders < ActiveRecord::Migration
       t.decimal :stop_price, :precision => 8, :scale => 2, :null => true
       t.decimal :limit_price, :precision => 8, :scale => 2, :null => true
       t.datetime :expiration_time, :null => true
+      t.integer :quantity, :null => false, :limit => 22
 
       t.timestamps
     end

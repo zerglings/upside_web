@@ -8,7 +8,8 @@ class TradeOrderTest < ActiveSupport::TestCase
                                   :is_long => trade_orders(:one).is_long,
                                   :stop_price => trade_orders(:one).stop_price,
                                   :limit_price => trade_orders(:one).limit_price,
-                                  :expiration_time => trade_orders(:one).expiration_time)
+                                  :expiration_time => trade_orders(:one).expiration_time,
+                                  :quantity => trade_orders(:one).quantity)
   end
   
   def test_setup_valid
@@ -54,7 +55,7 @@ class TradeOrderTest < ActiveSupport::TestCase
   end
   
   def test_stop_price_precision
-    @trade_order.stop_price = (TradeOrder::MAX_PRICE + 0.01)
+    @trade_order.stop_price = (TradeOrder::MAX_PRICE_PER_SHARE + 0.01)
     assert !@trade_order.valid?
   end
   
@@ -74,7 +75,7 @@ class TradeOrderTest < ActiveSupport::TestCase
   end
   
   def test_limit_price_precision
-    @trade_order.limit_price = -(TradeOrder::MAX_PRICE + 0.01)
+    @trade_order.limit_price = -(TradeOrder::MAX_PRICE_PER_SHARE + 0.01)
     assert !@trade_order.valid?
     
   end
@@ -96,6 +97,26 @@ class TradeOrderTest < ActiveSupport::TestCase
 
   def test_expiration_time_format
     @trade_order.expiration_time = 'timetime'
+    assert !@trade_order.valid?
+  end
+  
+  def test_quantity_presence
+    @trade_order.quantity = nil
+    assert !@trade_order.valid?
+  end
+  
+  def test_quantity_is_integer
+    @trade_order.quantity = 9.999
+    assert !@trade_order.valid?
+  end
+  
+  def test_quantity_non_negative
+    @trade_order.quantity = -50
+    assert !@trade_order.valid?
+  end
+  
+  def test_quantity_less_than_max
+    @trade_order.quantity = TradeOrder::MAX_QUANTITY_SHARES_PER_TRADE
     assert !@trade_order.valid?
   end
 end
