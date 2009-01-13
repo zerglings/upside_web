@@ -1,0 +1,28 @@
+<p>
+  <b>Time:</b>
+  <%=h @trade.time %>
+</p>
+
+<p>
+  <b>Quantity:</b>
+  <%=h @trade.quantity %>
+</p>
+
+<p>
+  <b>Trade order:</b>
+  <%=h @trade.trade_order_id %>
+</p>
+
+<p>
+  <b>Counterpart:</b>
+  <%=h @trade.counterpart_id %>
+</p>
+
+<p>
+  <b>Price:</b>
+  <%=h @trade.price %>
+</p>
+
+
+<%= link_to 'Edit', edit_trade_path(@trade) %> |
+<%= link_to 'Back', trades_path %>

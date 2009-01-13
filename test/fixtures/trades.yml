@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  time: 2009-01-10 20:07:51
+  quantity: 1
+  trade_order_id: 1
+  counterpart_id: 1
+  price: 9.99
+
+two:
+  time: 2009-01-10 20:07:51
+  quantity: 1
+  trade_order_id: 1
+  counterpart_id: 1
+  price: 9.99
