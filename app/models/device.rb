@@ -9,7 +9,7 @@ class Device < ActiveRecord::Base
   
   # last time game used
   validates_presence_of :last_activation
-  validates_date_time :last_activation    
+  validates_datetime :last_activation    
   
   # user id to link to user
   validates_presence_of :user_id

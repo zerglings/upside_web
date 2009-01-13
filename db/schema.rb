@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090110090603) do
+ActiveRecord::Schema.define(:version => 20090110194217) do
 
   create_table "devices", :force => true do |t|
     t.string   "unique_id",       :limit => 64, :null => false
@@ -24,6 +24,19 @@ ActiveRecord::Schema.define(:version => 20090110090603) do
   create_table "portfolios", :force => true do |t|
     t.integer  "user_id",                                   :null => false
     t.decimal  "cash",       :precision => 20, :scale => 2, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "trade_orders", :force => true do |t|
+    t.integer  "portfolio_id",    :limit => 64,                                                 :null => false
+    t.integer  "stock_id",        :limit => 64,                                                 :null => false
+    t.boolean  "is_buy",                                                      :default => true, :null => false
+    t.boolean  "is_long",                                                     :default => true, :null => false
+    t.decimal  "stop_price",                    :precision => 8, :scale => 2
+    t.decimal  "limit_price",                   :precision => 8, :scale => 2
+    t.datetime "expiration_time"
+    t.integer  "quantity",        :limit => 22,                                                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

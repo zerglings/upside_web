@@ -1,0 +1,41 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+buy_to_cover_short_with_stop_and_limit_orders:
+  portfolio_id: 1
+  stock_id: 1
+  is_buy: false
+  is_long: false
+  stop_price: 9.99
+  limit_price: 9.99
+  expiration_time: 2020-01-10 14:42:17
+  quantity: 100
+
+buy_long_with_stop_order:
+  portfolio_id: 1
+  stock_id: 1
+  is_buy: true
+  is_long: true
+  stop_price: 9.99
+  limit_price: 
+  expiration_time: 2020-01-10 14:42:17
+  quantity: 2000
+
+buy_short_with_limit_order:
+  portfolio_id: 2
+  stock_id: 15
+  is_buy: true
+  is_long: false
+  stop_price: 
+  limit_price: 14.98
+  expiration_time: 2010-01-10 14:42:17
+  quantity: 200
+  
+sell_long_without_stop_or_limit_orders: 
+  portfolio_id: 3
+  stock_id: 20
+  is_buy: false
+  is_long: true
+  stop_price: 
+  limit_price:
+  expiration_time: 2010-03-10 14:42:17
+  quantity: 40000

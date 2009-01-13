@@ -1,0 +1,32 @@
+<h1>Listing trade_orders</h1>
+
+<table>
+  <tr>
+    <th>Portfolio</th>
+    <th>Stock</th>
+    <th>Is buy</th>
+    <th>Is long</th>
+    <th>Stop price</th>
+    <th>Limit price</th>
+    <th>Expiration time</th>
+  </tr>
+
+<% for trade_order in @trade_orders %>
+  <tr>
+    <td><%=h trade_order.portfolio_id %></td>
+    <td><%=h trade_order.stock_id %></td>
+    <td><%=h trade_order.is_buy %></td>
+    <td><%=h trade_order.is_long %></td>
+    <td><%=h trade_order.stop_price %></td>
+    <td><%=h trade_order.limit_price %></td>
+    <td><%=h trade_order.expiration_time %></td>
+    <td><%= link_to 'Show', trade_order %></td>
+    <td><%= link_to 'Edit', edit_trade_order_path(trade_order) %></td>
+    <td><%= link_to 'Destroy', trade_order, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New trade_order', new_trade_order_path %>

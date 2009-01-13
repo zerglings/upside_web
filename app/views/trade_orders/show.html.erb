@@ -1,0 +1,38 @@
+<p>
+  <b>Portfolio:</b>
+  <%=h @trade_order.portfolio_id %>
+</p>
+
+<p>
+  <b>Stock:</b>
+  <%=h @trade_order.stock_id %>
+</p>
+
+<p>
+  <b>Is buy:</b>
+  <%=h @trade_order.is_buy %>
+</p>
+
+<p>
+  <b>Is long:</b>
+  <%=h @trade_order.is_long %>
+</p>
+
+<p>
+  <b>Stop price:</b>
+  <%=h @trade_order.stop_price %>
+</p>
+
+<p>
+  <b>Limit price:</b>
+  <%=h @trade_order.limit_price %>
+</p>
+
+<p>
+  <b>Expiration time:</b>
+  <%=h @trade_order.expiration_time %>
+</p>
+
+
+<%= link_to 'Edit', edit_trade_order_path(@trade_order) %> |
+<%= link_to 'Back', trade_orders_path %>
