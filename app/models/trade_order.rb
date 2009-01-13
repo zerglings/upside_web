@@ -3,6 +3,7 @@ class TradeOrder < ActiveRecord::Base
   MAX_QUANTITY_SHARES_PER_TRADE = (10**16)
   
   belongs_to :portfolio
+  belongs_to :stock
   has_many :trades, :dependent => :nullify
   
   # portfolio id 

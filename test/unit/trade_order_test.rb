@@ -2,14 +2,14 @@ require 'test_helper'
 
 class TradeOrderTest < ActiveSupport::TestCase
   def setup 
-    @trade_order = TradeOrder.new(:portfolio_id => trade_orders(:one).portfolio_id,
-                                  :stock_id => trade_orders(:one).stock_id,
-                                  :is_buy => trade_orders(:one).is_buy,
-                                  :is_long => trade_orders(:one).is_long,
-                                  :stop_price => trade_orders(:one).stop_price,
-                                  :limit_price => trade_orders(:one).limit_price,
-                                  :expiration_time => trade_orders(:one).expiration_time,
-                                  :quantity => trade_orders(:one).quantity)
+    @trade_order = TradeOrder.new(:portfolio_id => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).portfolio_id,
+                                  :stock_id => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).stock_id,
+                                  :is_buy => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).is_buy,
+                                  :is_long => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).is_long,
+                                  :stop_price => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).stop_price,
+                                  :limit_price => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).limit_price,
+                                  :expiration_time => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).expiration_time,
+                                  :quantity => trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).quantity)
   end
   
   def test_setup_valid
@@ -112,6 +112,11 @@ class TradeOrderTest < ActiveSupport::TestCase
   
   def test_quantity_non_negative
     @trade_order.quantity = -50
+    assert !@trade_order.valid?
+  end
+  
+  def test_quantity_zero_is_invalid
+    @trade_order.quantity = 0
     assert !@trade_order.valid?
   end
   
