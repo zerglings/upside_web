@@ -1,11 +1,11 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  unique_id: MyString
+  unique_id: <%= '11111' * 8 %>
   last_activation: 2009-01-01 16:44:49
   user_id: 1
 
 two:
-  unique_id: MyString2
+  unique_id: <%= '22222' * 8 %>
   last_activation: 2009-01-01 16:44:49
   user_id: 1

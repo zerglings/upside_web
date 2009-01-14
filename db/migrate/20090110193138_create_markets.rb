@@ -1,7 +1,7 @@
 class CreateMarkets < ActiveRecord::Migration
   def self.up
     create_table :markets do |t|
-      t.string :name, :null => false
+      t.string :name, :limit => 64, :null => false
       t.timestamps
     end
   end

@@ -4,7 +4,7 @@ class PositionTest < ActiveSupport::TestCase
   
   def setup
     @position = Position.new(:stock_id => 8, :portfolio_id => 123, 
-                              :is_long? => true, :quantity => 24, :average_base_cost => 48)
+                              :is_long => true, :quantity => 24, :average_base_cost => 48)
   end
   
   def test_position_validity
@@ -40,13 +40,15 @@ class PositionTest < ActiveSupport::TestCase
     assert !@position.valid?
   end
   
-  def test_position_quantity_presence
-    @position.quantity = nil
+  def test_position_quantity_numericality
+    @position.quantity = 0
+    assert !@position.valid?
+    @position.quantity = -1
     assert !@position.valid?
   end
   
-  def test_position_average_base_cost_presence
-    @position.average_base_cost = nil
+  def test_position_average_base_cost_numericality
+    @position.average_base_cost = ""
     assert !@position.valid?
   end
   

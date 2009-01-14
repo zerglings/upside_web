@@ -1,0 +1,28 @@
+<h1>Listing trades</h1>
+
+<table>
+  <tr>
+    <th>Time</th>
+    <th>Quantity</th>
+    <th>Trade order</th>
+    <th>Counterpart</th>
+    <th>Price</th>
+  </tr>
+
+<% for trade in @trades %>
+  <tr>
+    <td><%=h trade.time %></td>
+    <td><%=h trade.quantity %></td>
+    <td><%=h trade.trade_order_id %></td>
+    <td><%=h trade.counterpart_id %></td>
+    <td><%=h trade.price %></td>
+    <td><%= link_to 'Show', trade %></td>
+    <td><%= link_to 'Edit', edit_trade_path(trade) %></td>
+    <td><%= link_to 'Destroy', trade, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New trade', new_trade_path %>

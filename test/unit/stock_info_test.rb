@@ -41,10 +41,4 @@ class StockInfoTest < ActiveSupport::TestCase
     assert !@stock_info.valid?
   end
   
-  def test_stock_info_company_name_uniqueness
-    @stock_info.stock_id = 3
-    @stock_info.company_name = "Morgan Stanley"
-    assert !@stock_info.valid?
-  end
-  
 end

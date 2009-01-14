@@ -9,54 +9,87 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090110193224) do
+ActiveRecord::Schema.define(:version => 20090111010751) do
 
   create_table "devices", :force => true do |t|
-    t.string   "unique_id",       :limit => 40, :null => false
+    t.string   "unique_id",       :limit => 64, :null => false
     t.datetime "last_activation",               :null => false
     t.integer  "user_id",                       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true
+
   create_table "markets", :force => true do |t|
-    t.string   "name",       :null => false
+    t.string   "name",       :limit => 64, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "portfolios", :force => true do |t|
+    t.integer  "user_id",                                   :null => false
+    t.decimal  "cash",       :precision => 20, :scale => 2, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "positions", :force => true do |t|
-    t.integer  "portfolio_id",                                        :null => false
-    t.integer  "stock_id",                                            :null => false
-    t.boolean  "is_long?",                                            :null => false
-    t.integer  "quantity",                             :default => 0, :null => false
-    t.integer  "average_base_cost", :limit => 1000000
+    t.integer  "portfolio_id",                         :null => false
+    t.integer  "stock_id",                             :null => false
+    t.boolean  "is_long",                              :null => false
+    t.integer  "quantity",                             :null => false
+    t.float    "average_base_cost", :limit => 1048576
+    t.float    "decimal",           :limit => 1048576
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "positions", ["portfolio_id"], :name => "index_positions_on_portfolio_id", :unique => true
+  add_index "positions", ["portfolio_id", "stock_id", "is_long"], :name => "index_positions_on_portfolio_id_and_stock_id_and_is_long", :unique => true
 
   create_table "stock_infos", :force => true do |t|
-    t.integer  "stock_id",     :null => false
-    t.string   "company_name"
+    t.integer  "stock_id",                    :null => false
+    t.string   "company_name", :limit => 128, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "stock_infos", ["stock_id"], :name => "index_stock_infos_on_stock_id", :unique => true
+
   create_table "stocks", :force => true do |t|
-    t.string   "ticker",     :null => false
-    t.integer  "market_id",  :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string  "ticker",    :limit => 16, :null => false
+    t.integer "market_id",               :null => false
   end
 
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
+  create_table "trade_orders", :force => true do |t|
+    t.integer  "portfolio_id",    :limit => 64,                                                 :null => false
+    t.integer  "stock_id",        :limit => 64,                                                 :null => false
+    t.boolean  "is_buy",                                                      :default => true, :null => false
+    t.boolean  "is_long",                                                     :default => true, :null => false
+    t.decimal  "stop_price",                    :precision => 8, :scale => 2
+    t.decimal  "limit_price",                   :precision => 8, :scale => 2
+    t.datetime "expiration_time"
+    t.integer  "quantity",        :limit => 22,                                                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "trades", :force => true do |t|
+    t.datetime "time",                                                       :null => false
+    t.integer  "quantity",       :limit => 22,                               :null => false
+    t.integer  "trade_order_id", :limit => 16,                               :null => false
+    t.integer  "counterpart_id", :limit => 16
+    t.decimal  "price",                        :precision => 8, :scale => 2, :null => false
+    t.datetime "created_at"
+  end
+
   create_table "users", :force => true do |t|
-    t.string   "name",          :limit => 16, :null => false
-    t.string   "password_hash", :limit => 64, :null => false
-    t.string   "password_salt", :limit => 4,  :null => false
+    t.string   "name",          :limit => 64,                   :null => false
+    t.string   "password_hash", :limit => 64,                   :null => false
+    t.string   "password_salt", :limit => 4,                    :null => false
+    t.boolean  "pseudo_user",                 :default => true, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

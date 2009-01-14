@@ -1,9 +1,8 @@
 class CreateStocks < ActiveRecord::Migration
   def self.up
     create_table :stocks do |t|
-      t.string :ticker, :null => false
+      t.string :ticker, :limit => 16, :null => false
       t.integer :market_id, :null => false
-      t.timestamps
     end
     
     add_index :stocks, :ticker, :unique => true
