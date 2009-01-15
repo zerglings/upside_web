@@ -12,7 +12,7 @@ class StockTest < ActiveSupport::TestCase
     assert @stock.valid?
   end
   
-  def test_stock_ticker_not_null
+  def test_stock_ticker_cannot_be_null
     @stock.ticker = nil
     assert !@stock.valid?
   end
@@ -29,12 +29,12 @@ class StockTest < ActiveSupport::TestCase
     assert !@stock.valid?
   end
   
-  def test_market_id_not_null
+  def test_market_id_cannot_be_null
     @stock.market_id = nil
     assert !@stock.valid?
   end
   
-  def test_market_id_positive_number
+  def test_market_id_must_be_positive
     @stock.market_id = 0
     assert !@stock.valid?
     @stock.market_id = -1

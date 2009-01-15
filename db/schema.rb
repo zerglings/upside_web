@@ -35,12 +35,12 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
   end
 
   create_table "positions", :force => true do |t|
-    t.integer  "portfolio_id",                         :null => false
-    t.integer  "stock_id",                             :null => false
-    t.boolean  "is_long",                              :null => false
-    t.integer  "quantity",                             :null => false
-    t.float    "average_base_cost", :limit => 1048576
-    t.float    "decimal",           :limit => 1048576
+    t.integer  "portfolio_id",      :null => false
+    t.integer  "stock_id",          :null => false
+    t.boolean  "is_long",           :null => false
+    t.integer  "quantity",          :null => false
+    t.float    "average_base_cost"
+    t.float    "decimal"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
