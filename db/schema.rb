@@ -21,12 +21,47 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
 
   add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true
 
+  create_table "markets", :force => true do |t|
+    t.string   "name",       :limit => 64, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "portfolios", :force => true do |t|
     t.integer  "user_id",                                   :null => false
     t.decimal  "cash",       :precision => 20, :scale => 2, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "positions", :force => true do |t|
+    t.integer  "portfolio_id",      :null => false
+    t.integer  "stock_id",          :null => false
+    t.boolean  "is_long",           :null => false
+    t.integer  "quantity",          :null => false
+    t.float    "average_base_cost"
+    t.float    "decimal"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "positions", ["portfolio_id", "stock_id", "is_long"], :name => "index_positions_on_portfolio_id_and_stock_id_and_is_long", :unique => true
+
+  create_table "stock_infos", :force => true do |t|
+    t.integer  "stock_id",                    :null => false
+    t.string   "company_name", :limit => 128, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "stock_infos", ["stock_id"], :name => "index_stock_infos_on_stock_id", :unique => true
+
+  create_table "stocks", :force => true do |t|
+    t.string  "ticker",    :limit => 16, :null => false
+    t.integer "market_id",               :null => false
+  end
+
+  add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
     t.integer  "portfolio_id",    :limit => 64,                                                 :null => false

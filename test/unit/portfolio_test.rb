@@ -15,12 +15,12 @@ class PortfolioTest < ActiveSupport::TestCase
     assert !@portfolio.valid?
   end
   
-  def test_user_id_presence
+  def test_user_id_cannot_be_nil
     @portfolio.user_id = nil
     assert !@portfolio.valid?
   end
   
-  def test_cash_balance_presence
+  def test_cash_balance_cannot_be_nil
      @portfolio.cash = nil
      assert !@portfolio.valid?
   end
