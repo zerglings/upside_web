@@ -6,18 +6,20 @@ class MarketTest < ActiveSupport::TestCase
     @market = Market.new(:name => "NASDAQ")
   end
   
-  def test_market_name_length
+  def test_validity
     assert @market.valid?
-    
+  end
+  
+  def test_name_length
     @market.name = "ha"
     assert !@market.valid?
     @market.name = "hah"
     assert @market.valid?
-    @market.name = "NASDAQNASDAQNASDAQNASDAQNASDAQNASDAQNASDAQNASDAQNAS"
+    @market.name = "NASDAQ" * 10 + "NASDA"
     assert !@market.valid?
   end
   
-  def test_market_name_presence
+  def test_name_presence
     @market.name = nil
     assert !@market.valid?
   end

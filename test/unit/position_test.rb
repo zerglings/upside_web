@@ -7,47 +7,57 @@ class PositionTest < ActiveSupport::TestCase
                               :is_long => true, :quantity => 24, :average_base_cost => 48)
   end
   
-  def test_position_validity
+  def test_validity
     assert @position.valid?
   end
   
-  def test_position_stock_id_presence
+  def test_stock_id_not_null
     @position.stock_id = nil
     assert !@position.valid?
   end
   
-  def test_position_stock_id_numericality
+  def test_stock_id_positive_number
     @position.stock_id = 0
     assert !@position.valid?
     @position.stock_id = -1
     assert !@position.valid?
   end
     
-  def test_position_portfolio_id_presence
+  def test_portfolio_id_not_null
     @position.portfolio_id = nil
     assert !@position.valid?
   end
   
-  def test_position_portfolio_id_numericality
+  def test_portfolio_id_positive_number
     @position.portfolio_id = 0
     assert !@position.valid?
     @position.portfolio_id = -1
     assert !@position.valid?
   end
   
-  def test_position_is_long_presence
+  def test_is_long_not_null
+    @position.is_long = nil
+    assert !@position.valid?
+  end
+  
+  def test_quantity_not_null
     @position.quantity = nil
     assert !@position.valid?
   end
   
-  def test_position_quantity_numericality
+  def test_quantity_positive_number
     @position.quantity = 0
     assert !@position.valid?
     @position.quantity = -1
     assert !@position.valid?
   end
   
-  def test_position_average_base_cost_numericality
+  def test_average_base_cost_not_null
+    @position.average_base_cost = nil
+    assert !@position.valid?
+  end
+  
+  def test_average_base_cost_number
     @position.average_base_cost = ""
     assert !@position.valid?
   end

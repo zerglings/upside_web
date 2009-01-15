@@ -5,7 +5,7 @@ class CreatePositions < ActiveRecord::Migration
       t.integer :stock_id, :null => false
       t.boolean :is_long, :null => false
       t.integer :quantity, :null => false
-      t.float :average_base_cost, :decimal, :precision => 8, :scale => 2, :limit => 1048576
+      t.float :average_base_cost, :decimal, :precision => 8, :scale => 2
 
       t.timestamps
     end

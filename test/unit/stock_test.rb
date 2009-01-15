@@ -12,29 +12,29 @@ class StockTest < ActiveSupport::TestCase
     assert @stock.valid?
   end
   
-  def test_stock_ticker_presence
+  def test_stock_ticker_not_null
     @stock.ticker = nil
     assert !@stock.valid?
   end
   
-  def test_stock_ticker_length
+  def test_ticker_length
     @stock.ticker = ""
     assert !@stock.valid?
     @stock.ticker = "12345678910"
     assert !@stock.valid?
   end
   
-  def test_stock_ticker_uniqueness
+  def test_ticker_uniqueness
     @stock.ticker = "GS"
     assert !@stock.valid?
   end
   
-  def test_stock_market_id_presence
+  def test_market_id_not_null
     @stock.market_id = nil
     assert !@stock.valid?
   end
   
-  def test_stock_market_id_numericality
+  def test_market_id_positive_number
     @stock.market_id = 0
     assert !@stock.valid?
     @stock.market_id = -1
