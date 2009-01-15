@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
   
   # generates a random password salt
   def self.random_salt
-    (0...4).map { rand(256) }.pack 'C*'
+    (0...4).map { 32 + rand(64) }.pack 'C*'
   end
   
   # computes a hash from a password and a salt
