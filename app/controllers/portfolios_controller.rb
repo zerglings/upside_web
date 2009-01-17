@@ -1,4 +1,5 @@
 class PortfoliosController < ApplicationController
+
   # GET /portfolios
   # GET /portfolios.xml
   def index
@@ -14,7 +15,8 @@ class PortfoliosController < ApplicationController
   # GET /portfolios/1.xml
   def show
     @portfolio = Portfolio.find(params[:id])
-
+    @trade_order = TradeOrder.find(:all, 
+                                   :conditions => {:portfolio_id => @portfolio.id})
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @portfolio }

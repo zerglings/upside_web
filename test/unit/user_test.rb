@@ -119,15 +119,22 @@ class PseudoUserTest < Test::Unit::TestCase
   end  
   
   def test_deleting_user_deletes_dependencies
-    user = User.new(:name => 'angry',
-                    :password => 'blah',
-                    :password_confirmation => 'blah',
-                    :pseudo_user => false) 
-    user.save!
-    portfolio = Portfolio.new(:user_id => user.id, :cash => 40)
-    portfolio.save!
-    user.destroy
+    @user.save!
+    @user.destroy
     assert_equal nil, Portfolio.find(:first, 
-                                     :conditions => {:user_id => user.id})
+                                     :conditions => {:user_id => @user.id})
+  end
+  
+  def test_create_user_also_creates_portfolio
+    @user.save!
+    assert_not_nil Portfolio.find(:first, 
+                                  :conditions => {:user_id => @user.id})
+    @user.pseudo_user = false
+    @user.name = "noob"
+    old_count = Portfolio.count
+    @user.save!
+    assert_equal old_count, Portfolio.count
+  ensure 
+    @user.destroy
   end
 end

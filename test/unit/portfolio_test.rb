@@ -40,4 +40,8 @@ class PortfolioTest < ActiveSupport::TestCase
     assert !@portfolio.valid?
   end
   
+  def test_cash_balance_starts_at_quarter_million
+    newport = Portfolio.new
+    assert_equal Portfolio::CASH_STARTING_VALUE, newport.cash
+  end
 end

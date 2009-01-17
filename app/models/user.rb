@@ -4,6 +4,12 @@ class User < ActiveRecord::Base
   has_many :devices
   has_one :portfolio, :dependent => :destroy
   
+  # create a portfolio for user after user is created
+  after_create do |user|
+    portfolio = Portfolio.new(:user => user)
+    portfolio.save!  
+  end
+  
   # user name
   validates_length_of :name, :in => 4..16,
                       :unless => Proc.new{ |u| u.pseudo_user? },
@@ -63,5 +69,7 @@ class User < ActiveRecord::Base
      user.password = device_id
      user.save!
      return user
-  end
+ end
+
+ 
 end

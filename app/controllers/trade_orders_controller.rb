@@ -39,15 +39,19 @@ class TradeOrdersController < ApplicationController
 
   # POST /trade_orders
   # POST /trade_orders.xml
-  def create
+  def create  
+    @user = User.find(:first,
+                      :conditions => {:id => session[:user_id]})
+    @portfolio = @user.portfolio
     @trade_order = TradeOrder.new(params[:trade_order])
-
+    @trade_order.portfolio_id = @portfolio.id
     respond_to do |format|
       if @trade_order.save
         flash[:notice] = 'TradeOrder was successfully created.'
-        format.html { redirect_to(@trade_order) }
+        format.html { redirect_to(@portfolio) }
         format.xml  { render :xml => @trade_order, :status => :created, :location => @trade_order }
       else
+        flash[:error] = 'Your trade order was not placed.'
         format.html { render :action => "new" }
         format.xml  { render :xml => @trade_order.errors, :status => :unprocessable_entity }
       end
@@ -78,7 +82,7 @@ class TradeOrdersController < ApplicationController
     @trade_order.destroy
 
     respond_to do |format|
-      format.html { redirect_to(trade_orders_url) }
+      format.html { redirect_to(@portfolio) }
       format.xml  { head :ok }
     end
   end

@@ -41,7 +41,8 @@ class UsersController < ApplicationController
   # POST /users.xml
   def create
     @user = User.new(params[:user])
-
+    @user.pseudo_user = false
+    
     respond_to do |format|
       if @user.save
         flash[:notice] = "User #{@user.name} was successfully created."
@@ -58,7 +59,8 @@ class UsersController < ApplicationController
   # PUT /users/1.xml
   def update
     @user = User.find(params[:id])
-
+    @user.pseudo_user = false
+    
     respond_to do |format|
       if @user.update_attributes(params[:user])
         flash[:notice] = "User #{@user.name} was successfully updated."

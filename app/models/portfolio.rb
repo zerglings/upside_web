@@ -1,5 +1,6 @@
 class Portfolio < ActiveRecord::Base
   MAX_CASH = (10**13 -0.01)
+  CASH_STARTING_VALUE = 250000
   
   belongs_to :user
   # has_many :trade_orders, :dependent => :destroy

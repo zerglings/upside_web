@@ -4,10 +4,35 @@
 </p>
 
 <p>
-  <b>Cash:</b>
+  <b>Cash Balance:</b>
   <%=h @portfolio.cash %>
 </p>
 
+<p> 
+	<b>Pending Orders</b> 
+</p>
+	
+<table>
+		<tr>
+			<th>Ticker</th>
+			<th>Transaction</th>
+			<th>Quantity</th>
+			<th>Stop Price</th>
+			<th>Limit Price</th>
+			<th>Expiration Time</th>
+		</tr>	
+	<% for trade_order in @trade_order %>	
+		<tr>
+			<td><%=h trade_order.stock.ticker %></td>
+			<td><%=h trade_order.transaction_type %></td>
+			<td><%=h trade_order.quantity %></td>
+			<td><%=h trade_order.stop_price %></td>
+			<td><%=h trade_order.limit_price %></td>
+			<td><%=h trade_order.expiration_time %></td>
+		</tr> 
+	<% end %>	
+</table>
 
+<%= link_to 'Place an order', new_trade_order_path %>
 <%= link_to 'Edit', edit_portfolio_path(@portfolio) %> |
 <%= link_to 'Back', portfolios_path %>

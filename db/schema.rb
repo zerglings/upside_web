@@ -28,8 +28,8 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
   end
 
   create_table "portfolios", :force => true do |t|
-    t.integer  "user_id",                                   :null => false
-    t.decimal  "cash",       :precision => 20, :scale => 2, :null => false
+    t.integer  "user_id",                                                         :null => false
+    t.decimal  "cash",       :precision => 20, :scale => 2, :default => 250000.0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
