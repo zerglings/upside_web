@@ -9,7 +9,7 @@ class UsersControllerTest < ActionController::TestCase
   
   def test_web_users_not_pseudo_users
     post :create, :user => {:name => "createuser", :password => "blah", :password_confirmation => "blah"}
-    assert_redirected_to :action => :index
+    assert_redirected_to :controller => :admin, :action => :login
     user = User.find(:first, 
                      :conditions => {:name => "createuser"})
     assert user, "User was not created"

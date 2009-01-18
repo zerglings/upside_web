@@ -1,7 +1,6 @@
 require 'test_helper'
 
-class AdminControllerTest < ActionController::TestCase
-  
+class AdminControllerTest < ActionController::TestCase  
  fixtures :users
  
   def test_index_without_user
@@ -19,7 +18,7 @@ class AdminControllerTest < ActionController::TestCase
   def test_login_good_user_and_password
     one = users(:one)
     post :login, :name => one.name, :password => 'password'
-    assert_redirected_to :action => "index"
+    assert_redirected_to :controller => "portfolios", :action => one.id
     assert_equal one.id, session[:user_id]
   end
   

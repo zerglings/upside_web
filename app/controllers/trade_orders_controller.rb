@@ -44,7 +44,7 @@ class TradeOrdersController < ApplicationController
                       :conditions => {:id => session[:user_id]})
     @portfolio = @user.portfolio
     @trade_order = TradeOrder.new(params[:trade_order])
-    @trade_order.portfolio_id = @portfolio.id
+    @trade_order.portfolio = @portfolio
     respond_to do |format|
       if @trade_order.save
         flash[:notice] = 'TradeOrder was successfully created.'

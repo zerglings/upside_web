@@ -42,6 +42,6 @@ class PortfolioTest < ActiveSupport::TestCase
   
   def test_cash_balance_starts_at_quarter_million
     newport = Portfolio.new
-    assert_equal Portfolio::CASH_STARTING_VALUE, newport.cash
+    assert_equal Portfolio::NEW_PLAYER_CASH, newport.cash
   end
 end

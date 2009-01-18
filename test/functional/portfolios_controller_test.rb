@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class PortfoliosControllerTest < ActionController::TestCase
+#TODO(celia): test this later  
+
 =begin 
   test "should get index" do
     get :index

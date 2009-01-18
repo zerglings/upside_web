@@ -37,7 +37,7 @@ class TradeOrder < ActiveRecord::Base
   # expiration time of trade order
   validates_datetime :expiration_time,
                      :allow_nil => true,
-                     :on_or_after => Proc.new { Time.now }
+                     :after => Proc.new { Time.now }
                      
   # number of shares to be traded
   validates_presence_of :quantity,
@@ -74,7 +74,7 @@ class TradeOrder
   end
   
   # Trade order transaction type
-  def transaction_type
+  def transaction_type    
     if is_buy == true && is_long == false 
       return "Short"
     elsif is_buy == true && is_long == true  
@@ -85,6 +85,6 @@ class TradeOrder
       return "Sell"
     else
       return nil
-    end
+    end  
   end
 end

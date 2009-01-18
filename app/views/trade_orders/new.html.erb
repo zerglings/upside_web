@@ -47,4 +47,4 @@
 	</p>			
 <% end %>
 
-<%= link_to 'Back to portfolio', @portfolio %>
+<%= link_to 'Back to portfolio', :controller => "portfolios", :action => "#{session[:user_id]}" %>

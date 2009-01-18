@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class TradeOrdersControllerTest < ActionController::TestCase
+#TODO(celia): test these later!  
+  
 =begin 
   test "should get index" do
     get :index

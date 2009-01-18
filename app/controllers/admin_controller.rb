@@ -5,7 +5,7 @@ class AdminController < ApplicationController
       user = User.authenticate(params[:name], params[:password])
       if user
         session[:user_id] = user.id
-        redirect_to(:action => "index")
+        redirect_to(:controller => "portfolios", :action => "show", :id => session[:user_id])
       else
         flash[:error] = "Invalid user/password combination"
       end

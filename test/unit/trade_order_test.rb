@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class TradeOrderTest < ActiveSupport::TestCase
+  fixtures :stocks  
   
   def setup 
     fixture_case = trade_orders(:buy_to_cover_short_with_stop_and_limit_orders)
@@ -126,5 +127,36 @@ class TradeOrderTest < ActiveSupport::TestCase
   def test_quantity_less_than_max
     @trade_order.quantity = TradeOrder::MAX_QUANTITY_SHARES_PER_TRADE
     assert !@trade_order.valid?
+  end
+  
+  def test_virtual_attribute_ticker_converts_to_stock_id
+    @trade_order.stock_id = nil
+    @trade_order.ticker = stocks(:Morgan_Stanley).ticker
+    @trade_order.save!
+    assert_equal Stock.find(:first, :conditions => {:ticker => stocks(:Morgan_Stanley).ticker}).id, @trade_order.stock_id
+  end
+  
+  def test_is_limit_order
+    @trade_order.limit_price = nil 
+    @trade_order.stop_price  = nil
+    assert_equal false, @trade_order.is_limit 
+    @trade_order.limit_price = 15.55
+    assert_equal true, @trade_order.is_limit
+    @trade_order.stop_price = 14.44
+    assert_equal true, @trade_order.is_limit
+    @trade_order.limit_price = nil
+    assert_equal true, @trade_order.is_limit
+  end
+  
+  def test_transaction_type
+    @trade_order.is_buy = true
+    @trade_order.is_long = true
+    assert_equal "Buy", @trade_order.transaction_type
+    @trade_order.is_buy = false
+    assert_equal "Sell", @trade_order.transaction_type
+    @trade_order.is_long = false
+    assert_equal "Buy to Cover", @trade_order.transaction_type
+    @trade_order.is_buy = true
+    assert_equal "Short", @trade_order.transaction_type
   end
 end

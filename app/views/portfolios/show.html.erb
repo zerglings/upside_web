@@ -11,8 +11,8 @@
 <p> 
 	<b>Pending Orders</b> 
 </p>
-	
-<table>
+<% if TradeOrder.find(:all, :conditions => {:portfolio_id => @portfolio.id}).length > 0 %>
+	<table>
 		<tr>
 			<th>Ticker</th>
 			<th>Transaction</th>
@@ -31,8 +31,13 @@
 			<td><%=h trade_order.expiration_time %></td>
 		</tr> 
 	<% end %>	
-</table>
+	</table>
+<%else%> 
+<p> No Pending Orders </p>
+<%end%>
 
-<%= link_to 'Place an order', new_trade_order_path %>
+<p>
+<%= link_to 'Place an order', new_trade_order_path %> |
 <%= link_to 'Edit', edit_portfolio_path(@portfolio) %> |
-<%= link_to 'Back', portfolios_path %>
+<%= link_to 'Logout', :controller => :admin, :action => 'logout' %>
+</p>
