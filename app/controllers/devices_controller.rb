@@ -1,4 +1,6 @@
 class DevicesController < ApplicationController
+  protect_from_forgery :except => [:register]
+  
   # GET /devices
   # GET /devices.xml
   def index
