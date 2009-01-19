@@ -16,7 +16,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_redirected_to :controller => :sessions, :action => :new
     assert_equal false, user.pseudo_user               
   end
-    
+  
 =begin
   test "should get new" do
     get :new

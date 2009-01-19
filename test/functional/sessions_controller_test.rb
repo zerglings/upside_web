@@ -3,6 +3,11 @@ require 'test_helper'
 class SessionsControllerTest < ActionController::TestCase  
   fixtures :users
   
+  def setup
+    @user = users :rich_kid
+    @password = 'password'
+  end
+  
   def test_index_without_user
     get :index
     assert_redirected_to :action => :new
@@ -16,15 +21,13 @@ class SessionsControllerTest < ActionController::TestCase
   end
   
   def test_login_good_user_and_password
-    one = users(:rich_kid)
-    post :create, :name => one.name, :password => 'password'
-    assert_redirected_to :controller => :portfolios, :action => one.id
-    assert_equal one.id, session[:user_id]
+    post :create, :name => @user.name, :password => @password
+    assert_redirected_to :controller => :portfolios, :action => @user.id
+    assert_equal @user.id, session[:user_id]
   end
   
   def test_bad_password
-    one = users(:rich_kid)
-    post :create, :name => one.name, :password => 'wrong'
+    post :create, :name => @user.name, :password => 'wrong'
     assert_template "new"
     assert_equal "Invalid user/password combination", flash[:error]
     assert_equal nil, session[:user_id], "User entered incorrect password but session was still set"
@@ -43,4 +46,14 @@ class SessionsControllerTest < ActionController::TestCase
     assert_equal nil, session[:user_id], "Session not set to nil even though user logged out"
     assert_equal "Logged out", flash[:notice]
   end
+  
+  def test_xml_login
+    post :create, :name => @user.name, :password => @password, :format => 'xml'
+    assert_equal @user.id, session[:user_id], "Session not set properly"
+    assert_select "result", "ok"
+    
+    post :create, :name => @user.name, :password => "wrong", :format => 'xml'
+    assert_equal nil, session[:user_id], "Session not set properly"
+    assert_select "result", "failure"    
+  end  
 end
