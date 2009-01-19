@@ -25,7 +25,7 @@ module CommonUserTests
   
   def test_user_name_with_spaces
     if @user.pseudo_user
-      @user.name = "bu f" + "buffet" * 6
+      @user.name = "bu f" + "buffet" * 10
     else
       @user.name = "buf fet"
     end
@@ -104,13 +104,20 @@ class UserTest < ActiveSupport::TestCase
     user = User.authenticate( 'inexistent', 'password')
     assert_equal user, nil, 'Inexistent user was authenticated'
   end
+  
+  def test_pseudo_user_generation
+    device_id = '31415' * 8
+    user = User.new_pseudo_user device_id
+    assert_equal user.name, 'a5f271f817c04cca75e8e8ae70b2ca1733956aeef8f787de0e3203555db69602'
+    assert_equal user.password, device_id
+  end
 end
 
 class PseudoUserTest < Test::Unit::TestCase
   include CommonUserTests
   
   def setup
-    @user = User.new :name => "abcde" * 8,
+    @user = User.new :name => "abcde123" * 8,
                      :password => "money",
                      :password_confirmation => "money",
                      :pseudo_user => true
@@ -120,7 +127,7 @@ class PseudoUserTest < Test::Unit::TestCase
     @user.name = "12345"
     assert !@user.valid?
     
-    @user.name = "12345" * 8
+    @user.name = "12345678" * 8
     assert @user.valid?   
   end  
   

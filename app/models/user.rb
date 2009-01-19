@@ -15,9 +15,9 @@ class User < ActiveRecord::Base
                       :unless => Proc.new{ |u| u.pseudo_user? },
                       :message => "The user name should have between 4 and 16 characters.",
                       :allow_nil => false
-  validates_length_of :name, :is => 40,
+  validates_length_of :name, :is => 64,
                       :if => Proc.new{ |u| u.pseudo_user? },
-                      :message => "The user name should be 40 characters.",
+                      :message => "Pseudo-user names should be 64 characters.",
                       :allow_nil => false
   validates_format_of :name,
                       :with => /^[^\s]+$/
@@ -65,11 +65,9 @@ class User < ActiveRecord::Base
   
   def self.new_pseudo_user(device_id)
      user = self.new
-     user.name = device_id
+     user.name = Digest::SHA2.hexdigest device_id
      user.password = device_id
      user.save!
      return user
- end
-
- 
+ end 
 end
