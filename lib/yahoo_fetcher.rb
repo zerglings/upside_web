@@ -3,21 +3,36 @@ require 'uri'
 require 'csv'
 
 module YahooFetcher
-  def self.stock_data_for_tickers(tickers)
-    data_csv = fetch_data(tickers)
-    data_parsed = parse_response(data_csv)
-  end
-
-  # Pulls and returns stock data from Yahoo finance
+  # Pulls and returns stock data from Yahoo finance.
   #  Parameters:
-  #    an array of stock tickers 
-  #      ex. ["GOOG","MSFT"] 
-  #  Output:
-  #    CSV document with each company's data on a separate line  
-  def self.fetch_data(tickers)
-    data_codes = "abx"
-    
-    query = "/d/?s=#{URI.encode(tickers.join("+"))}&f=#{URI.encode(data_codes)}"
+  #    tickers: an array of stock tickers 
+  #      ex. ["GOOG","MSFT"]
+  #  Returns:
+  #    an array of hashes with each hash accounting for one of the stock tickers  
+  #    ex. [{:ask=>316.18, :bid=>315.0}, {:ask=>19.6, :bid=>19.58}]
+  def self.stock_data_for_tickers(tickers)
+    parse_response fetch_data(tickers, "xab") do |result|
+      { :stock_exchange => result[0],
+        :ask => result[1].to_f,
+        :bid => result[2].to_f
+      }
+    end
+  end
+  
+  # Checks the existence of ticker symbols with Yahoo finance.
+  #  Parameters:
+  #   tickers: an array of stock tickers 
+  #      ex. ["GOOG","MSFT"]
+  #  Returns:
+  #   an array with a boolean per ticker (true = exists, false = does not exist)
+  def self.tickers_exist?(tickers)
+    parse_response(fetch_data(tickers, "x"), false) { |result| true }
+  end
+  
+
+  # Generic method for pulling information from Yahoo finance.
+  def self.fetch_data(tickers, data_codes)
+    query = "/d/?s=#{URI.encode(tickers.join("+"))}&f=#{data_codes}"
     
     response = Net::HTTP.start("download.finance.yahoo.com", 80) { |http| http.get query}
     unless response.kind_of? Net::HTTPSuccess
@@ -26,21 +41,14 @@ module YahooFetcher
     return response.body
   end
 
-  # The CSV file outputted from above is now parsed and converted into 
-  #    an array of hashes with each hash accounting for one of the stock tickers  
-  #    ex. [{:ask=>316.18, :bid=>315.0}, {:ask=>19.6, :bid=>19.58}]  
-  def self.parse_response(response)
+  # Generic parser for data returned from Yahoo finance.
+  # Assumes the first column for each stock is N/A if the stock does not exist.
+  def self.parse_response(response, not_found_placeholder = :not_found)
     results = CSV.parse(response)
  
     results.map do |result|
-      if result[2] != "N/A"
-      { :ask => result[0].to_f,
-        :bid => result[1].to_f,
-        :stock_exchange => result[2]
-      }
-      else
-        :not_found
-      end
+      next not_found_placeholder if result.first == "N/A"      
+      yield result
     end 
   end
 end
