@@ -24,7 +24,7 @@ class TradeOrdersController < ApplicationController
   # GET /trade_orders/new
   # GET /trade_orders/new.xml
   def new
-    @trade_order = TradeOrder.new
+    @trade_order = TradeOrder.new :expiration_time => 30.days.from_now
 
     respond_to do |format|
       format.html # new.html.erb
