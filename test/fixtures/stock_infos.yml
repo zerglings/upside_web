@@ -1,9 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
- Morgan_Stanley:
-   stock_id: 1
-   company_name: Morgan Stanley
+Morgan_Stanley:
+  stock: ms
+  company_name: Morgan Stanley
 
- Goldman_Sachs:
-   stock_id: 2
-   company_name: Goldman Sachs
+Goldman_Sachs:
+  stock: gs
+  company_name: Goldman Sachs

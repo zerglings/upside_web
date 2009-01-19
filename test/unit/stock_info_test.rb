@@ -1,11 +1,11 @@
 require 'test_helper'
 
 class StockInfoTest < ActiveSupport::TestCase
-  
-  fixtures :stock_infos
+  fixtures :stocks, :stock_infos
 
   def setup
-    @stock_info = StockInfo.new(:stock_id => 3, :company_name => "zergling.net")
+    @stock_info = StockInfo.new :stock_id => 3,
+                                :company_name => "zergling.net"
   end
   
   def test_validity
@@ -25,7 +25,7 @@ class StockInfoTest < ActiveSupport::TestCase
   end
   
   def test_stock_id_uniqueness
-    @stock_info.stock_id = 1
+    @stock_info.stock_id = stocks(:gs).id
     assert !@stock_info.valid?
   end
   

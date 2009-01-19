@@ -3,7 +3,9 @@ require 'test_helper'
 class DeviceTest < ActiveSupport::TestCase
 
   def setup
-    @device = Device.new(:unique_id => "12345" * 8, :last_activation => "2009-01-01 16:44:49", :user_id => users(:one).id)
+    @device = Device.new :unique_id => "12345" * 8,
+                         :last_activation => Time.now - 2.days,
+                         :user_id => users(:rich_kid).id
   end
   
   def test_setup_valid
@@ -11,7 +13,7 @@ class DeviceTest < ActiveSupport::TestCase
   end
   
   def test_unique_id_uniqueness
-    @device.unique_id = devices(:one).unique_id
+    @device.unique_id = devices(:iphone_3g).unique_id
     assert !@device.valid?
   end
   

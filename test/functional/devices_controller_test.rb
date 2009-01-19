@@ -2,6 +2,15 @@ require 'test_helper'
 
 
 class DevicesControllerTest < ActionController::TestCase
+  fixtures :devices, :users
+  
+  def setup
+    return
+    device1 = devices(:iphone_3g)
+    device1.user = users(:rich_kid)
+    device1.save!
+  end
+  
   
   def test_register_new_device
     unique_id = '88888' * 8
@@ -17,19 +26,23 @@ class DevicesControllerTest < ActionController::TestCase
     assert_equal user, device.user
     
     assert_select "device" do
-      assert_select "user-id", user.id.to_s
+      assert_select "deviceId", device.id.to_s
+      assert_select "uniqueId", unique_id
+      assert_select "userId", user.id.to_s
     end
   end  
   
   def test_register_existing_device
     old_user_count = User.count
     old_device_count = Device.count
-    post :register, :unique_id => devices(:one).unique_id, :format => 'xml'
+    post :register, :unique_id => devices(:iphone_3g).unique_id, :format => 'xml'
     assert_equal old_device_count, Device.count, "Registering an existing device created a new device"
     assert_equal old_user_count, User.count, "Registering an existing device created a new user"
     
     assert_select "device" do
-      assert_select "id", devices(:one).id.to_s
+      assert_select "deviceId", devices(:iphone_3g).id.to_s
+      assert_select "uniqueId", devices(:iphone_3g).unique_id
+      assert_select "userId", devices(:iphone_3g).user_id.to_s
     end
   end
   
@@ -54,23 +67,23 @@ class DevicesControllerTest < ActionController::TestCase
   end
 
   test "should show device" do
-    get :show, :id => devices(:one).id
+    get :show, :id => devices(:iphone_3g).id
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => devices(:one).id
+    get :edit, :id => devices(:iphone_3g).id
     assert_response :success
   end
 
   test "should update device" do
-    put :update, :id => devices(:one).id, :device => { }
+    put :update, :id => devices(:iphone_3g).id, :device => { }
     assert_redirected_to device_path(assigns(:device))
   end
 
   test "should destroy device" do
     assert_difference('Device.count', -1) do
-      delete :destroy, :id => devices(:one).id
+      delete :destroy, :id => devices(:iphone_3g).id
     end
 
     assert_redirected_to devices_path

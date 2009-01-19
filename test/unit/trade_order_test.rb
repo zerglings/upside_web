@@ -4,16 +4,16 @@ class TradeOrderTest < ActiveSupport::TestCase
   fixtures :stocks  
   
   def setup 
-    fixture_case = trade_orders(:buy_to_cover_short_with_stop_and_limit_orders)
+    order = trade_orders(:buy_to_cover_short_with_stop_and_limit_orders)
     
-    @trade_order = TradeOrder.new(:portfolio_id => fixture_case.portfolio_id,
-                                  :stock_id => fixture_case.stock_id,
-                                  :is_buy => fixture_case.is_buy,
-                                  :is_long => fixture_case.is_long,
-                                  :stop_price => fixture_case.stop_price,
-                                  :limit_price => fixture_case.limit_price,
-                                  :expiration_time => fixture_case.expiration_time,
-                                  :quantity => fixture_case.quantity)
+    @trade_order = TradeOrder.new :portfolio_id => order.portfolio_id,
+                                  :stock_id => order.stock_id,
+                                  :is_buy => order.is_buy,
+                                  :is_long => order.is_long,
+                                  :stop_price => order.stop_price,
+                                  :limit_price => order.limit_price,
+                                  :expiration_time => order.expiration_time,
+                                  :quantity => order.quantity
   end
   
   def test_setup_valid
@@ -131,9 +131,9 @@ class TradeOrderTest < ActiveSupport::TestCase
   
   def test_virtual_attribute_ticker_converts_to_stock_id
     @trade_order.stock_id = nil
-    @trade_order.ticker = stocks(:Morgan_Stanley).ticker
+    @trade_order.ticker = stocks(:ms).ticker
     @trade_order.save!
-    assert_equal Stock.find(:first, :conditions => {:ticker => stocks(:Morgan_Stanley).ticker}).id, @trade_order.stock_id
+    assert_equal stocks(:ms).id, @trade_order.stock_id
   end
   
   def test_is_limit_order

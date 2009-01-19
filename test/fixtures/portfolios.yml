@@ -1,9 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-one:
-  user_id: 1
+rich_kid:
+  user: rich_kid
   cash: 9.99
 
-two:
-  user_id: 2
+site_user:
+  user: site_user
   cash: 9.99

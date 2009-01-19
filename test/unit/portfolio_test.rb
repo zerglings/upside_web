@@ -3,7 +3,8 @@ require 'test_helper'
 class PortfolioTest < ActiveSupport::TestCase
 
   def setup
-    @portfolio = Portfolio.new(:cash => portfolios(:one).cash, :user_id => 35)
+    @portfolio = Portfolio.new :cash => portfolios(:rich_kid).cash,
+                               :user_id => 35
   end
   
   def test_setup_valid
@@ -11,7 +12,7 @@ class PortfolioTest < ActiveSupport::TestCase
   end
   
   def test_unique_user_id
-    @portfolio.user_id = portfolios(:two).user_id
+    @portfolio.user_id = portfolios(:site_user).user_id
     assert !@portfolio.valid?
   end
   

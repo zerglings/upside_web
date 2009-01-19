@@ -1,8 +1,8 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 buy_to_cover_short_with_stop_and_limit_orders:
-  portfolio_id: 1
-  stock_id: 1
+  portfolio: rich_kid
+  stock: Morgan_Stanley
   is_buy: false
   is_long: false
   stop_price: 9.99
@@ -11,8 +11,8 @@ buy_to_cover_short_with_stop_and_limit_orders:
   quantity: 100
 
 buy_long_with_stop_order:
-  portfolio_id: 1
-  stock_id: 1
+  portfolio: rich_kid
+  stock: Morgan_Stanley
   is_buy: true
   is_long: true
   stop_price: 9.99
@@ -21,8 +21,8 @@ buy_long_with_stop_order:
   quantity: 2000
 
 buy_short_with_limit_order:
-  portfolio_id: 2
-  stock_id: 15
+  portfolio: rich_kid
+  stock: Goldman_Sachs
   is_buy: true
   is_long: false
   stop_price: 
@@ -31,8 +31,8 @@ buy_short_with_limit_order:
   quantity: 200
   
 sell_long_without_stop_or_limit_orders: 
-  portfolio_id: 3
-  stock_id: 20
+  portfolio: site_user
+  stock: Goldman_Sachs
   is_buy: false
   is_long: true
   stop_price: 

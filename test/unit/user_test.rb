@@ -14,7 +14,7 @@ module CommonUserTests
   end  
 
   def test_password_confirmation
-    @user.password = users(:one).password_salt
+    @user.password = users(:rich_kid).password_salt
     assert !@user.valid?
   end
   
@@ -37,7 +37,10 @@ class UserTest < ActiveSupport::TestCase
   include CommonUserTests
   
   def setup
-    @user = User.new(:name => "buffet", :password => "money", :password_confirmation => "money", :pseudo_user => false)
+    @user = User.new :name => "buffet",
+                     :password => "money",
+                     :password_confirmation => "money",
+                     :pseudo_user => false
   end
   
   def test_user_name_length
@@ -54,7 +57,7 @@ class UserTest < ActiveSupport::TestCase
   end
   
   def test_user_name_uniqueness
-    @user.name = users(:one).name
+    @user.name = users(:rich_kid).name
     assert !@user.valid?
   end
   
@@ -87,13 +90,13 @@ class UserTest < ActiveSupport::TestCase
   end
   
   def test_login_correct_user_and_password
-    user = User.authenticate(users(:one).name, 'password' )
+    user = User.authenticate(users(:rich_kid).name, 'password' )
     assert user, 'Valid user was not authenticated'
-    assert_equal user.id, users(:one).id, 'Wrong user was authenticated'
+    assert_equal user.id, users(:rich_kid).id, 'Wrong user was authenticated'
   end
   
   def test_login_correct_user_but_wrong_password
-    user = User.authenticate(users(:one).name, 'pass' )
+    user = User.authenticate(users(:rich_kid).name, 'pass' )
     assert_equal user, nil, 'User was authenticated with wrong password'
   end
   
@@ -107,7 +110,10 @@ class PseudoUserTest < Test::Unit::TestCase
   include CommonUserTests
   
   def setup
-    @user = User.new(:name => "abcde" * 8, :password => "money", :password_confirmation => "money", :pseudo_user => true)
+    @user = User.new :name => "abcde" * 8,
+                     :password => "money",
+                     :password_confirmation => "money",
+                     :pseudo_user => true
   end
   
   def test_user_name_length

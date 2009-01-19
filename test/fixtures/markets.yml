@@ -5,3 +5,9 @@
 #
 # two:
 #   column: value
+
+nasdaq:
+  name: "NASDAQ"
+
+nyse:
+  name: "New York Stock Exchange"

@@ -1,11 +1,11 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-one:
+iphone_3g:
   unique_id: <%= '11111' * 8 %>
   last_activation: 2009-01-01 16:44:49
-  user_id: 1
+  user: rich_kid
 
-two:
+ipod_touch_2g:
   unique_id: <%= '22222' * 8 %>
   last_activation: 2009-01-01 16:44:49
-  user_id: 1
+  user: rich_kid

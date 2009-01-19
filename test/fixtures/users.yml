@@ -1,13 +1,13 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-one:
-  name: MyString
+rich_kid:
+  name: rich_kid
   password_hash: <%= User.hash_password 'password', '1234' %>
   password_salt: 1234
   pseudo_user: false
 
-two:
-  name: MyString2
-  password_hash: MyString
+device_user:
+  name: '<%= '31415' * 8 %>'
+  password_hash: <%= User.hash_password 'password', '1234' %>
   password_salt: MyString
   pseudo_user: true

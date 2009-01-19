@@ -1,9 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
- Morgan_Stanley:
-   ticker: MS
-   market_id: 1
+ms:
+  ticker: MS
+  market: nyse
 
- Goldman_Sachs:
-   ticker: GS
-   market_id: 2
+gs:
+  ticker: GS
+  market: nyse

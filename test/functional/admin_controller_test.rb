@@ -10,20 +10,20 @@ class AdminControllerTest < ActionController::TestCase
   end
   
   def test_index_with_user
-    get :index, {}, { :user_id => users(:one).id }
+    get :index, {}, { :user_id => users(:rich_kid).id }
     assert_response :success
     assert_template "index"
   end
   
   def test_login_good_user_and_password
-    one = users(:one)
+    one = users(:rich_kid)
     post :login, :name => one.name, :password => 'password'
     assert_redirected_to :controller => "portfolios", :action => one.id
     assert_equal one.id, session[:user_id]
   end
   
   def test_bad_password
-    one = users(:one)
+    one = users(:rich_kid)
     post :login, :name => one.name, :password => 'wrong'
     assert_template "login"
     assert_equal "Invalid user/password combination", flash[:error]

@@ -91,7 +91,7 @@ class DevicesController < ApplicationController
     respond_to do |format|
       if @device
         format.html { redirect_to(@device) }
-        format.xml { render :xml => @device, :status => :success }  
+        format.xml # register.xml.builder 
       else
         @user = User.new_pseudo_user(params[:unique_id])
         @device = Device.new
@@ -99,7 +99,8 @@ class DevicesController < ApplicationController
         @device.last_activation = Time.now 
         @device.user = @user
         @device.save!
-        format.xml { render :xml => @device, :status => :success }
+        
+        format.xml # register.xml.builder
       end
     end
   end

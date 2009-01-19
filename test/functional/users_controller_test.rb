@@ -31,23 +31,23 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "should show user" do
-    get :show, :id => users(:one).id
+    get :show, :id => users(:rich_kid).id
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => users(:one).id
+    get :edit, :id => users(:rich_kid).id
     assert_response :success
   end
 
   test "should update user" do
-    put :update, :id => users(:one).id, :user => { }
+    put :update, :id => users(:rich_kid).id, :user => { }
     assert_redirected_to user_path(assigns(:user))
   end
 
   test "should destroy user" do
     assert_difference('User.count', -1) do
-      delete :destroy, :id => users(:one).id
+      delete :destroy, :id => users(:rich_kid).id
     end
 
     assert_redirected_to users_path

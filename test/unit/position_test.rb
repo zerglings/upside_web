@@ -3,8 +3,9 @@ require 'test_helper'
 class PositionTest < ActiveSupport::TestCase
   
   def setup
-    @position = Position.new(:stock_id => 8, :portfolio_id => 123, 
-                              :is_long => true, :quantity => 24, :average_base_cost => 48)
+    @position = Position.new :stock_id => 8, :portfolio_id => 123,
+                             :is_long => true, :quantity => 24,
+                             :average_base_cost => 48
   end
   
   def test_validity
