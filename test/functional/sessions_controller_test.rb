@@ -1,11 +1,11 @@
 require 'test_helper'
 
-class AdminControllerTest < ActionController::TestCase  
- fixtures :users
- 
+class SessionsControllerTest < ActionController::TestCase  
+  fixtures :users
+  
   def test_index_without_user
     get :index
-    assert_redirected_to :action => "login"
+    assert_redirected_to :action => :new
     assert_equal "Please log in", flash[:error]
   end
   
@@ -17,29 +17,29 @@ class AdminControllerTest < ActionController::TestCase
   
   def test_login_good_user_and_password
     one = users(:rich_kid)
-    post :login, :name => one.name, :password => 'password'
-    assert_redirected_to :controller => "portfolios", :action => one.id
+    post :create, :name => one.name, :password => 'password'
+    assert_redirected_to :controller => :portfolios, :action => one.id
     assert_equal one.id, session[:user_id]
   end
   
   def test_bad_password
     one = users(:rich_kid)
-    post :login, :name => one.name, :password => 'wrong'
-    assert_template "login"
+    post :create, :name => one.name, :password => 'wrong'
+    assert_template "new"
     assert_equal "Invalid user/password combination", flash[:error]
     assert_equal nil, session[:user_id], "User entered incorrect password but session was still set"
   end
   
   def test_bad_user
-    post :login, :name => "wrong", :password => 'wrong'
-    assert_template "login"
+    post :create, :name => "wrong", :password => 'wrong'
+    assert_template "new"
     assert_equal "Invalid user/password combination", flash[:error]
     assert_equal nil, session[:user_id], "Nonexistent user but session was still set"
   end
   
   def test_logout
-    get :logout
-    assert_redirected_to :action=> "login"
+    delete :destroy
+    assert_redirected_to :action => :new
     assert_equal nil, session[:user_id], "Session not set to nil even though user logged out"
     assert_equal "Logged out", flash[:notice]
   end

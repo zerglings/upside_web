@@ -39,5 +39,5 @@
 <p>
 <%= link_to 'Place an order', new_trade_order_path %> |
 <%= link_to 'Edit', edit_portfolio_path(@portfolio) %> |
-<%= link_to 'Logout', :controller => :admin, :action => 'logout' %>
+<%= link_to 'Logout', {:controller => :sessions, :action => :destroy}, :method => :delete %>
 </p>
