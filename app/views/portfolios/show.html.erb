@@ -11,7 +11,7 @@
 <p> 
 	<b>Pending Orders</b> 
 </p>
-<% if TradeOrder.find(:all, :conditions => {:portfolio_id => @portfolio.id}).length > 0 %>
+<% if @portfolio.trade_orders.length > 0 %>
 	<table>
 		<tr>
 			<th>Ticker</th>
