@@ -5,9 +5,12 @@ class CreateOrderCancellations < ActiveRecord::Migration
       
       t.datetime :created_at
     end
+    add_index :order_cancellations, :trade_order_id, :unique => true,
+              :null => false
   end
 
   def self.down
+    remove_index :order_cancellations, :trade_order_id
     drop_table :order_cancellations
   end
 end

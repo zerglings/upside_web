@@ -29,10 +29,11 @@ ActiveRecord::Schema.define(:version => 20090120032718) do
   end
 
   create_table "order_cancellations", :force => true do |t|
-    t.integer  "trade_order_id", :limit => 64, :null => false
+    t.integer  "trade_order_id", :null => false
     t.datetime "created_at"
-    t.datetime "updated_at"
   end
+
+  add_index "order_cancellations", ["trade_order_id"], :name => "index_order_cancellations_on_trade_order_id", :unique => true
 
   create_table "portfolios", :force => true do |t|
     t.integer  "user_id",                                                         :null => false
