@@ -1,9 +1,9 @@
 class CreateOrderCancellations < ActiveRecord::Migration
   def self.up
     create_table :order_cancellations do |t|
-      t.integer :trade_order_id, :limit => 64, :null => false
+      t.integer :trade_order_id, :null => false
       
-      t.timestamps
+      t.datetime :created_at
     end
   end
 

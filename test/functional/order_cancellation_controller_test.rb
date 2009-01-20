@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class OrderCancellationControllerTest < ActionController::TestCase
-  fixtures :order_cancellations, :users, :trade_orders
+  fixtures :order_cancellations, :users, :trade_orders, :portfolios
   
   def setup
     @request.session[:user_id] = users(:rich_kid).id

@@ -3,10 +3,8 @@ class OrderCancellationController < ApplicationController
   # POST /order_cancellations
   # POST /order_cancellations.xml
   def create  
-    @user = User.find(:first,
-                      :conditions => {:id => session[:user_id]})
-    @portfolio = @user.portfolio
     @trade_order = TradeOrder.find(:first, :conditions => {:id => params[:trade_order_id]})
+    @portfolio = @trade_order.portfolio
     @order_cancellation = OrderCancellation.new(:trade_order => @trade_order)
   
     respond_to do |format|
