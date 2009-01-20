@@ -50,10 +50,16 @@ class SessionsControllerTest < ActionController::TestCase
   def test_xml_login
     post :create, :name => @user.name, :password => @password, :format => 'xml'
     assert_equal @user.id, session[:user_id], "Session not set properly"
-    assert_select "result", "ok"
+    assert_select "user" do
+      assert_select "modelId", @user.id.to_s
+      assert_select "name", @user.name
+      assert_select "isPseudoUser", "false"
+    end
     
     post :create, :name => @user.name, :password => "wrong", :format => 'xml'
     assert_equal nil, session[:user_id], "Session not set properly"
-    assert_select "result", "failure"    
+    assert_select "error" do
+      assert_select "message"
+    end
   end  
 end

@@ -27,24 +27,37 @@ class DevicesControllerTest < ActionController::TestCase
                     "Last activation time was not set properly"
     
     assert_select "device" do
-      assert_select "deviceId", device.id.to_s
+      assert_select "modelId", device.id.to_s
       assert_select "uniqueId", unique_id
       assert_select "userId", user.id.to_s
+    end
+    
+    assert_select "user" do
+      assert_select "modelId", user.id.to_s
+      assert_select "name", user.name
+      assert_select "isPseudoUser", "true"
     end
   end  
   
   def test_register_existing_device
     old_user_count = User.count
     old_device_count = Device.count
-    post :register, :unique_id => devices(:iphone_3g).unique_id, :format => 'xml'
+    iphone_3g = devices(:iphone_3g)
+    post :register, :unique_id => iphone_3g.unique_id, :format => 'xml'
     assert_equal old_device_count, Device.count, "Registering an existing device created a new device"
     assert_equal old_user_count, User.count, "Registering an existing device created a new user"
     
     assert_select "device" do
-      assert_select "deviceId", devices(:iphone_3g).id.to_s
-      assert_select "uniqueId", devices(:iphone_3g).unique_id
-      assert_select "userId", devices(:iphone_3g).user_id.to_s
+      assert_select "modelId", iphone_3g.id.to_s
+      assert_select "uniqueId", iphone_3g.unique_id
+      assert_select "userId", iphone_3g.user_id.to_s
     end
+    
+    assert_select "user" do
+      assert_select "modelId", iphone_3g.user.id.to_s
+      assert_select "name", iphone_3g.user.name
+      assert_select "isPseudoUser", "false"
+    end    
   end
   
   test "should get index" do
