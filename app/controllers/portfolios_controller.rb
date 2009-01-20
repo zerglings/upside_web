@@ -15,7 +15,7 @@ class PortfoliosController < ApplicationController
   # GET /portfolios/1.xml
   def show
     @portfolio = Portfolio.find(params[:id])
-    @trade_order = @portfolio.trade_orders
+    @trade_orders = @portfolio.trade_orders
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @portfolio }

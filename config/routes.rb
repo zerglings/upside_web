@@ -1,11 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :devices, :collection => { :register => :any }
-
-  map.resources :users
+  map.resources :order_cancellations
   map.resources :portfolios
-  map.resources :trades
-  map.resources :trade_orders
   map.resources :sessions
+  map.resources :trade_orders
+  map.resources :trades
+  map.resources :users
   
   # The priority is based upon order of creation: first created -> highest priority.
 
