@@ -5,11 +5,12 @@ class CreateStocks < ActiveRecord::Migration
       t.integer :market_id, :null => false
     end
     
-    add_index :stocks, :ticker, :unique => true
+    # Get the stock with a certain ticker.
+    add_index :stocks, :ticker, :unique => true, :null => false
   end
 
   def self.down
-    drop_index :stocks, :ticker
+    remove_index :stocks, :ticker
     drop_table :stocks
   end
 end

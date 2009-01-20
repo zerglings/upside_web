@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
   end
 
   add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true
+  add_index "devices", ["user_id"], :name => "index_devices_on_user_id"
 
   create_table "markets", :force => true do |t|
     t.string   "name",       :limit => 64, :null => false
@@ -33,6 +34,8 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "portfolios", ["user_id"], :name => "index_portfolios_on_user_id", :unique => true
 
   create_table "positions", :force => true do |t|
     t.integer  "portfolio_id",      :null => false
@@ -76,6 +79,8 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
     t.datetime "updated_at"
   end
 
+  add_index "trade_orders", ["portfolio_id"], :name => "index_trade_orders_on_portfolio_id"
+
   create_table "trades", :force => true do |t|
     t.datetime "time",                                                       :null => false
     t.integer  "quantity",       :limit => 22,                               :null => false
@@ -84,6 +89,8 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
     t.decimal  "price",                        :precision => 8, :scale => 2, :null => false
     t.datetime "created_at"
   end
+
+  add_index "trades", ["trade_order_id"], :name => "index_trades_on_trade_order_id"
 
   create_table "users", :force => true do |t|
     t.string   "name",          :limit => 64,                   :null => false

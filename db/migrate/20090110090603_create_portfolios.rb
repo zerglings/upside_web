@@ -6,9 +6,13 @@ class CreatePortfolios < ActiveRecord::Migration
 
       t.timestamps
     end
+    
+    # Get a user's portfolio.
+    add_index :portfolios, :user_id, :unique => true, :null => false
   end
 
   def self.down
+    remove_index :portfolios, :user_id    
     drop_table :portfolios
   end
 end

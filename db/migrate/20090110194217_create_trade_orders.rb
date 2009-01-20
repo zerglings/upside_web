@@ -12,6 +12,8 @@ class CreateTradeOrders < ActiveRecord::Migration
 
       t.timestamps
     end
+    
+    add_index :trade_orders, :portfolio_id, :unique => false, :null => false
   end
 
   def self.down

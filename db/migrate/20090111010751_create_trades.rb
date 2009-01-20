@@ -9,9 +9,13 @@ class CreateTrades < ActiveRecord::Migration
 
       t.datetime :created_at
     end
+    
+    # Get the trades associated with a certain order.
+    add_index :trades, :trade_order_id, :unique => false
   end
 
   def self.down
+    remove_index :trades, :trade_order_id
     drop_table :trades
   end
 end

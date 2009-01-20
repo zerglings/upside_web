@@ -10,6 +10,8 @@ class CreatePositions < ActiveRecord::Migration
       t.timestamps
     end
     
+    # Get all the positions in a portfolio.
+    # Get the positions for a cetain stock in the portfolio.
     add_index :positions, [:portfolio_id, :stock_id, :is_long], :unique => true
   end
 
