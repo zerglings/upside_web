@@ -5,6 +5,7 @@ class TradeOrder < ActiveRecord::Base
   belongs_to :portfolio
   belongs_to :stock
   has_many :trades, :dependent => :nullify
+  has_one :order_cancellation
   
   # portfolio id 
   validates_presence_of :portfolio_id

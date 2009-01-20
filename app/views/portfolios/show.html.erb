@@ -21,7 +21,7 @@
 			<th>Limit Price</th>
 			<th>Expiration Time</th>
 		</tr>	
-	<% for trade_order in @trade_order %>	
+	<% for trade_order in @trade_orders %>	
 		<tr>
 			<td><%=h trade_order.stock.ticker %></td>
 			<td><%=h trade_order.transaction_type %></td>
@@ -29,6 +29,11 @@
 			<td><%=h trade_order.stop_price %></td>
 			<td><%=h trade_order.limit_price %></td>
 			<td><%=h trade_order.expiration_time %></td>
+			<% if trade_order.order_cancellation == nil %>
+				<td><%= link_to "Cancel Order", :controller => :order_cancellation, :action => :create, :trade_order_id => trade_order.id %></td>
+			<% else %>
+				<td>Cancellation pending</td>
+			<% end%>		
 		</tr> 
 	<% end %>	
 	</table>
