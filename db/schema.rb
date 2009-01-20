@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090111010751) do
+ActiveRecord::Schema.define(:version => 20090120032718) do
 
   create_table "devices", :force => true do |t|
     t.string   "unique_id",       :limit => 64, :null => false
@@ -24,6 +24,12 @@ ActiveRecord::Schema.define(:version => 20090111010751) do
 
   create_table "markets", :force => true do |t|
     t.string   "name",       :limit => 64, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "order_cancellations", :force => true do |t|
+    t.integer  "trade_order_id", :limit => 64, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
