@@ -2,7 +2,7 @@
 
 buy_to_cover_short_with_stop_and_limit_orders:
   portfolio: rich_kid
-  stock: Morgan_Stanley
+  stock: ms
   is_buy: false
   is_long: false
   stop_price: 9.99
@@ -12,7 +12,7 @@ buy_to_cover_short_with_stop_and_limit_orders:
 
 buy_long_with_stop_order:
   portfolio: rich_kid
-  stock: Morgan_Stanley
+  stock: ms
   is_buy: true
   is_long: true
   stop_price: 9.99
@@ -22,7 +22,7 @@ buy_long_with_stop_order:
 
 buy_short_with_limit_order:
   portfolio: rich_kid
-  stock: Goldman_Sachs
+  stock: gs
   is_buy: true
   is_long: false
   stop_price: 
@@ -32,7 +32,7 @@ buy_short_with_limit_order:
   
 sell_long_without_stop_or_limit_orders: 
   portfolio: site_user
-  stock: Goldman_Sachs
+  stock: gs
   is_buy: false
   is_long: true
   stop_price: 

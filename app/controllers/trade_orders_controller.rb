@@ -74,7 +74,8 @@ class TradeOrdersController < ApplicationController
       end
     end
   end
-
+  private :update
+  
   # DELETE /trade_orders/1
   # DELETE /trade_orders/1.xml
   def destroy
@@ -82,7 +83,7 @@ class TradeOrdersController < ApplicationController
     @trade_order.destroy
 
     respond_to do |format|
-      format.html { redirect_to(@portfolio) }
+      format.html { redirect_to(@trade_order.portfolio) }
       format.xml  { head :ok }
     end
   end
