@@ -1,5 +1,5 @@
+require 'digest/sha2'
 require 'test_helper'
-
 
 class DevicesControllerTest < ActionController::TestCase
   fixtures :devices, :users
@@ -15,15 +15,16 @@ class DevicesControllerTest < ActionController::TestCase
   def test_register_new_device
     unique_id = '88888' * 8
     post :register, :unique_id => unique_id, :format => 'xml'
-    user = User.find(:first, :conditions => {:name => unique_id})
-    assert_not_nil user, "User was not created when registering a new device"
-    assert_equal unique_id, user.name
-    assert_not_nil User.authenticate(unique_id, unique_id), "Password was set incorrectly when registering a new device"
-    device = Device.find(:first, :conditions => {:unique_id => unique_id})  
-    assert_not_nil device, "Device was not created when registering a new device"
+    device = Device.find_by_unique_id unique_id
+    assert_not_nil device, "Device not created when registering a new device"
     assert_equal unique_id, device.unique_id
-    assert_operator (Time.now - device.last_activation).abs, :<= , 2, "Last activation time was not set properly"
-    assert_equal user, device.user
+    user = device.user
+    assert_not_nil user, "User not created when registering a new device"
+    assert user.pseudo_user?, "New device's user should be a pseudo-user"
+    assert_equal Digest::SHA2.hexdigest(unique_id), user.name,
+                 "New user's name should be the SHA2 of the device's UDID."
+    assert_operator (Time.now - device.last_activation).abs, :<=, 2,
+                    "Last activation time was not set properly"
     
     assert_select "device" do
       assert_select "deviceId", device.id.to_s

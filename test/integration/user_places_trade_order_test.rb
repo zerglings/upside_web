@@ -12,25 +12,28 @@ User logs in.
 User views his portfolio and decides to place an order.
 User creates and places a new order.
 The trade order is added to the trade order table.  
-User is redirected to his portfolio and sees the new order in a list of trade orders.
+User is redirected to his portfolio and sees the new order in a list of trade
+orders.
 User finally logs out.
 =end
   test "user places trade order" do
     get "/users/new"
     assert_response :success
     
-    post_via_redirect "/users", :user => {:name => "bunny",
-                                          :password => "carrot",
-                                          :password_confirmation => "carrot"}   
-    @user = User.find_by_name "bunny"
+    user_name = "bunny"
+    password = "carrot"
+    post_via_redirect "/users", :user => {:name => user_name,
+                                          :password => password,
+                                          :password_confirmation => password}   
+    @user = User.find_by_name user_name
+    assert_not_nil @user
+    @portfolio = @user.portfolio
+    assert_not_nil @portfolio    
     assert_response :success
     assert_equal "User #{@user.name} was successfully created.", flash[:notice]
     
-    assert_not_nil @user
-    @portfolio = @user.portfolio
-    assert_not_nil @portfolio
-    
-    post_via_redirect "/admin/login", :name => @user.name, :password => "carrot"
+    post_via_redirect "/sessions", :name => @user.name,
+                                   :password => password
     assert_equal @user.id, session[:user_id]
     assert_response :success
     
@@ -48,8 +51,8 @@ User finally logs out.
     assert_redirected_to "/portfolios/#{@portfolio.id}"
     assert 1, @user.portfolio.trade_orders.length
     
-    get "/admin/logout"
-    assert_redirected_to "/admin/login"
+    delete "/sessions/1"
+    assert_redirected_to "/sessions/new"
     assert_equal nil, session[:user_id]
   end
 end

@@ -8,14 +8,15 @@ class UsersControllerTest < ActionController::TestCase
   end
   
   def test_web_users_not_pseudo_users
-    post :create, :user => {:name => "createuser", :password => "blah", :password_confirmation => "blah"}
-    assert_redirected_to :controller => :admin, :action => :login
-    user = User.find(:first, 
-                     :conditions => {:name => "createuser"})
-    assert user, "User was not created"
+    post :create, :user => {:name => "createuser",
+                            :password => "blah",
+                            :password_confirmation => "blah"}
+    user = User.find_by_name "createuser"
+    assert_not_nil user, "User was not created"
+    assert_redirected_to :controller => :sessions, :action => :new
     assert_equal false, user.pseudo_user               
   end
-    
+  
 =begin
   test "should get new" do
     get :new
