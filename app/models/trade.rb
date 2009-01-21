@@ -31,4 +31,8 @@ class Trade < ActiveRecord::Base
   validates_format_of :price,
                       :with => /\.\d{0,2}$/,
                       :allow_nil => false
+  
+  def portfolio
+    trade_order.portfolio
+  end
 end
