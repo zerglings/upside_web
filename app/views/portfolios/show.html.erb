@@ -1,6 +1,15 @@
 <p>
+<%= link_to 'Place an order', new_trade_order_path %> |
+<%= link_to 'Logout', {:controller => :sessions, :action => :destroy}, :method => :delete %>
+</p>
+
+<p>
   <b>User:</b>
   <%=h @portfolio.user_id %>
+</p>
+
+<p> 
+	<h2>Positions</h2> 
 </p>
 
 <p>
@@ -8,10 +17,32 @@
   <%=h @portfolio.cash %>
 </p>
 
+<% if @positions.length > 0 %>
+	<table>
+		<tr>
+			<th>Ticker</th>
+			<th>Last Price</th>
+			<th>Avg Cost/Share</th>
+			<th>Shares</th>
+			<th>Market Value</th>		
+		</tr>
+	<% for position in @positions %>
+		<tr>
+			<td><%=h position.stock.ticker %></td>
+			<td><%=h "Need Yahoo stock data" %></td>
+			<td><%=h position.average_base_cost %></td>
+			<td><%=h position.quantity %></td>
+			<td><%=h "Need last trade price." %></td>
+		</tr>		
+	<% end %>	
+	</table>
+<% else %>
+	<p>No current holdings.</p>	
+<% end %>
 <p> 
-	<b>Pending Orders</b> 
+	<h2>Pending Orders</h2> 
 </p>
-<% if @portfolio.trade_orders.length > 0 %>
+<% if @trade_orders.length > 0 %>
 	<table>
 		<tr>
 			<th>Ticker</th>
@@ -41,8 +72,28 @@
 <p> No Pending Orders </p>
 <%end%>
 
-<p>
-<%= link_to 'Place an order', new_trade_order_path %> |
-<%= link_to 'Edit', edit_portfolio_path(@portfolio) %> |
-<%= link_to 'Logout', {:controller => :sessions, :action => :destroy}, :method => :delete %>
+<p> 
+	<h2>Trade Order History</h2> 
 </p>
+<% if @trades.length > 0 %>
+	<table>
+		<tr>
+			<th>Ticker</th>
+			<th>Transaction</th>
+			<th>Quantity</th>
+			<th>Price</th>
+			<th>Execution Date</th>
+		</tr>
+	<% for trade in @trades %>
+		<tr>
+			<td><%=h trade.trade_order.stock.ticker %></td>
+			<td><%=h trade.trade_order.transaction_type %></td>
+			<td><%=h trade.quantity %></td>
+			<td><%=h trade.price %></td>
+			<td><%=h trade.created_at %></td>
+		</tr>	
+	<% end %>	
+	</table>
+<% else %>
+<p> No completed trades in the past 6 months. </p>		
+<% end %>

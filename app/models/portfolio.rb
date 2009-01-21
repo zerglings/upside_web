@@ -4,6 +4,8 @@ class Portfolio < ActiveRecord::Base
   
   belongs_to :user
   has_many :trade_orders, :dependent => :destroy
+  has_many :trades, :through => :trade_orders
+  has_many :positions
   
   # user id
   validates_presence_of :user_id   
