@@ -17,6 +17,7 @@ class CreateTradeOrders < ActiveRecord::Migration
   end
 
   def self.down
+    remove_index :trade_orders, :portfolio_id
     drop_table :trade_orders
   end
 end
