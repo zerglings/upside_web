@@ -4,7 +4,7 @@ class TradeOrder < ActiveRecord::Base
   
   belongs_to :portfolio
   belongs_to :stock
-  has_many :trades, :dependent => :nullify
+  has_many :trades
   has_one :order_cancellation, :dependent => :destroy
   
   # portfolio id 

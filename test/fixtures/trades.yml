@@ -3,13 +3,13 @@
 normal_trade:
   time: 2009-01-10 20:07:51
   quantity: 9900
-  trade_order_id: 3
-  counterpart_id: 4
+  trade_order: buy_short_with_limit_order
+  counterpart_id: sell_long_without_stop_or_limit_orders
   price: 67.67
 
 order_filled_with_market:
   time: 2009-01-10 20:07:51
   quantity: 10000
-  trade_order_id: 1
+  trade_order: buy_to_cover_short_with_stop_and_limit_orders
   counterpart_id: 
   price: 9.99
