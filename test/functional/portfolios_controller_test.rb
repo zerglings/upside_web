@@ -17,8 +17,13 @@ class PortfoliosControllerTest < ActionController::TestCase
   test "should show portfolio" do
     get :show, :id => @portfolio.id
     assert_response :success
-    assert_equal Set.new([trade_orders(:buy_to_cover_short_with_stop_and_limit_orders), trade_orders(:buy_long_with_stop_order), trade_orders(:buy_short_with_limit_order)]), Set.new(assigns(:trade_orders))
-    assert_equal Set.new([trades(:normal_trade), trades(:order_filled_with_market)]), Set.new(assigns(:trades))
-    assert_equal Set.new([positions(:ms_long), positions(:ms_short), positions(:gs_long), positions(:gs_short)]), Set.new(assigns(:positions))
+    assert_equal Set.new([:buy_to_cover_short_with_stop_and_limit_orders, 
+                          :buy_long_with_stop_order, 
+                          :buy_short_with_limit_order].map { |x| trade_orders(x) }),
+                 Set.new(assigns(:trade_orders))
+    assert_equal Set.new([:normal_trade, :order_filled_with_market].map { |x| trades(x) }), 
+                 Set.new(assigns(:trades))
+    assert_equal Set.new([:ms_long, :ms_short, :gs_long, :gs_short].map { |x| positions(x) }), 
+                 Set.new(assigns(:positions))
   end
 end
