@@ -24,38 +24,11 @@ class PortfoliosController < ApplicationController
     end
   end
 
-  # GET /portfolios/new
-  # GET /portfolios/new.xml
-  def new
-    @portfolio = Portfolio.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @portfolio }
-    end
-  end
-
   # GET /portfolios/1/edit
   def edit
     @portfolio = Portfolio.find(params[:id])
   end
-
-  # POST /portfolios
-  # POST /portfolios.xml
-  def create
-    @portfolio = Portfolio.new(params[:portfolio])
-
-    respond_to do |format|
-      if @portfolio.save
-        flash[:notice] = 'Portfolio was successfully created.'
-        format.html { redirect_to(@portfolio) }
-        format.xml  { render :xml => @portfolio, :status => :created, :location => @portfolio }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @portfolio.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
+  private :edit
 
   # PUT /portfolios/1
   # PUT /portfolios/1.xml
@@ -73,16 +46,5 @@ class PortfoliosController < ApplicationController
       end
     end
   end
-
-  # DELETE /portfolios/1
-  # DELETE /portfolios/1.xml
-  def destroy
-    @portfolio = Portfolio.find(params[:id])
-    @portfolio.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(portfolios_url) }
-      format.xml  { head :ok }
-    end
-  end
+  private :update
 end

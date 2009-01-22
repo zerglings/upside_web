@@ -86,5 +86,5 @@ class TradeOrdersController < ApplicationController
       format.html { redirect_to(@trade_order.portfolio) }
       format.xml  { head :ok }
     end
-  end
+  end  
 end
