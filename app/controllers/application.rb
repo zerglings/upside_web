@@ -18,5 +18,5 @@ class ApplicationController < ActionController::Base
     Time.zone = "Eastern Time (US & Canada)"
   end
   
-  include 
+  include LoginFilters
 end

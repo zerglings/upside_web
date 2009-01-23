@@ -1,5 +1,6 @@
 class PortfoliosController < ApplicationController
-
+  before_filter :ensure_user_authenticated
+  
   # GET /portfolios
   # GET /portfolios.xml
   def index
@@ -47,4 +48,21 @@ class PortfoliosController < ApplicationController
     end
   end
   private :update
+  
+  def sync
+    if params[:id].to_i == 0
+      @portfolio = @s_user.portfolio
+    else
+      @portfolio = Portfolio.find(params[:id])
+    end
+    
+    @positions = @portfolio.positions
+    @trade_orders = @portfolio.trade_orders
+    @trades = @portfolio.trades
+    
+    respond_to do |format|
+      format.html { redirect_to @portfolio }
+      format.xml # portfolios/sync.xml.builder
+    end
+  end
 end

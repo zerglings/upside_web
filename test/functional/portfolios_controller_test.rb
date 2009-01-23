@@ -26,4 +26,37 @@ class PortfoliosControllerTest < ActionController::TestCase
     assert_equal Set.new([:ms_long, :ms_short, :gs_long, :gs_short].map { |x| positions(x) }), 
                  Set.new(assigns(:positions))
   end
+  
+  test "xml sync" do
+    get :sync, :id => 0, :format => 'xml'
+    assert_response :success
+    
+    @portfolio.positions.each do |position|
+      assert_select('position') do
+        assert_select 'modelId', position.id.to_s
+        assert_select 'ticker', position.stock.ticker
+        assert_select 'quantity', position.quantity.to_s
+        assert_select 'isLong', position.is_long.to_s
+      end
+    end
+    
+    @portfolio.trade_orders.each do |trade_order|
+      assert_select('trade_order') do
+        assert_select 'modelId', trade_order.id.to_s
+        assert_select 'ticker', trade_order.stock.ticker
+        assert_select 'quantity', trade_order.quantity.to_s
+        assert_select 'isBuy', trade_order.is_buy.to_s
+        assert_select 'isLong', trade_order.is_long.to_s
+        assert_select 'expirationTime', trade_order.expiration_time.to_s        
+      end
+    end
+    
+    @portfolio.trades.each do |trade|
+      assert_select('trade') do
+        assert_select 'modelId', trade.id.to_s
+        assert_select 'quantity', trade.quantity.to_s
+        assert_select 'price', trade.price.to_s
+      end
+    end
+  end
 end
