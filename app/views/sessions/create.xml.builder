@@ -9,5 +9,6 @@ if @user
 else
   xml.error do |error|
     error.message flash[:error]
+    error.reason "auth"
   end
 end

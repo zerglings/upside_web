@@ -59,7 +59,8 @@ class SessionsControllerTest < ActionController::TestCase
     post :create, :name => @user.name, :password => "wrong", :format => 'xml'
     assert_equal nil, session[:user_id], "Session not set properly"
     assert_select "error" do
+      assert_select "reason", "auth"
       assert_select "message"
     end
-  end  
+  end
 end
