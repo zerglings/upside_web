@@ -59,4 +59,14 @@ class PortfoliosControllerTest < ActionController::TestCase
       end
     end
   end
+  
+  test "xml sync rejects unauthenticated sessions" do
+    @request.session[:user_id] = nil
+    get :sync, :id => 0, :format => 'xml'
+    assert_response :success
+    
+    assert_select 'error' do
+      assert_select 'reason', 'login'
+    end
+  end
 end
