@@ -29,7 +29,13 @@ module YahooFetcher
     parse_response(fetch_data(tickers, "x"), false) { |result| true }
   end
   
-
+  # Determine the market for a particular stock
+  def self.market_for_ticker(ticker)
+    parse_response fetch_data(ticker, "x") do |result|
+      return result[0]
+    end
+  end
+  
   # Generic method for pulling information from Yahoo finance.
   def self.fetch_data(tickers, data_codes)
     query = "/d/?s=#{URI.encode(tickers.join("+"))}&f=#{data_codes}"

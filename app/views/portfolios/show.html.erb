@@ -14,7 +14,7 @@
 
 <p>
   <b>Cash Balance:</b>
-  <%=h @portfolio.cash %>
+  <%=h "%.2f" % @portfolio.cash %>
 </p>
 
 <% if @positions.length > 0 %>
@@ -30,7 +30,7 @@
 		<tr>
 			<td><%=h position.stock.ticker %></td>
 			<td><%=h "Need Yahoo stock data" %></td>
-			<td><%=h position.average_base_cost %></td>
+			<td><%=h "%.2f" % position.average_base_cost %></td>
 			<td><%=h position.quantity %></td>
 			<td><%=h "Need last trade price." %></td>
 		</tr>		
@@ -57,8 +57,8 @@
 			<td><%=h trade_order.stock.ticker %></td>
 			<td><%=h trade_order.transaction_type %></td>
 			<td><%=h trade_order.quantity %></td>
-			<td><%=h trade_order.stop_price %></td>
-			<td><%=h trade_order.limit_price %></td>
+			<td><%=h trade_order.stop_price && "%.2f" % trade_order.stop_price %></td>
+			<td><%=h trade_order.limit_price && "%.2f" % trade_order.limit_price %></td>
 			<td><%=h trade_order.expiration_time %></td>
 			<% if trade_order.order_cancellation == nil %>
 				<td><%= link_to "Cancel Order", :controller => :order_cancellation, :action => :create, :trade_order_id => trade_order.id %></td>
@@ -89,7 +89,7 @@
 			<td><%=h trade.trade_order.stock.ticker %></td>
 			<td><%=h trade.trade_order.transaction_type %></td>
 			<td><%=h trade.quantity %></td>
-			<td><%=h trade.price %></td>
+			<td><%=h "%.2f" % trade.price %></td>
 			<td><%=h trade.created_at %></td>
 		</tr>	
 	<% end %>	

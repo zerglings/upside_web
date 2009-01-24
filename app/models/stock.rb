@@ -7,4 +7,19 @@ class Stock < ActiveRecord::Base
   
   validates_numericality_of :market_id, :greater_than => 0, :allow_nil => false
   
+  def self.for_ticker(ticker)
+    stock = Stock.find(:first, 
+                       :conditions => {:ticker => ticker})
+   
+    if stock.nil?
+      if YahooFetcher.tickers_exist?([ticker])[0] == true
+        market = YahooFetcher.market_for_ticker([ticker])
+        market_id = Market.for_name(market)
+        stock = Stock.new(:ticker => ticker, :market_id => market_id)
+        stock.save!    
+      end
+    end 
+    
+    return stock
+  end
 end
