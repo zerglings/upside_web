@@ -9,6 +9,15 @@ class User < ActiveRecord::Base
     portfolio = Portfolio.new(:user => user)
     portfolio.save!  
   end
+    
+  # password confirmation
+  validates_confirmation_of :password
+  
+  # SHA-256 of password_salt + user's password
+  validates_presence_of :password_hash
+  
+  # random salt to prevent match attacks on the password db
+  validates_presence_of :password_salt
   
   # user name
   validates_length_of :name, :in => 4..16,
@@ -20,17 +29,15 @@ class User < ActiveRecord::Base
                       :message => "Pseudo-user names should be 64 characters.",
                       :allow_nil => false
   validates_format_of :name,
-                      :with => /^[^\s]+$/
-  validates_uniqueness_of :name                    
-  
-  # password confirmation
-  validates_confirmation_of :password
-  
-  # SHA-256 of password_salt + user's password
-  validates_presence_of :password_hash
-  
-  # random salt to prevent match attacks on the password db
-  validates_presence_of :password_salt
+                      :with => /^[^\s]+$/,
+                      :message => "User names cannot contain spaces.",
+                      :allow_nil => false
+  validates_uniqueness_of :name, :allow_nil => false
+
+  # True for users automatically created by devices. These accounts have
+  # auto-generated names and passwords, and cannot be used from the Web or other
+  # devices.
+  validates_inclusion_of :pseudo_user, :in => [true, false], :allow_nil => false
   
   attr_accessor :password_confirmation
   attr_reader :password

@@ -30,7 +30,12 @@ module CommonUserTests
       @user.name = "buf fet"
     end
     assert !@user.valid?
-  end  
+  end
+  
+  def test_pseudo_user_must_be_set
+    @user.pseudo_user = nil
+    assert !@user.valid?
+  end
 end
 
 class UserTest < ActiveSupport::TestCase
