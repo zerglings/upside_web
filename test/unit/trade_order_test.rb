@@ -129,13 +129,6 @@ class TradeOrderTest < ActiveSupport::TestCase
     assert !@trade_order.valid?
   end
   
-  def test_virtual_attribute_ticker_converts_to_stock_id
-    @trade_order.stock_id = nil
-    @trade_order.ticker = stocks(:ms).ticker
-    @trade_order.save!
-    assert_equal stocks(:ms).id, @trade_order.stock_id
-  end
-  
   def test_is_limit_order
     @trade_order.limit_price = nil 
     @trade_order.stop_price  = nil

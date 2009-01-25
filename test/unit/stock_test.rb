@@ -40,4 +40,25 @@ class StockTest < ActiveSupport::TestCase
     assert !@stock.valid?
   end
   
+  def test_stock_for_finds_existent_stock
+    gs = Stock.for_ticker(stocks(:gs).ticker)
+    assert_equal stocks(:gs), gs
+  end
+  
+  def test_stock_for_ticker_creates_entry_for_valid_ticker
+    assert_nil Stock.find(:first, :conditions => {:ticker => "jpm"})
+    count_before = Stock.count
+    jpm = Stock.for_ticker("jpm")
+    count_after = Stock.count
+    assert_equal 1, count_after - count_before
+    assert_not_nil Stock.find(:first, :conditions => {:ticker => jpm.ticker})
+  end
+  
+  def test_stock_for_returns_nil_for_invalid_ticker
+    count_before = Stock.count
+    qwerty = Stock.for_ticker("qwerty")
+    count_after = Stock.count
+    assert_equal nil, qwerty
+    assert_equal 0, count_after - count_before
+  end
 end

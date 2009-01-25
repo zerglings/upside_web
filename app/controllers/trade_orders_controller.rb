@@ -45,6 +45,14 @@ class TradeOrdersController < ApplicationController
     @portfolio = @user.portfolio
     @trade_order = TradeOrder.new(params[:trade_order])
     @trade_order.portfolio = @portfolio
+    
+    @stock = Stock.for_ticker(@trade_order.ticker)
+    if @stock != nil
+      @trade_order.stock = @stock
+    else 
+      @trade_order.stock_id = nil
+    end
+    
     respond_to do |format|
       if @trade_order.save
         flash[:notice] = 'TradeOrder was successfully created.'

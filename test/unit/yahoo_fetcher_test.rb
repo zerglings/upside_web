@@ -48,4 +48,9 @@ END
     assert_equal [true, false, true, true],
                  YahooFetcher.tickers_exist?(["GOOG", "XXXX", "MSFT", "ZZZZ"])     
   end
+  
+  def test_markets_for_tickers_works_for_several_tickers
+    markets_array = YahooFetcher.markets_for_tickers(["mrk", "qwerty","cvs"])
+    assert_equal ["NYSE", :not_found, "NYSE"], markets_array
+  end
 end
