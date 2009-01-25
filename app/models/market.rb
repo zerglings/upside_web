@@ -11,6 +11,6 @@ class Market < ActiveRecord::Base
       market.save!
     end
     
-    return market.id
+    return market
   end
 end

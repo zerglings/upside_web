@@ -12,9 +12,9 @@ class Stock < ActiveRecord::Base
                        :conditions => {:ticker => ticker})
    
     if stock.nil?
-      if YahooFetcher.tickers_exist?([ticker])[0] == true
-        market = YahooFetcher.market_for_ticker([ticker])
-        market_id = Market.for_name(market)
+      market = YahooFetcher.markets_for_tickers([ticker]).first
+      if market != :not_found
+        market_id = Market.for_name(market).id
         stock = Stock.new(:ticker => ticker, :market_id => market_id)
         stock.save!    
       end

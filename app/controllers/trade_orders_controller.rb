@@ -48,7 +48,7 @@ class TradeOrdersController < ApplicationController
     
     @stock = Stock.for_ticker(@trade_order.ticker)
     if @stock != nil
-      @trade_order.stock_id = @stock.id
+      @trade_order.stock = @stock
     else 
       @trade_order.stock_id = nil
     end

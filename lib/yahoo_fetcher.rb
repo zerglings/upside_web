@@ -29,10 +29,11 @@ module YahooFetcher
     parse_response(fetch_data(tickers, "x"), false) { |result| true }
   end
   
-  # Determine the market for a particular stock
-  def self.market_for_ticker(ticker)
-    parse_response fetch_data(ticker, "x") do |result|
-      return result[0]
+  # Determine the markets for stocks
+  # Take in array of tickers and returns array of markets
+  def self.markets_for_tickers(tickers)
+    parse_response fetch_data(tickers, "x") do |result|
+      (result[0].to_s == "N/A") ? :not_found : result[0] 
     end
   end
   
