@@ -1,5 +1,6 @@
 class PortfoliosController < ApplicationController
   before_filter :ensure_user_authenticated
+  protect_from_forgery :except => [:sync]
   
   # GET /portfolios
   # GET /portfolios.xml
