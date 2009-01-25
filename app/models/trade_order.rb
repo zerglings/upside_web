@@ -11,7 +11,8 @@ class TradeOrder < ActiveRecord::Base
   validates_presence_of :portfolio_id
   
   # stock id
-  validates_presence_of :stock_id
+  validates_presence_of :stock_id, 
+                        :message => "Please enter a valid ticker."
                         
   # buy / sell
   validates_inclusion_of :is_buy,
@@ -59,10 +60,6 @@ class TradeOrder
   
   def ticker=(stock_ticker)
     @ticker = stock_ticker
-    
-    stock = Stock.find(:first, 
-               :conditions => {:ticker => @ticker})
-    self.stock_id = stock.id
   end
   
   # virtual attribute to determine order type (market order or limit order)
