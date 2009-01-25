@@ -46,12 +46,11 @@ class StockTest < ActiveSupport::TestCase
   end
   
   def test_stock_for_ticker_creates_entry_for_valid_ticker
-    before_create = Stock.find(:first, :conditions => {:ticker => "jpm"})
+    assert_nil Stock.find(:first, :conditions => {:ticker => "jpm"})
     count_before = Stock.count
     jpm = Stock.for_ticker("jpm")
     count_after = Stock.count
     assert_equal 1, count_after - count_before
-    assert_equal nil, before_create
     assert_not_nil Stock.find(:first, :conditions => {:ticker => jpm.ticker})
   end
   

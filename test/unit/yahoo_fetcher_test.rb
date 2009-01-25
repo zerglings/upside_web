@@ -49,16 +49,6 @@ END
                  YahooFetcher.tickers_exist?(["GOOG", "XXXX", "MSFT", "ZZZZ"])     
   end
   
-  def test_markets_for_tickers_returns_correct_market_for_valid_stocks
-    merck_market = YahooFetcher.markets_for_tickers(["mrk"])
-    assert_equal ["NYSE"], merck_market
-  end
-  
-  def test_markets_for_tickers_returns_not_found_for_invalid_stocks
-    qwerty_market = YahooFetcher.markets_for_tickers(["qwerty"])
-    assert_equal [:not_found], qwerty_market
-  end
-  
   def test_markets_for_tickers_works_for_several_tickers
     markets_array = YahooFetcher.markets_for_tickers(["mrk", "qwerty","cvs"])
     assert_equal ["NYSE", :not_found, "NYSE"], markets_array

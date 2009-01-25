@@ -26,7 +26,7 @@ class MarketTest < ActiveSupport::TestCase
   
   def test_for_name_finds_existent_market
     nyse = Market.for_name(markets(:nyse).name)
-    assert_equal markets(:nyse).id, nyse.id
+    assert_equal markets(:nyse), nyse
   end
   
   def test_For_name_creates_entry_for_valid_market
