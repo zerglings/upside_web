@@ -27,7 +27,7 @@ class TradeOrder < ActiveRecord::Base
   # stop price and limit price
   [:stop_price, :limit_price].each do |field|
     validates_numericality_of field,
-                              :greater_than_or_equal_to => -MAX_PRICE_PER_SHARE,
+                              :greater_than => 0,
                               :less_than_or_equal_to => MAX_PRICE_PER_SHARE,
                               :allow_nil => true   
     

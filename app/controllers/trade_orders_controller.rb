@@ -1,4 +1,7 @@
 class TradeOrdersController < ApplicationController
+  before_filter :ensure_user_authenticated
+  protect_from_forgery :except => [:create]
+  
   # GET /trade_orders
   # GET /trade_orders.xml
   def index
@@ -39,11 +42,14 @@ class TradeOrdersController < ApplicationController
 
   # POST /trade_orders
   # POST /trade_orders.xml
-  def create  
-    @user = User.find(:first,
-                      :conditions => {:id => session[:user_id]})
-    @portfolio = @user.portfolio
+  def create
+    @user = @s_user
+    @portfolio = @s_user.portfolio
+    # TODO(overmind): remove deletes when trade orders have execution attributes
+    params[:trade_order].delete :quantity_unfilled
+    params[:trade_order].delete :model_id
     @trade_order = TradeOrder.new(params[:trade_order])
+    @trade_order.limit_price = nil if @trade_order.limit_price == 0
     @trade_order.portfolio = @portfolio
     
     @stock = Stock.for_ticker(@trade_order.ticker)
@@ -57,11 +63,11 @@ class TradeOrdersController < ApplicationController
       if @trade_order.save
         flash[:notice] = 'TradeOrder was successfully created.'
         format.html { redirect_to(@portfolio) }
-        format.xml  { render :xml => @trade_order, :status => :created, :location => @trade_order }
+        format.xml  # create.xml.builder
       else
         flash[:error] = 'Your trade order was not placed.'
         format.html { render :action => "new" }
-        format.xml  { render :xml => @trade_order.errors, :status => :unprocessable_entity }
+        format.xml  # create.xml.builder
       end
     end
   end

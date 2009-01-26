@@ -38,12 +38,35 @@ class TradeOrdersControllerTest < ActionController::TestCase
   
   test "should create trade_order" do
     count_before = TradeOrder.count
-    post :create, :trade_order => {:ticker => @order.stock.ticker, :is_limit => false, :quantity => @order.quantity}
+    post :create, :trade_order => {:ticker => @order.stock.ticker,
+                                   :is_limit => false,
+                                   :quantity => @order.quantity}
     count_after = TradeOrder.count
     
     assert_equal 1, count_after - count_before
     assert_redirected_to portfolios(:rich_kid) 
     assert_equal 'TradeOrder was successfully created.', flash[:notice]
+  end
+  
+  test "should XML-create market order" do
+    assert_difference('TradeOrder.count') do
+      post :create, :trade_order => {:ticker => "JCG",
+                                     :quantity => @order.quantity,
+                                     :is_buy => true,
+                                     :is_long => true,
+                                     :is_limit => false,
+                                     :limit_price => 0,
+                                     :model_id => 0,
+                                     :quantity_unfilled => 0},
+                    :format => 'xml'
+    end
+    assert_response :success
+    assert_select 'trade_order' do
+      assert_select 'ticker', 'JCG'
+      assert_select 'quantity', @order.quantity.to_s
+      assert_select 'limitPrice', '0'
+      assert_select 'modelId'
+    end
   end
   
   test "should create trade_order when using a new ticker" do

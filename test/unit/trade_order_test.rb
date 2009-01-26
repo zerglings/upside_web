@@ -73,6 +73,13 @@ class TradeOrderTest < ActiveSupport::TestCase
     assert @trade_order.valid?
   end
   
+  def test_stop_price_must_be_positive
+    @trade_order.stop_price = 0
+    assert !@trade_order.valid?
+    @trade_order.stop_price = -1.99
+    assert !@trade_order.valid?    
+  end
+  
   def test_limit_price_format
     @trade_order.limit_price = 'yuck'
     assert !@trade_order.valid?
@@ -93,6 +100,13 @@ class TradeOrderTest < ActiveSupport::TestCase
     @trade_order.limit_price = nil
     assert @trade_order.valid?
   end
+  
+  def test_limit_price_must_be_positive
+    @trade_order.limit_price = 0
+    assert !@trade_order.valid?
+    @trade_order.limit_price = -1.99
+    assert !@trade_order.valid?    
+  end  
   
   def test_expiration_time_in_future
     @trade_order.expiration_time = Time.now - 2
