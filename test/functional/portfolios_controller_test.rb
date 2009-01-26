@@ -47,6 +47,11 @@ class PortfoliosControllerTest < ActionController::TestCase
         assert_select 'quantity', trade_order.quantity.to_s
         assert_select 'isBuy', trade_order.is_buy.to_s
         assert_select 'isLong', trade_order.is_long.to_s
+        if trade_order.is_limit
+          assert_select 'limitPrice', trade_order.limit_price.to_s
+        else
+          assert_select 'limitPrice', '0'
+        end
         assert_select 'expirationTime', trade_order.expiration_time.to_s        
       end
     end
