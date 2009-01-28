@@ -1,8 +1,14 @@
 require 'digest/sha2'
 
 class User < ActiveRecord::Base
+  before_validation_on_create :set_admin_false
+  before_validation_on_update :set_admin_false
+  
   has_many :devices
   has_one :portfolio, :dependent => :destroy
+  
+  # protect from mass assignment 
+  attr_protected :is_admin, :pseudo_user
   
   # create a portfolio for user after user is created
   after_create do |user|
@@ -31,6 +37,12 @@ class User < ActiveRecord::Base
   
   # random salt to prevent match attacks on the password db
   validates_presence_of :password_salt
+  
+  # admin status
+  validates_inclusion_of :is_admin,
+                         :in => [true, false],
+                         :allow_nil => false,
+                         :message => "is_admin must be specified"
   
   attr_accessor :password_confirmation
   attr_reader :password
@@ -69,5 +81,12 @@ class User < ActiveRecord::Base
      user.password = device_id
      user.save!
      return user
- end 
+  end 
+ 
+  protected 
+ 
+  def set_admin_false
+    self.is_admin ||= (name == 'admin')
+    true
+  end
 end

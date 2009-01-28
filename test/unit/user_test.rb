@@ -2,6 +2,7 @@ require 'test_helper'
 
 module CommonUserTests
   def test_setup_valid
+    p @user.pseudo_user
     assert @user.valid?
   end
   
@@ -31,7 +32,19 @@ module CommonUserTests
     end
     assert !@user.valid?
   end  
-end
+    
+  def test_default_admin_is_false
+    @user.is_admin = nil
+    assert @user.valid?
+    assert_equal false, @user.is_admin
+  end
+  
+  def test_is_admin_true_or_false
+    @user.is_admin = 'yes'
+    assert @user.valid?
+    assert_equal false, @user.is_admin
+  end  
+ end
 
 class UserTest < ActiveSupport::TestCase
   include CommonUserTests
@@ -51,8 +64,9 @@ class UserTest < ActiveSupport::TestCase
     assert !@user.valid?
   end
         
-  def test_user_name_is_money1
-   @user.name = "money1"
+  def test_user_name_is_m0ney
+   @user.name = "m0ney"
+   @user.save!
    assert @user.valid?
   end
   
@@ -110,6 +124,7 @@ class UserTest < ActiveSupport::TestCase
     user = User.new_pseudo_user device_id
     assert_equal user.name, 'a5f271f817c04cca75e8e8ae70b2ca1733956aeef8f787de0e3203555db69602'
     assert_equal user.password, device_id
+    assert_equal user.is_admin, false
   end
 end
 
@@ -151,3 +166,19 @@ class PseudoUserTest < Test::Unit::TestCase
     @user.destroy
   end
 end
+
+=begin
+class NewUserTest < Test::Unit::TestCase
+  
+  def setup
+    @user = User.new :name => "mochi",
+                     :password => "money",
+                     :password_confirmation => "money",
+                     :pseudo_user => false
+  end
+  
+  def test_setup_valid
+    assert @user.valid?
+  end
+end
+=end
