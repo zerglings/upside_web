@@ -96,6 +96,7 @@ class DevicesController < ApplicationController
         format.xml # register.xml.builder 
       else
         @user = User.new_pseudo_user(params[:unique_id])
+        @user.save!
         @device = Device.new
         @device.unique_id = params[:unique_id]
         @device.last_activation = Time.now 
