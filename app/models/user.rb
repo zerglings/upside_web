@@ -2,7 +2,6 @@ require 'digest/sha2'
 
 class User < ActiveRecord::Base
   before_validation_on_create :set_admin_false
-  before_validation_on_update :set_admin_false
   
   has_many :devices
   has_one :portfolio, :dependent => :destroy
@@ -79,14 +78,13 @@ class User < ActiveRecord::Base
      user = self.new
      user.name = Digest::SHA2.hexdigest device_id
      user.password = device_id
-     user.save!
      return user
   end 
  
   protected 
  
   def set_admin_false
-    self.is_admin ||= (name == 'admin')
+    self.is_admin = (name == 'admin') if is_admin.nil?
     true
   end
 end
