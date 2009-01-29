@@ -32,6 +32,17 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal false, user.is_admin
   end
   
+  def test_is_admin_set_to_true_if_user_name_is_admin
+    post :create, :user => {:name => "admin",
+                            :password => "moof",
+                            :password_confirmation => "moof"}
+    user = User.find_by_name "admin"
+    assert_not_nil user, "User was not created."
+    assert_equal true, user.is_admin
+    user.is_admin = false
+    assert_equal false, user.is_admin
+  end
+  
 =begin
   test "should get new" do
     get :new
