@@ -39,8 +39,6 @@ class UsersControllerTest < ActionController::TestCase
     user = User.find_by_name "admin"
     assert_not_nil user, "User was not created."
     assert_equal true, user.is_admin
-    user.is_admin = false
-    assert_equal false, user.is_admin
   end
   
 =begin
