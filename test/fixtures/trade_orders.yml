@@ -39,3 +39,53 @@ sell_long_without_stop_or_limit_orders:
   limit_price:
   expiration_time: 2010-03-10 14:42:17
   quantity: 40000
+  
+sell_short_without_stop_or_limit_orders: 
+  portfolio: some_guy
+  stock: gs
+  is_buy: false
+  is_long: true
+  stop_price: 
+  limit_price:
+  expiration_time: 2010-02-14 14:42:17
+  quantity: 900
+  
+user_A_buy_gs_short_with_limit_order:
+  portfolio: user_A
+  stock: gs
+  is_buy: true
+  is_long: false
+  stop_price: 
+  limit_price: 14.98
+  expiration_time: 2010-01-10 14:42:17
+  quantity: 200
+  
+user_B_buy_gs_long_with_limit_order:
+  portfolio: user_B
+  stock: gs
+  is_buy: true
+  is_long: true
+  stop_price: 
+  limit_price: 9.99 
+  expiration_time: 2020-01-10 14:42:17
+  quantity: 2000
+  
+user_A_sell_gs_long_without_stop_or_limit_orders: 
+  portfolio: user_A
+  stock: gs
+  is_buy: false
+  is_long: true
+  stop_price: 
+  limit_price:
+  expiration_time: 2010-03-10 14:42:17
+  quantity: 100
+  
+user_B_sell_gs_short_without_stop_or_limit_orders: 
+  portfolio: user_B
+  stock: gs
+  is_buy: false
+  is_long: true
+  stop_price: 
+  limit_price:
+  expiration_time: 2010-02-14 14:42:17
+  quantity: 900

@@ -27,3 +27,17 @@ gs_short:
   is_long: false
   quantity: 450
   average_base_cost: 80.50
+  
+user_A_short_position:
+  stock: gs
+  portfolio: user_A
+  is_long: false
+  quantity: 200
+  average_base_cost: 80.50
+  
+user_B_short_position:
+  stock: gs
+  portfolio: user_B
+  is_long: false
+  quantity: 1000
+  average_base_cost: 80.50

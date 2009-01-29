@@ -2,6 +2,10 @@ class Trade < ActiveRecord::Base
   
   belongs_to :trade_order
   
+  after_create do |trade|
+    execute
+  end
+  
   # trade execution time
   validates_datetime :time,
                       :allow_nil => false
@@ -15,8 +19,9 @@ class Trade < ActiveRecord::Base
                             :less_than => TradeOrder::MAX_QUANTITY_SHARES_PER_TRADE
   
   # trade order id 
-  validates_presence_of :trade_order_id,
-                        :allow_nil => false
+  validates_numericality_of :trade_order_id,
+                            :greater_than => 0,
+                            :allow_nil => false
   
   # trade order id of counter-party                      
   validates_numericality_of :counterpart_id,
@@ -35,4 +40,35 @@ class Trade < ActiveRecord::Base
   def portfolio
     trade_order.portfolio
   end
+  
+  def execute
+    @position = Position.find(:first, :conditions => {:portfolio_id => trade_order.portfolio_id,
+                                                      :stock_id => trade_order.stock_id,
+                                                      :is_long => trade_order.is_long})
+    if @position
+      :adjust_position_quantity
+      :adjust_position_average_base_cost
+    else
+      @position = Position.new(:portfolio_id => trade_order.portfolio_id,
+                   :stock_id => trade_order.stock_id, 
+                   :is_long => trade_order.is_long,
+                   :quantity => quantity,
+                   :average_base_cost => 0)
+    end
+    @position.save!
+  end
+  
+  def adjust_position_quantity
+    if trade_order.is_buy?
+      @position.quantity += quantity
+    end
+    if !trade_order.is_buy?
+      @position.quantity -= quantity
+    end
+  end
+  
+  def adjust_position_average_base_cost
+    
+  end
+  
 end

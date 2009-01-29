@@ -7,3 +7,10 @@ rich_kid:
 site_user:
   user: site_user
   cash: 9.99
+  
+user_A:
+  user: user_A
+  cash: 9.99
+user_B:
+  user: user_B
+  cash: 9.99
