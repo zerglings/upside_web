@@ -9,7 +9,7 @@ module CommonUserTests
     @user.name = ""
     assert !@user.valid?
     
-    @user.name = nil 
+    @user.name = nil
     assert !@user.valid?
   end  
 
@@ -36,6 +36,18 @@ module CommonUserTests
     @user.pseudo_user = nil
     assert !@user.valid?
   end
+    
+  def test_default_admin_is_false
+    @user.is_admin = nil
+    @user.valid?
+    assert_equal false, @user.is_admin
+  end
+  
+  def test_is_admin_true_or_false
+    @user.is_admin = 'yes'
+    assert @user.valid?
+    assert_equal false, @user.is_admin
+  end  
 end
 
 class UserTest < ActiveSupport::TestCase
@@ -44,8 +56,8 @@ class UserTest < ActiveSupport::TestCase
   def setup
     @user = User.new :name => "buffet",
                      :password => "money",
-                     :password_confirmation => "money",
-                     :pseudo_user => false
+                     :password_confirmation => "money"
+    @user.pseudo_user = false
   end
   
   def test_user_name_length
@@ -56,8 +68,9 @@ class UserTest < ActiveSupport::TestCase
     assert !@user.valid?
   end
         
-  def test_user_name_is_money1
-   @user.name = "money1"
+  def test_user_name_is_m0ney
+   @user.name = "m0ney"
+   @user.save!
    assert @user.valid?
   end
   
@@ -108,14 +121,7 @@ class UserTest < ActiveSupport::TestCase
   def test_login_wrong_user_name
     user = User.authenticate( 'inexistent', 'password')
     assert_equal user, nil, 'Inexistent user was authenticated'
-  end
-  
-  def test_pseudo_user_generation
-    device_id = '31415' * 8
-    user = User.new_pseudo_user device_id
-    assert_equal user.name, 'a5f271f817c04cca75e8e8ae70b2ca1733956aeef8f787de0e3203555db69602'
-    assert_equal user.password, device_id
-  end
+  end  
 end
 
 class PseudoUserTest < Test::Unit::TestCase
@@ -124,8 +130,8 @@ class PseudoUserTest < Test::Unit::TestCase
   def setup
     @user = User.new :name => "abcde123" * 8,
                      :password => "money",
-                     :password_confirmation => "money",
-                     :pseudo_user => true
+                     :password_confirmation => "money"
+    @user.pseudo_user = true                     
   end
   
   def test_user_name_length
@@ -155,4 +161,12 @@ class PseudoUserTest < Test::Unit::TestCase
   ensure 
     @user.destroy
   end
+  
+  def test_pseudo_user_generation
+    device_id = '31415' * 8
+    user = User.new_pseudo_user device_id
+    assert_equal user.name, 'a5f271f817c04cca75e8e8ae70b2ca1733956aeef8f787de0e3203555db69602'
+    assert_equal user.password, device_id
+    assert_equal user.is_admin, false
+  end  
 end

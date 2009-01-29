@@ -100,10 +100,11 @@ ActiveRecord::Schema.define(:version => 20090120032718) do
   add_index "trades", ["trade_order_id"], :name => "index_trades_on_trade_order_id"
 
   create_table "users", :force => true do |t|
-    t.string   "name",          :limit => 64,                   :null => false
-    t.string   "password_hash", :limit => 64,                   :null => false
-    t.string   "password_salt", :limit => 4,                    :null => false
-    t.boolean  "pseudo_user",                 :default => true, :null => false
+    t.string   "name",          :limit => 64,                    :null => false
+    t.string   "password_hash", :limit => 64,                    :null => false
+    t.string   "password_salt", :limit => 4,                     :null => false
+    t.boolean  "pseudo_user",                 :default => true,  :null => false
+    t.boolean  "is_admin",                    :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -5,9 +5,18 @@ rich_kid:
   password_hash: <%= User.hash_password 'password', '1234' %>
   password_salt: 1234
   pseudo_user: false
+  is_admin: false
 
 device_user:
   name: '<%= '31415' * 8 %>'
-  password_hash: <%= User.hash_password 'password', '1234' %>
-  password_salt: MyString
+  password_hash: <%= User.hash_password 'password', '2341' %>
+  password_salt: 2341
   pseudo_user: true
+  is_admin: false
+  
+admin:
+  name: admin
+  password_hash: <%= User.hash_password 'password', '3412' %>
+  password_salt: 3412
+  pseudo_user: false
+  is_admin: true
