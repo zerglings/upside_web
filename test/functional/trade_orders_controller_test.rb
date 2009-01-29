@@ -64,8 +64,8 @@ class TradeOrdersControllerTest < ActionController::TestCase
     assert_select 'trade_order' do
       assert_select 'ticker', 'JCG'
       assert_select 'quantity', @order.quantity.to_s
-      assert_select 'limitPrice', '0'
-      assert_select 'modelId'
+      assert_select 'limit_price', '0'
+      assert_select 'model_id'
     end
   end
   
