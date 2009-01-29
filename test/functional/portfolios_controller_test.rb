@@ -33,32 +33,32 @@ class PortfoliosControllerTest < ActionController::TestCase
     
     @portfolio.positions.each do |position|
       assert_select('position') do
-        assert_select 'modelId', position.id.to_s
+        assert_select 'model_id', position.id.to_s
         assert_select 'ticker', position.stock.ticker
         assert_select 'quantity', position.quantity.to_s
-        assert_select 'isLong', position.is_long.to_s
+        assert_select 'is_long', position.is_long.to_s
       end
     end
     
     @portfolio.trade_orders.each do |trade_order|
       assert_select('trade_order') do
-        assert_select 'modelId', trade_order.id.to_s
+        assert_select 'model_id', trade_order.id.to_s
         assert_select 'ticker', trade_order.stock.ticker
         assert_select 'quantity', trade_order.quantity.to_s
-        assert_select 'isBuy', trade_order.is_buy.to_s
-        assert_select 'isLong', trade_order.is_long.to_s
+        assert_select 'is_buy', trade_order.is_buy.to_s
+        assert_select 'is_long', trade_order.is_long.to_s
         if trade_order.is_limit
-          assert_select 'limitPrice', trade_order.limit_price.to_s
+          assert_select 'limit_price', trade_order.limit_price.to_s
         else
-          assert_select 'limitPrice', '0'
+          assert_select 'limit_price', '0'
         end
-        assert_select 'expirationTime', trade_order.expiration_time.to_s        
+        assert_select 'expiration_time', trade_order.expiration_time.to_s        
       end
     end
     
     @portfolio.trades.each do |trade|
       assert_select('trade') do
-        assert_select 'modelId', trade.id.to_s
+        assert_select 'model_id', trade.id.to_s
         assert_select 'quantity', trade.quantity.to_s
         assert_select 'price', trade.price.to_s
       end

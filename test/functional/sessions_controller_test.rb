@@ -51,9 +51,9 @@ class SessionsControllerTest < ActionController::TestCase
     post :create, :name => @user.name, :password => @password, :format => 'xml'
     assert_equal @user.id, session[:user_id], "Session not set properly"
     assert_select "user" do
-      assert_select "modelId", @user.id.to_s
+      assert_select "model_id", @user.id.to_s
       assert_select "name", @user.name
-      assert_select "isPseudoUser", "false"
+      assert_select "is_pseudo_user", "false"
     end
     
     post :create, :name => @user.name, :password => "wrong", :format => 'xml'

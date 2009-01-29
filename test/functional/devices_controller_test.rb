@@ -27,15 +27,15 @@ class DevicesControllerTest < ActionController::TestCase
                     "Last activation time was not set properly"
     
     assert_select "device" do
-      assert_select "modelId", device.id.to_s
-      assert_select "uniqueId", unique_id
-      assert_select "userId", user.id.to_s
+      assert_select "model_id", device.id.to_s
+      assert_select "unique_id", unique_id
+      assert_select "user_id", user.id.to_s
     end
     
     assert_select "user" do
-      assert_select "modelId", user.id.to_s
+      assert_select "model_id", user.id.to_s
       assert_select "name", user.name
-      assert_select "isPseudoUser", "true"
+      assert_select "is_pseudo_user", "true"
     end
   end  
   
@@ -48,15 +48,15 @@ class DevicesControllerTest < ActionController::TestCase
     assert_equal old_user_count, User.count, "Registering an existing device created a new user"
     
     assert_select "device" do
-      assert_select "modelId", iphone_3g.id.to_s
-      assert_select "uniqueId", iphone_3g.unique_id
-      assert_select "userId", iphone_3g.user_id.to_s
+      assert_select "model_id", iphone_3g.id.to_s
+      assert_select "unique_id", iphone_3g.unique_id
+      assert_select "user_id", iphone_3g.user_id.to_s
     end
     
     assert_select "user" do
-      assert_select "modelId", iphone_3g.user.id.to_s
+      assert_select "model_id", iphone_3g.user.id.to_s
       assert_select "name", iphone_3g.user.name
-      assert_select "isPseudoUser", "false"
+      assert_select "is_pseudo_user", "false"
     end    
   end
   
