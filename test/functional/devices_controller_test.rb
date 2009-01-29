@@ -12,9 +12,11 @@ class DevicesControllerTest < ActionController::TestCase
   end
   
   
-  def test_register_new_device
+  test "register new device" do
     unique_id = '88888' * 8
-    post :register, :unique_id => unique_id, :format => 'xml'
+    post :register, :unique_id => unique_id, :format => 'xml',
+                    :device_sig => IphoneAuthFilters.signature(unique_id),
+                    :device_sig_v => IphoneAuthFilters.signature_version
     device = Device.find_by_unique_id unique_id
     assert_not_nil device, "Device not created when registering a new device"
     assert_equal unique_id, device.unique_id
@@ -39,11 +41,14 @@ class DevicesControllerTest < ActionController::TestCase
     end
   end  
   
-  def test_register_existing_device
+  test "try registering existing device" do
     old_user_count = User.count
     old_device_count = Device.count
     iphone_3g = devices(:iphone_3g)
-    post :register, :unique_id => iphone_3g.unique_id, :format => 'xml'
+    unique_id = iphone_3g.unique_id
+    post :register, :unique_id => unique_id, :format => 'xml',
+                    :device_sig => IphoneAuthFilters.signature(unique_id),
+                    :device_sig_v => IphoneAuthFilters.signature_version
     assert_equal old_device_count, Device.count, "Registering an existing device created a new device"
     assert_equal old_user_count, User.count, "Registering an existing device created a new user"
     
@@ -58,6 +63,18 @@ class DevicesControllerTest < ActionController::TestCase
       assert_select "name", iphone_3g.user.name
       assert_select "is_pseudo_user", "false"
     end    
+  end
+  
+  test "registration bounces without signature" do
+    old_user_count = User.count
+    old_device_count = Device.count
+    iphone_3g = devices(:iphone_3g)
+    unique_id = iphone_3g.unique_id
+    post :register, :unique_id => unique_id, :format => 'xml',
+                    :device_sig_v => IphoneAuthFilters.signature_version
+    assert_select "error" do
+      assert_select "reason", "device_auth"
+    end
   end
   
   test "should get index" do

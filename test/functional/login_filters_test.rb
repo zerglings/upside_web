@@ -1,4 +1,3 @@
-require 'digest/sha2'
 require 'test_helper'
 
 # Fake controller for testing the login filters.
