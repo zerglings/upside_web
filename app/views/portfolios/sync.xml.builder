@@ -1,6 +1,10 @@
 xml.instruct! :xml, :version => "1.0"
 
 xml.sync do |sync|
+  sync.portfolio do |output|
+    output.cash @portfolio.cash
+  end
+  
   @positions.each do |position|
     sync.position do |output|
       output.model_id position.id

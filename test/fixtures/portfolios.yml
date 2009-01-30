@@ -2,7 +2,7 @@
 
 rich_kid:
   user: rich_kid
-  cash: 9.99
+  cash: 10_000_000.00
 
 site_user:
   user: site_user

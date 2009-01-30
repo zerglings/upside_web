@@ -31,6 +31,11 @@ class PortfoliosControllerTest < ActionController::TestCase
     get :sync, :id => 0, :format => 'xml'
     assert_response :success
     
+    assert_select 'portfolio' do
+      assert_select 'cash', @portfolio.cash.to_s
+    end
+    
+    
     @portfolio.positions.each do |position|
       assert_select('position') do
         assert_select 'model_id', position.id.to_s
