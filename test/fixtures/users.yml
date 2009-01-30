@@ -12,14 +12,14 @@ device_user:
   password_salt: MyString
   pseudo_user: true
   
-user_A:
-  name: user_A
+short_lover:
+  name: short_lover
   password_hash: <%= User.hash_password 'password', '1234' %>
   password_salt: 1234
   pseudo_user: false
   
-user_B:
-  name: user_B
+long_lover:
+  name: long_lover
   password_hash: <%= User.hash_password 'password', '1234' %>
   password_salt: 1234
   pseudo_user: false

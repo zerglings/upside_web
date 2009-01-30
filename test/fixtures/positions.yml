@@ -28,16 +28,16 @@ gs_short:
   quantity: 450
   average_base_cost: 80.50
   
-user_A_short_position:
+short_lover_short_position:
   stock: gs
-  portfolio: user_A
+  portfolio: short_lover
   is_long: false
   quantity: 200
   average_base_cost: 80.50
   
-user_B_short_position:
+long_lover_short_position:
   stock: gs
-  portfolio: user_B
+  portfolio: long_lover
   is_long: false
   quantity: 1000
   average_base_cost: 80.50

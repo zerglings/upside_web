@@ -8,9 +8,9 @@ site_user:
   user: site_user
   cash: 9.99
   
-user_A:
-  user: user_A
+short_lover:
+  user: short_lover
   cash: 9.99
-user_B:
-  user: user_B
+long_lover:
+  user: long_lover
   cash: 9.99
