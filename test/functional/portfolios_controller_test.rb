@@ -1,20 +1,8 @@
 require 'test_helper'
 
-class PortfoliosControllerTest < ActionController::TestCase
-  fixtures :portfolios, :positions, :trade_orders, :trades, :users
+module CommonPortfolioTests
   
-  def setup
-    @request.session[:user_id] = users(:rich_kid).id
-    @portfolio = portfolios(:rich_kid)
-  end
-  
-  test "should get index" do
-    get :index
-    assert_response :success
-    assert_not_nil assigns(:portfolios)
-  end
-  
-  test "should show portfolio" do
+  def test_should_show_portfolio
     get :show, :id => @portfolio.id
     assert_response :success
     assert_equal Set.new([:buy_to_cover_short_with_stop_and_limit_orders, 
@@ -27,7 +15,7 @@ class PortfoliosControllerTest < ActionController::TestCase
                  Set.new(assigns(:positions))
   end
   
-  test "xml sync" do
+  def test_xml_sync
     get :sync, :id => 0, :format => 'xml'
     assert_response :success
     
@@ -65,7 +53,7 @@ class PortfoliosControllerTest < ActionController::TestCase
     end
   end
   
-  test "xml sync rejects unauthenticated sessions" do
+  def test_xml_sync_rejects_unquthenticated_sessions
     @request.session[:user_id] = nil
     get :sync, :id => 0, :format => 'xml'
     assert_response :success
@@ -73,5 +61,70 @@ class PortfoliosControllerTest < ActionController::TestCase
     assert_select 'error' do
       assert_select 'reason', 'login'
     end
+  end
+end
+
+class PortfoliosControllerTest < ActionController::TestCase
+  fixtures :portfolios, :positions, :trade_orders, :trades, :users
+  include CommonPortfolioTests
+  
+  def setup
+    @request.session[:user_id] = users(:admin).id
+    @portfolio = portfolios(:admin)
+  end
+  
+  test "admin can see index" do
+    @request.session[:user_id] = users(:admin).id 
+    get :index
+    assert_response :success
+    assert_not_nil assigns(:portfolios)
+  end
+  
+  test "admin can edit portfolios" do
+    @request.session[:user_id] = users(:admin).id
+    get :edit, :id => portfolios(:site_user).id
+    assert_response :success
+  end
+  
+  test "admin can update other users' portfolios" do
+    @request.session[:user_id] = users(:admin).id
+    put :update, :id => portfolios(:site_user).id
+    assert_redirected_to portfolios(:site_user)
+  end
+end
+
+class PortfoliosControllerTest < ActionController::TestCase
+  fixtures :portfolios, :positions, :trade_orders, :trades, :users
+  include CommonPortfolioTests
+  
+  def setup
+    @request.session[:user_id] = users(:rich_kid).id
+    @portfolio = portfolios(:rich_kid)
+  end
+  
+  test "user should not see index" do
+    @request.session[:user_id] = users(:rich_kid).id  
+    get :index
+    assert_redirected_to @portfolio
+  end
+  
+  test "users cannot see the portfolio of another user" do
+    get :show, :id => portfolios(:site_user).id
+    assert_redirected_to @portfolio
+  end
+  
+  test "users should not edit other users' portfolios" do
+    get :edit, :id => portfolios(:site_user).id
+    assert_redirected_to @portfolio
+  end
+  
+  test "users should not update other users' portfolios" do
+    put :update, :id => portfolios(:site_user).id
+    assert_redirected_to @portfolio
+  end
+  
+  def teardown
+    @request.session[:user_id] = nil
+    @portfolio = nil
   end
 end
