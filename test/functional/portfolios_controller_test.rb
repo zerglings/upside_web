@@ -107,12 +107,12 @@ class PortfoliosControllerTest < ActionController::TestCase
   end
   
   test "user cannot edit his/her own portfolio" do
-    get :edit, :id => portfolios(:site_user).id
+    get :edit, :id => @portfolio.id
     assert_redirected_to @portfolio
   end
   
   test "users cannot update his/her own portfolio" do
-    put :update, :id => portfolios(:site_user).id
+    put :update, :id => @portfolio.id
     assert_redirected_to @portfolio
   end
   
