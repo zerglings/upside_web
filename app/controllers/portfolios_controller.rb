@@ -5,7 +5,7 @@ class PortfoliosController < ApplicationController
   protect_from_forgery :except => [:sync]
   
   # Before filter to ensure that users cannot view or sync portfolios with a different user. 
-  # If the authentication works, the @s_user instance variable is set.
+  # If the authorization works, the @portfolio instance variable is set.
   # Otherwise, the response is a redirect back to the portfolio of the user. 
   def ensure_user_owns_portfolio
     return false unless ensure_user_authenticated

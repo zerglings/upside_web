@@ -16,7 +16,7 @@ module LoginFilters
     return false
   end
   
-  # Before filter ensuring only admins have global access.
+  # Before filter ensuring the request comes from an authenticated administrator.
   # If the authentication works, the @s_user instance variable is set.
   # Otherwise, the response is a redirect back to the page the user was on.
   def ensure_admin_authenticated
