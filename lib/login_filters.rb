@@ -15,4 +15,23 @@ module LoginFilters
     end
     return false
   end
+  
+  # Before filter ensuring the request comes from an authenticated administrator.
+  # If the authentication works, the @s_user instance variable is set.
+  # Otherwise, the response is a redirect back to the page the user was on.
+  def ensure_admin_authenticated
+    return false unless ensure_user_authenticated    
+    return true if @s_user.is_admin?
+    respond_to do |format|
+      format.html do
+        flash[:error] = 'Admin access only.'
+        redirect_to @s_user.portfolio
+      end
+      format.xml do
+        render :xml => { :error => { :message => 'Admin access only.',
+                                     :reason => :denied } }
+      end
+    end
+    return false
+  end
 end

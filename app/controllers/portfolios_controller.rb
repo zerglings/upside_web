@@ -1,6 +1,33 @@
 class PortfoliosController < ApplicationController
-  before_filter :ensure_user_authenticated
+  before_filter :ensure_user_authenticated, :only => [:show, :sync]
+  before_filter :ensure_admin_authenticated, :except => [:show, :sync]
+  before_filter :ensure_user_owns_portfolio, :except => [:index]
   protect_from_forgery :except => [:sync]
+  
+  # Before filter to ensure that users cannot view or sync portfolios with a different user. 
+  # If the authorization works, the @portfolio instance variable is set.
+  # Otherwise, the response is a redirect back to the portfolio of the user. 
+  def ensure_user_owns_portfolio
+    return false unless ensure_user_authenticated
+    if params[:id].to_i == 0
+      @portfolio = @s_user.portfolio
+    else
+      @portfolio = Portfolio.find(:first, :conditions => {:id => params[:id]})
+    end
+
+    return true if @s_user == @portfolio.user || @s_user.is_admin?
+    respond_to do |format|
+      format.html do
+        flash[:error] = 'Admin access only.'
+        redirect_to @s_user.portfolio
+      end
+      format.xml do
+        render :xml => { :error => { :message => 'Admin access only.',
+                                     :reason => :denied } }
+      end
+    end
+    return false
+  end
   
   # GET /portfolios
   # GET /portfolios.xml
@@ -16,7 +43,6 @@ class PortfoliosController < ApplicationController
   # GET /portfolios/1
   # GET /portfolios/1.xml
   def show
-    @portfolio = Portfolio.find(params[:id])
     @trade_orders = @portfolio.trade_orders
     @trades = @portfolio.trades
     @positions = @portfolio.positions
@@ -28,15 +54,14 @@ class PortfoliosController < ApplicationController
 
   # GET /portfolios/1/edit
   def edit
-    @portfolio = Portfolio.find(params[:id])
+    respond_to do |format|
+      format.html # edit.html.erb
+    end
   end
-  private :edit
 
   # PUT /portfolios/1
   # PUT /portfolios/1.xml
   def update
-    @portfolio = Portfolio.find(params[:id])
-
     respond_to do |format|
       if @portfolio.update_attributes(params[:portfolio])
         flash[:notice] = 'Portfolio was successfully updated.'
@@ -48,15 +73,8 @@ class PortfoliosController < ApplicationController
       end
     end
   end
-  private :update
   
   def sync
-    if params[:id].to_i == 0
-      @portfolio = @s_user.portfolio
-    else
-      @portfolio = Portfolio.find(params[:id])
-    end
-    
     @positions = @portfolio.positions
     @trade_orders = @portfolio.trade_orders
     @trades = @portfolio.trades

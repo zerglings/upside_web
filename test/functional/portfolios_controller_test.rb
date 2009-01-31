@@ -1,20 +1,12 @@
 require 'test_helper'
 
-class PortfoliosControllerTest < ActionController::TestCase
-  fixtures :portfolios, :positions, :trade_orders, :trades, :users
-  
-  def setup
-    @request.session[:user_id] = users(:rich_kid).id
-    @portfolio = portfolios(:rich_kid)
+module CommonPortfolioTests
+  def common_setup
+    @request.session[:user_id] = @user.id
+    @portfolio = portfolios(:rich_kid)    
   end
   
-  test "should get index" do
-    get :index
-    assert_response :success
-    assert_not_nil assigns(:portfolios)
-  end
-  
-  test "should show portfolio" do
+  def test_should_show_portfolio
     get :show, :id => @portfolio.id
     assert_response :success
     assert_equal Set.new([:buy_to_cover_short_with_stop_and_limit_orders, 
@@ -27,8 +19,9 @@ class PortfoliosControllerTest < ActionController::TestCase
                  Set.new(assigns(:positions))
   end
   
-  test "xml sync" do
-    get :sync, :id => 0, :format => 'xml'
+  def test_xml_sync
+    portfolio_id = @user.is_admin? ? portfolios(:rich_kid).id : 0
+    get :sync, :id => portfolio_id, :format => 'xml'
     assert_response :success
     
     assert_select 'portfolio' do
@@ -68,9 +61,67 @@ class PortfoliosControllerTest < ActionController::TestCase
         assert_select 'price', trade.price.to_s
       end
     end
+  end  
+end
+
+class AdminPortfoliosControllerTest < ActionController::TestCase
+  fixtures :portfolios, :positions, :trade_orders, :trades, :users
+  include CommonPortfolioTests
+  tests PortfoliosController
+  
+  def setup
+    @user = users(:admin)
+    common_setup
   end
   
-  test "xml sync rejects unauthenticated sessions" do
+  test "admin can see index" do
+    get :index
+    assert_response :success
+    assert_not_nil assigns(:portfolios)
+  end
+  
+  test "admin can edit portfolios" do
+    get :edit, :id => portfolios(:site_user).id
+    assert_response :success
+  end
+  
+  test "admin can update other users' portfolios" do
+    put :update, :id => portfolios(:site_user).id
+    assert_redirected_to portfolios(:site_user)
+  end
+end
+
+class PortfoliosControllerTest < ActionController::TestCase
+  fixtures :portfolios, :positions, :trade_orders, :trades, :users
+  include CommonPortfolioTests
+  
+  def setup
+    @user = users(:rich_kid)
+    common_setup
+  end
+  
+  test "user should not see index" do
+    @request.session[:user_id] = users(:rich_kid).id  
+    get :index
+    assert_redirected_to @portfolio
+  end
+  
+  test "users cannot see the portfolio of another user" do
+    get :show, :id => portfolios(:site_user).id
+    assert_redirected_to @portfolio
+  end
+  
+  test "user cannot edit his/her own portfolio" do
+    get :edit, :id => @portfolio.id
+    assert_redirected_to @portfolio
+  end
+  
+  test "users cannot update his/her own portfolio" do
+    put :update, :id => @portfolio.id
+    assert_redirected_to @portfolio
+  end
+  
+  def test_xml_sync_rejects_unquthenticated_sessions
     @request.session[:user_id] = nil
     get :sync, :id => 0, :format => 'xml'
     assert_response :success
@@ -78,5 +129,5 @@ class PortfoliosControllerTest < ActionController::TestCase
     assert_select 'error' do
       assert_select 'reason', 'login'
     end
-  end
+  end  
 end

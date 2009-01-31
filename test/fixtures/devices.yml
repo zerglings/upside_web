@@ -8,4 +8,4 @@ iphone_3g:
 ipod_touch_2g:
   unique_id: <%= '22222' * 8 %>
   last_activation: 2009-01-01 16:44:49
-  user: rich_kid
+  user: admin

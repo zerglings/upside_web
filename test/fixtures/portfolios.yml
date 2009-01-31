@@ -7,3 +7,7 @@ rich_kid:
 site_user:
   user: site_user
   cash: 9.99
+  
+admin:
+  user: admin
+  cash: 25_000.00
