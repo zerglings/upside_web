@@ -1,6 +1,10 @@
 require 'test_helper'
 
 module CommonPortfolioTests
+  def common_setup
+    @request.session[:user_id] = @user.id
+    @portfolio = portfolios(:rich_kid)    
+  end
   
   def test_should_show_portfolio
     get :show, :id => @portfolio.id
@@ -16,7 +20,8 @@ module CommonPortfolioTests
   end
   
   def test_xml_sync
-    get :sync, :id => 0, :format => 'xml'
+    portfolio_id = @user.is_admin? ? portfolios(:rich_kid).id : 0
+    get :sync, :id => portfolio_id, :format => 'xml'
     assert_response :success
     
     @portfolio.positions.each do |position|
@@ -51,43 +56,31 @@ module CommonPortfolioTests
         assert_select 'price', trade.price.to_s
       end
     end
-  end
-  
-  def test_xml_sync_rejects_unquthenticated_sessions
-    @request.session[:user_id] = nil
-    get :sync, :id => 0, :format => 'xml'
-    assert_response :success
-    
-    assert_select 'error' do
-      assert_select 'reason', 'login'
-    end
-  end
+  end  
 end
 
-class PortfoliosControllerTest < ActionController::TestCase
+class AdminPortfoliosControllerTest < ActionController::TestCase
   fixtures :portfolios, :positions, :trade_orders, :trades, :users
   include CommonPortfolioTests
+  tests PortfoliosController
   
   def setup
-    @request.session[:user_id] = users(:admin).id
-    @portfolio = portfolios(:admin)
+    @user = users(:admin)
+    common_setup
   end
   
   test "admin can see index" do
-    @request.session[:user_id] = users(:admin).id 
     get :index
     assert_response :success
     assert_not_nil assigns(:portfolios)
   end
   
   test "admin can edit portfolios" do
-    @request.session[:user_id] = users(:admin).id
     get :edit, :id => portfolios(:site_user).id
     assert_response :success
   end
   
   test "admin can update other users' portfolios" do
-    @request.session[:user_id] = users(:admin).id
     put :update, :id => portfolios(:site_user).id
     assert_redirected_to portfolios(:site_user)
   end
@@ -98,8 +91,8 @@ class PortfoliosControllerTest < ActionController::TestCase
   include CommonPortfolioTests
   
   def setup
-    @request.session[:user_id] = users(:rich_kid).id
-    @portfolio = portfolios(:rich_kid)
+    @user = users(:rich_kid)
+    common_setup
   end
   
   test "user should not see index" do
@@ -123,8 +116,13 @@ class PortfoliosControllerTest < ActionController::TestCase
     assert_redirected_to @portfolio
   end
   
-  def teardown
+  def test_xml_sync_rejects_unquthenticated_sessions
     @request.session[:user_id] = nil
-    @portfolio = nil
-  end
+    get :sync, :id => 0, :format => 'xml'
+    assert_response :success
+    
+    assert_select 'error' do
+      assert_select 'reason', 'login'
+    end
+  end  
 end
