@@ -11,7 +11,7 @@ module UserFilters
     end
 
     return true if @s_user == @portfolio.user || @s_user.is_admin?
-    respond_to_section
+    render_access_denied
   end
   
   # Before filter to ensure that users cannot create or edit trade orders for a different user. 
@@ -21,12 +21,12 @@ module UserFilters
     return false unless ensure_user_authenticated
     @portfolio = @s_user.portfolio
     @trade_order = TradeOrder.find(:first, :conditions => {:id => params[:id]})
-    return true if @s_user.is_admin? || @s_user.portfolio == @trade_order.portfolio
-    respond_to_section
+    return true if @s_user.is_admin? || @s_user == @trade_order.portfolio.user
+    render_access_denied
   end
   
   # This contains code common to both ensure_user_owns_portfolio and ensure_user_owns_trade_order
-  def respond_to_section
+  def render_access_denied
     respond_to do |format|
       format.html do
         flash[:error] = 'Admin access only.'

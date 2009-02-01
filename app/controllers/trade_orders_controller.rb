@@ -1,5 +1,5 @@
 class TradeOrdersController < ApplicationController
-  before_filter :ensure_user_authenticated, :except => [:index, :update, :destroy]
+  before_filter :ensure_user_authenticated, :except => [:index, :edit, :update, :destroy]
   before_filter :ensure_admin_authenticated, :only => [:index, :edit, :update, :destroy]
   before_filter :ensure_user_owns_trade_order, :except => [:index, :new, :create]
   protect_from_forgery :except => [:create]
