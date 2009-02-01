@@ -1,39 +1,50 @@
 <h1>Editing trade_order</h1>
 
-<% form_for(@trade_order) do |f| %>
-  <%= f.error_messages %>
+<%= flash[:error] %>
 
-  <p>
-    <%= f.label :portfolio_id %><br />
-    <%= f.text_field :portfolio_id %>
-  </p>
-  <p>
-    <%= f.label :stock_id %><br />
-    <%= f.text_field :stock_id %>
-  </p>
-  <p>
-    <%= f.label :is_buy %><br />
-    <%= f.check_box :is_buy %>
-  </p>
-  <p>
-    <%= f.label :is_long %><br />
-    <%= f.check_box :is_long %>
-  </p>
-  <p>
-    <%= f.label :stop_price %><br />
-    <%= f.text_field :stop_price %>
-  </p>
-  <p>
-    <%= f.label :limit_price %><br />
-    <%= f.text_field :limit_price %>
-  </p>
-  <p>
-    <%= f.label :expiration_time %><br />
-    <%= f.datetime_select :expiration_time %>
-  </p>
-  <p>
-    <%= f.submit "Update" %>
-  </p>
+<% form_for(@trade_order) do |f| %>
+	<%= f.error_messages %>
+	<p>
+		<%= f.radio_button(:is_limit, false) %> Market Order
+		<%= f.radio_button(:is_limit, true) %> Limit Order
+	</p>	
+		
+	<p>
+		<%= f.label :ticker %>
+		<%= f.text_field :ticker %>
+	</p>
+	
+	<p>
+		<%= f.label :quantity %>
+		<%= f.text_field :quantity%>
+	</p>	
+	
+	<p>
+		<%= f.select(:is_buy, [ ['Buy', true],
+								['Sell', false] ]) %>
+								
+		<%= f.select(:is_long, [ ['Long', true],
+								 ['Short', false] ]) %>
+	</p>
+								 
+	<p>
+		<%= f.label :stop_price %>
+		<%= f.text_field :stop_price %>
+	</p>
+	
+	<p>
+		<%= f.label :limit_price %>
+		<%= f.text_field :limit_price %>
+	</p>
+		
+	<p>
+		<%= f.label :expiration_time %>
+		<%= f.datetime_select(:expiration_time) %>
+	</p>		
+		
+	<p>
+		<%= f.submit "Update" %>
+	</p>			
 <% end %>
 
 <%= link_to 'Show', @trade_order %> |
