@@ -4,6 +4,7 @@ module TradesHelper
       output.model_id trade_order.id
       output.ticker trade_order.stock.ticker
       output.quantity trade_order.quantity
+      output.unfilled_quantity trade_order.unfilled_quantity
       output.is_buy trade_order.is_buy
       output.is_long trade_order.is_long
       output.limit_price((trade_order.is_limit) ? trade_order.limit_price : 0)

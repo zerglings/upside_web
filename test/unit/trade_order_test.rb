@@ -143,6 +143,37 @@ class TradeOrderTest < ActiveSupport::TestCase
     assert !@trade_order.valid?
   end
   
+  def test_quantity_sets_unfilled_quantity
+    assert_equal @trade_order.unfilled_quantity, @trade_order.quantity
+  end
+  
+  def test_unfilled_quanity_must_be_nonnegative
+    @trade_order.unfilled_quantity = -1
+    assert !@trade_order.valid?
+  end
+
+  def test_unfilled_quanity_can_be_zero
+    @trade_order.unfilled_quantity = 0
+    assert @trade_order.valid?
+  end
+  
+  def test_unfilled_quanity_cannot_exceed_quantity
+    @trade_order.unfilled_quantity = @trade_order.quantity + 1
+    assert !@trade_order.valid?
+  end
+  
+  def test_unfilled_quantity_does_not_reset_quantity
+    old_quantity = @trade_order.quantity
+    @trade_order.unfilled_quantity = 0
+    assert_equal old_quantity, @trade_order.quantity
+  end
+  
+  def test_filled
+    assert !@trade_order.filled?, "filled? should be false for new orders"
+    assert trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).filled?,
+           "filled? should be true for filled orders"
+  end
+
   def test_is_limit_order
     @trade_order.limit_price = nil 
     @trade_order.stop_price  = nil
@@ -165,5 +196,20 @@ class TradeOrderTest < ActiveSupport::TestCase
     assert_equal "Buy to Cover", @trade_order.transaction_type
     @trade_order.is_buy = true
     assert_equal "Short", @trade_order.transaction_type
+  end
+  
+  def test_ticker_is_set_by_stock_id
+    assert_equal stocks(:ms), @trade_order.stock
+  end
+  
+  def test_valid_ticker_sets_stock
+    @trade_order.ticker = 'AAPL'
+    assert_equal 'AAPL', @trade_order.stock.ticker
+  end
+  
+  def test_invalid_ticker_resets_stock
+    @trade_order.ticker = 'QWERTY'
+    assert_equal nil, @trade_order.stock
+    assert_equal 'QWERTY', @trade_order.ticker
   end
 end

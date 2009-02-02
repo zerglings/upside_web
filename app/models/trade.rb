@@ -1,4 +1,5 @@
 class Trade < ActiveRecord::Base
+  include ModelLimits
   
   belongs_to :trade_order
   
@@ -12,7 +13,7 @@ class Trade < ActiveRecord::Base
   validates_numericality_of :quantity,
                             :only_integer => true,
                             :greater_than => 0,
-                            :less_than => TradeOrder::MAX_QUANTITY_SHARES_PER_TRADE
+                            :less_than => MAX_QUANTITY_SHARES_PER_TRADE
   
   # trade order id 
   validates_presence_of :trade_order_id,
@@ -26,7 +27,7 @@ class Trade < ActiveRecord::Base
   validates_numericality_of :price,
                             :allow_nil => false,
                             :greater_than => 0,
-                            :less_than_or_equal_to => TradeOrder::MAX_PRICE_PER_SHARE
+                            :less_than_or_equal_to => MAX_PRICE_PER_SHARE
                             
   validates_format_of :price,
                       :with => /\.\d{0,2}$/,
