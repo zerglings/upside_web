@@ -1,6 +1,7 @@
 class DevicesController < ApplicationController
   protect_from_forgery :except => [:register]
   before_filter :ensure_iphone_request, :only => [:register]
+  before_filter :ensure_admin_authenticated, :except => [:register]
   
   # GET /devices
   # GET /devices.xml
