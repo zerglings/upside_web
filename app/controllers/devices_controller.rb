@@ -47,7 +47,7 @@ class DevicesController < ApplicationController
     @device = Device.new(params[:device])
 
     respond_to do |format|
-      if @device.save!
+      if @device.save
         flash[:notice] = 'Device was successfully created.'
         format.html { redirect_to(@device) }
         format.xml  { render :xml => @device, :status => :created, :location => @device }

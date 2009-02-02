@@ -52,6 +52,58 @@ class AdminDevicesControllerTest < ActionController::TestCase
   end
 end
 
+class UserDevicesControllerTest < ActionController::TestCase
+  fixtures :devices, :users
+  tests DevicesController
+  
+  def setup
+    @user = users(:rich_kid)
+    @request.session[:user_id] = @user
+    @portfolio = @user.portfolio
+  end
+  
+  test "user not authorized to get index" do
+    get :index
+    assert_redirected_to @portfolio
+  end
+  
+  test "user not authorized to get new" do
+    get :new
+    assert_redirected_to @portfolio
+  end
+  
+  test "user not authorized to create device" do
+    count_before = Device.count
+    post :create, :device => {:unique_id => "12345" * 8, :last_activation => Time.now, :user_id => users(:device_user).id }
+    count_after = Device.count
+    assert_equal 0, count_after - count_before
+    assert_redirected_to @portfolio
+  end
+
+  test "user not authorized to show device" do
+    get :show, :id => devices(:iphone_3g).id
+    assert_redirected_to @portfolio
+  end
+
+  test "user not authorized to get edit" do
+    get :edit, :id => devices(:iphone_3g).id
+    assert_redirected_to @portfolio
+  end
+
+  test "user not authorized to update device" do
+    put :update, :id => devices(:iphone_3g).id, :device => { }
+    assert_redirected_to @portfolio
+  end
+
+  test "user not authoried to destroy device" do
+    count_before = Device.count
+    delete :destroy, :id => devices(:iphone_3g).id
+    count_after = Device.count
+    assert_equal 0, count_after - count_before
+    assert_redirected_to @portfolio
+  end
+end
+
 class DevicesControllerTest < ActionController::TestCase
   fixtures :devices, :users
   
