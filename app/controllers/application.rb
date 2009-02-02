@@ -19,5 +19,6 @@ class ApplicationController < ActionController::Base
   end
   
   include LoginFilters
+  include UserFilters
   include IphoneAuthFilters
 end

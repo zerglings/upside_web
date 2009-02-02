@@ -9,7 +9,7 @@ buy_to_cover_short_with_stop_and_limit_orders:
   limit_price: 9.99
   expiration_time: 2020-01-10 14:42:17
   quantity: 100
-  unfilled_quantity: 100
+  unfilled_quantity: 0
 
 buy_long_with_stop_order:
   portfolio: rich_kid
@@ -34,7 +34,7 @@ buy_short_with_limit_order:
   unfilled_quantity: 200
   
 sell_long_without_stop_or_limit_orders: 
-  portfolio: site_user
+  portfolio: admin 
   stock: gs
   is_buy: false
   is_long: true

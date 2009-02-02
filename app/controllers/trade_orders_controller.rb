@@ -1,5 +1,7 @@
 class TradeOrdersController < ApplicationController
-  before_filter :ensure_user_authenticated
+  before_filter :ensure_user_authenticated, :except => [:index, :edit, :update, :destroy]
+  before_filter :ensure_admin_authenticated, :only => [:index, :edit, :update, :destroy]
+  before_filter :ensure_user_owns_trade_order, :except => [:index, :new, :create]
   protect_from_forgery :except => [:create]
   
   # GET /trade_orders
@@ -16,7 +18,6 @@ class TradeOrdersController < ApplicationController
   # GET /trade_orders/1
   # GET /trade_orders/1.xml
   def show
-    @trade_order = TradeOrder.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -37,7 +38,6 @@ class TradeOrdersController < ApplicationController
 
   # GET /trade_orders/1/edit
   def edit
-    @trade_order = TradeOrder.find(params[:id])
   end
 
   # POST /trade_orders
@@ -69,7 +69,6 @@ class TradeOrdersController < ApplicationController
   # PUT /trade_orders/1
   # PUT /trade_orders/1.xml
   def update
-    @trade_order = TradeOrder.find(params[:id])
 
     respond_to do |format|
       if @trade_order.update_attributes(params[:trade_order])
@@ -82,17 +81,15 @@ class TradeOrdersController < ApplicationController
       end
     end
   end
-  private :update
   
   # DELETE /trade_orders/1
   # DELETE /trade_orders/1.xml
   def destroy
-    @trade_order = TradeOrder.find(params[:id])
     @trade_order.destroy
 
     respond_to do |format|
       format.html { redirect_to(@trade_order.portfolio) }
       format.xml  { head :ok }
     end
-  end  
+  end 
 end

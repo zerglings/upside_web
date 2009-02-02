@@ -143,7 +143,7 @@ class TradeOrderTest < ActiveSupport::TestCase
     assert !@trade_order.valid?
   end
   
-  def test_qunatity_sets_unfilled_quantity
+  def test_quantity_sets_unfilled_quantity
     assert_equal @trade_order.unfilled_quantity, @trade_order.quantity
   end
   
@@ -170,8 +170,8 @@ class TradeOrderTest < ActiveSupport::TestCase
   
   def test_filled
     assert !@trade_order.filled?, "filled? should be false for new orders"
-    @trade_order.unfilled_quantity = 0
-    assert @trade_order.filled?, "filled? should be true for filled orders"
+    assert trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).filled?,
+           "filled? should be true for filled orders"
   end
 
   def test_is_limit_order
