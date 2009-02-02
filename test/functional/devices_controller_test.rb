@@ -1,17 +1,66 @@
 require 'digest/sha2'
 require 'test_helper'
 
+class AdminDevicesControllerTest < ActionController::TestCase
+  fixtures :devices, :users
+  tests DevicesController
+  
+  def setup
+    @request.session[:user_id] = users(:admin)
+  end
+  
+  test "admin should get index" do
+    get :index
+    assert_response :success
+    assert_not_nil assigns(:devices)
+  end
+  
+  test "should get new" do
+    get :new
+    assert_response :success
+  end
+  
+  test "should create device" do
+    assert_difference('Device.count') do
+      post :create, :device => {:unique_id => "12345" * 8, :last_activation => Time.now, :user_id => users(:device_user).id }
+    end
+
+    assert_redirected_to device_path(assigns(:device))
+  end
+
+  test "should show device" do
+    get :show, :id => devices(:iphone_3g).id
+    assert_response :success
+  end
+
+  test "should get edit" do
+    get :edit, :id => devices(:iphone_3g).id
+    assert_response :success
+  end
+
+  test "should update device" do
+    put :update, :id => devices(:iphone_3g).id, :device => { }
+    assert_redirected_to device_path(assigns(:device))
+  end
+
+  test "should destroy device" do
+    assert_difference('Device.count', -1) do
+      delete :destroy, :id => devices(:iphone_3g).id
+    end
+
+    assert_redirected_to devices_path
+  end
+end
+
 class DevicesControllerTest < ActionController::TestCase
   fixtures :devices, :users
   
   def setup
-    return
     device1 = devices(:iphone_3g)
     device1.user = users(:rich_kid)
     device1.save!
   end
-  
-  
+
   test "register new device" do
     unique_id = '88888' * 8
     post :register, :unique_id => unique_id, :format => 'xml',
@@ -76,48 +125,4 @@ class DevicesControllerTest < ActionController::TestCase
       assert_select "reason", "device_auth"
     end
   end
-  
-  test "should get index" do
-    get :index
-    assert_response :success
-    assert_not_nil assigns(:devices)
-  end
-
-=begin
-  test "should get new" do
-    get :new
-    assert_response :success
-  end
-
-  test "should create device" do
-    assert_difference('Device.count') do
-      post :create, :device => { }
-    end
-
-    assert_redirected_to device_path(assigns(:device))
-  end
-
-  test "should show device" do
-    get :show, :id => devices(:iphone_3g).id
-    assert_response :success
-  end
-
-  test "should get edit" do
-    get :edit, :id => devices(:iphone_3g).id
-    assert_response :success
-  end
-
-  test "should update device" do
-    put :update, :id => devices(:iphone_3g).id, :device => { }
-    assert_redirected_to device_path(assigns(:device))
-  end
-
-  test "should destroy device" do
-    assert_difference('Device.count', -1) do
-      delete :destroy, :id => devices(:iphone_3g).id
-    end
-
-    assert_redirected_to devices_path
-  end
-=end
 end

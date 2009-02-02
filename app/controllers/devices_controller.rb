@@ -1,6 +1,7 @@
 class DevicesController < ApplicationController
   protect_from_forgery :except => [:register]
   before_filter :ensure_iphone_request, :only => [:register]
+  before_filter :ensure_admin_authenticated, :except => [:register]
   
   # GET /devices
   # GET /devices.xml
@@ -46,7 +47,7 @@ class DevicesController < ApplicationController
     @device = Device.new(params[:device])
 
     respond_to do |format|
-      if @device.save
+      if @device.save!
         flash[:notice] = 'Device was successfully created.'
         format.html { redirect_to(@device) }
         format.xml  { render :xml => @device, :status => :created, :location => @device }
