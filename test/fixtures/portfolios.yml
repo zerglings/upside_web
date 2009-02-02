@@ -10,7 +10,8 @@ site_user:
   
 short_lover:
   user: short_lover
-  cash: 9.99
+  cash: 250000
+  
 long_lover:
   user: long_lover
-  cash: 9.99
+  cash: 250000

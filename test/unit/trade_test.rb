@@ -4,21 +4,24 @@ class TradeTest < ActiveSupport::TestCase
   fixtures :trades, :positions
   
  def setup
+   long_buys_long = :long_lover_buys_long_from_short_lover
+   short_sells_short = :short_lover_sells_short_to_long_lover
+   
    @trade = Trade.new(:quantity => trades(:normal_trade).quantity,
                       :trade_order_id => trades(:normal_trade).trade_order_id,
                       :counterpart_id => trades(:normal_trade).counterpart_id,
                       :price => trades(:normal_trade).price,
                       :time => trades(:normal_trade).time)
-   @trade1 = Trade.new(:quantity => trades(:long_lover_buys_long_from_short_lover).quantity,
-                      :trade_order_id => trades(:long_lover_buys_long_from_short_lover).trade_order_id,
-                      :counterpart_id => trades(:long_lover_buys_long_from_short_lover).counterpart_id,
-                      :price => trades(:long_lover_buys_long_from_short_lover).price,
-                      :time => trades(:long_lover_buys_long_from_short_lover).time)                    
-   @trade2 = Trade.new(:quantity => trades(:long_lover_sells_short_to_short_lover).quantity,
-                      :trade_order_id => trades(:long_lover_sells_short_to_short_lover).trade_order_id,
-                      :counterpart_id => trades(:long_lover_sells_short_to_short_lover).counterpart_id,
-                      :price => trades(:long_lover_sells_short_to_short_lover).price,
-                      :time => trades(:long_lover_sells_short_to_short_lover).time)
+   @long_buys_long_trade = Trade.new(:quantity => trades(long_buys_long).quantity, 
+                                     :trade_order_id => trades(long_buys_long).trade_order_id, 
+                                     :counterpart_id => trades(long_buys_long).counterpart_id, 
+                                     :price => trades(long_buys_long).price, 
+                                     :time => trades(long_buys_long).time)                    
+   @short_sells_short_trade = Trade.new(:quantity => trades(short_sells_short).quantity, 
+                                        :trade_order_id => trades(short_sells_short).trade_order_id, 
+                                        :counterpart_id => trades(short_sells_short).counterpart_id, 
+                                        :price => trades(short_sells_short).price, 
+                                        :time => trades(short_sells_short).time)
  end
  
  def test_setup_valid
@@ -113,32 +116,39 @@ class TradeTest < ActiveSupport::TestCase
  end
  
  def test_create_trade_also_creates_position_if_position_is_initially_nonexistent
-   setup
-   @trade1.save!
-   @position1 = Position.find(:first, 
-                                :conditions => {:stock_id => @trade1.trade_order.stock_id,
-                                                :portfolio_id => @trade1.trade_order.portfolio_id,
-                                                :is_long => @trade1.trade_order.is_long})
-   assert_not_nil @position1
-   assert_equal @position1.quantity, 200
+   @long_buys_long_trade.execute
+   @long_position = Position.find(:first, 
+                              :conditions => {:stock_id => @long_buys_long_trade.trade_order.stock_id,
+                                              :portfolio_id => @long_buys_long_trade.trade_order.portfolio_id,
+                                              :is_long => @long_buys_long_trade.trade_order.is_long})
+   assert_not_nil @long_position
+   assert_equal @long_position.quantity, 200
  end
  
  def test_create_trade_also_updates_position_if_position_is_initially_existent
-   setup
-   @position2 = Position.find(:first, 
-                                :conditions => {:stock_id => @trade2.trade_order.stock_id,
-                                                :portfolio_id => @trade2.trade_order.portfolio_id,
-                                                :is_long => @trade2.trade_order.is_long})
+   @short_position = Position.find(:first, 
+                                   :conditions => {:stock_id => @short_sells_short_trade.trade_order.stock_id,
+                                                   :portfolio_id => @short_sells_short_trade.trade_order.portfolio_id,
+                                                    :is_long => @short_sells_short_trade.trade_order.is_long})
                                                 
-   assert_not_nil @position2
-   @trade2.save!
-   @position2 = Position.find(:first, 
-                                :conditions => {:stock_id => @trade2.trade_order.stock_id,
-                                                :portfolio_id => @trade2.trade_order.portfolio_id,
-                                                :is_long => @trade2.trade_order.is_long})
+   assert_not_nil @short_position
+   @short_sells_short_trade.execute
+   @short_position = Position.find(:first, 
+                                   :conditions => {:stock_id => @short_sells_short_trade.trade_order.stock_id,
+                                                   :portfolio_id => @short_sells_short_trade.trade_order.portfolio_id,
+                                                   :is_long => @short_sells_short_trade.trade_order.is_long})
                                                 
-   assert_not_nil @position2
-   assert_equal @position2.quantity, 900
+   assert_not_nil @short_position
+   assert_equal @short_position.quantity, 300
+ end
+ 
+ def test_cash_flow
+   @long_buys_long_trade.execute
+   portfolio = @long_buys_long_trade.trade_order.portfolio
+   assert_equal 236466, portfolio.cash
+   @short_sells_short_trade.execute
+   portfolio = @short_sells_short_trade.trade_order.portfolio
+   assert_equal 254905, portfolio.cash
  end
  
 end

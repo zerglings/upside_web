@@ -50,10 +50,10 @@ sell_short_without_stop_or_limit_orders:
   expiration_time: 2010-02-14 14:42:17
   quantity: 900
   
-short_lover_buy_gs_short_with_limit_order:
+short_lover_sell_gs_short_with_limit_order:
   portfolio: short_lover
   stock: gs
-  is_buy: true
+  is_buy: false
   is_long: false
   stop_price: 
   limit_price: 14.98
@@ -80,10 +80,10 @@ short_lover_sell_gs_long_without_stop_or_limit_orders:
   expiration_time: 2010-03-10 14:42:17
   quantity: 100
   
-long_lover_sell_gs_short_without_stop_or_limit_orders: 
+long_lover_covers_gs_short_without_stop_or_limit_orders: 
   portfolio: long_lover
   stock: gs
-  is_buy: false
+  is_buy: true
   is_long: false
   stop_price: 
   limit_price:

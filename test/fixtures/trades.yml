@@ -12,11 +12,11 @@ long_lover_buys_long_from_short_lover:
   trade_order: long_lover_buy_gs_long_with_limit_order
   counterpart_id: short_lover_sell_gs_long_without_stop_or_limit_orders
   price: 67.67
-long_lover_sells_short_to_short_lover:
+short_lover_sells_short_to_long_lover:
   time: 2009-01-10 20:09:00
   quantity: 100
-  trade_order: long_lover_sell_gs_short_without_stop_or_limit_orders
-  counterpart_id: short_lover_buy_gs_short_with_limit_order
+  trade_order: short_lover_sell_gs_short_with_limit_order
+  counterpart_id: long_lover_covers_gs_short_without_stop_or_limit_orders
   price: 49.05
 
 order_filled_with_market:
