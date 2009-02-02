@@ -9,7 +9,7 @@ buy_to_cover_short_with_stop_and_limit_orders:
   limit_price: 9.99
   expiration_time: 2020-01-10 14:42:17
   quantity: 100
-  unfilled_quantity: 100
+  unfilled_quantity: 0
 
 buy_long_with_stop_order:
   portfolio: rich_kid
