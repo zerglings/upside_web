@@ -1,6 +1,5 @@
 class TradeOrder < ActiveRecord::Base
-  MAX_PRICE_PER_SHARE = (10**6 -0.01)
-  MAX_QUANTITY_SHARES_PER_TRADE = (10**16)
+  include ModelLimits
   
   belongs_to :portfolio
   belongs_to :stock
@@ -45,11 +44,33 @@ class TradeOrder < ActiveRecord::Base
   validates_presence_of :quantity,
                         :allow_nil => false,
                         :message => "Must enter desired number of shares to be traded."
-  
   validates_numericality_of :quantity,
                             :only_integer => true,
                             :greater_than => 0,
                             :less_than => MAX_QUANTITY_SHARES_PER_TRADE
+                            
+  # number of shares that still need to be traded as part of this order
+  attr_protected :unfilled_quantity
+  validates_numericality_of :unfilled_quantity,
+                            :only_integer => true,
+                            :greater_than_or_equal_to => 0,
+                            :allow_nil => false
+  validates_each :unfilled_quantity do |order, attr, value|
+    next if order.unfilled_quantity.nil? or order.quantity.nil?
+    next unless order.unfilled_quantity > order.quantity
+    order.errors.add attr, 'Shares unfilled cannot exceed total shares.'
+  end
+
+  # override quantity assignment to set unfilled_quantity
+  def quantity=(new_quantity)
+    super
+    self.unfilled_quantity = new_quantity    
+  end
+  
+  # true if this order has been filled
+  def filled?()
+    unfilled_quantity == 0
+  end                            
 end
 
 # Virtual attributes for display
@@ -59,13 +80,15 @@ class TradeOrder
   attr_reader :ticker
   
   def ticker=(stock_ticker)
-    @ticker = stock_ticker
+    @ticker = stock_ticker    
+    self.stock = Stock.for_ticker(stock_ticker)
   end
   
   # virtual attribute to determine order type (market order or limit order)
   def is_limit
     (limit_price || stop_price) ? true : false
   end
+  alias_method :is_limit?, :is_limit
   
   def is_limit=(new_limit)
     # fake setter so submitting forms works

@@ -7,3 +7,15 @@ ms:
 gs:
   ticker: GS
   market: nyse
+
+aapl:
+  ticker: AAPL
+  market: nasdaq
+
+goog:
+  ticker: GOOG
+  market: nasdaq
+  
+msft:
+  ticker: MSFT
+  market: nasdaq
