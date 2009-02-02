@@ -52,13 +52,7 @@ class TradeOrdersController < ApplicationController
     @trade_order.limit_price = nil if @trade_order.limit_price == 0
     @trade_order.portfolio = @portfolio
     
-    @stock = Stock.for_ticker(@trade_order.ticker)
-    if @stock != nil
-      @trade_order.stock = @stock
-    else 
-      @trade_order.stock_id = nil
-    end
-    
+    @stock = @trade_order.stock    
     respond_to do |format|
       if @trade_order.save
         flash[:notice] = 'TradeOrder was successfully created.'
