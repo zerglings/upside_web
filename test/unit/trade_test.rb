@@ -115,7 +115,14 @@ class TradeTest < ActiveSupport::TestCase
    assert !@trade.valid?
  end
  
+ # Boosts a trade order's unfilled shares, so a trade can execute. 
+ def boost_unfilled_quantity(trade)
+   trade.trade_order.unfilled_quantity = trade.quantity
+ end
+ 
  def test_create_trade_also_creates_position_if_position_is_initially_nonexistent
+   boost_unfilled_quantity @long_buys_long_trade
+   @long_buys_long_trade.trade_order.save!
    @long_buys_long_trade.execute
    @long_position = Position.find(:first, 
                               :conditions => {:stock_id => @long_buys_long_trade.trade_order.stock_id,
@@ -123,6 +130,7 @@ class TradeTest < ActiveSupport::TestCase
                                               :is_long => @long_buys_long_trade.trade_order.is_long})
    assert_not_nil @long_position
    assert_equal @long_position.quantity, 200
+   assert_equal 0, @long_buys_long_trade.trade_order.unfilled_quantity
  end
  
  def test_create_trade_also_updates_position_if_position_is_initially_existent
@@ -132,6 +140,8 @@ class TradeTest < ActiveSupport::TestCase
                                                     :is_long => @short_sells_short_trade.trade_order.is_long})
                                                 
    assert_not_nil @short_position
+   boost_unfilled_quantity @short_sells_short_trade
+   @short_sells_short_trade.trade_order.save!
    @short_sells_short_trade.execute
    @short_position = Position.find(:first, 
                                    :conditions => {:stock_id => @short_sells_short_trade.trade_order.stock_id,
@@ -140,12 +150,15 @@ class TradeTest < ActiveSupport::TestCase
                                                 
    assert_not_nil @short_position
    assert_equal @short_position.quantity, 300
+   assert_equal 0, @short_sells_short_trade.trade_order.unfilled_quantity
  end
  
  def test_cash_flow
+   boost_unfilled_quantity @long_buys_long_trade 
    @long_buys_long_trade.execute
    portfolio = @long_buys_long_trade.trade_order.portfolio
    assert_equal 236466, portfolio.cash
+   boost_unfilled_quantity @short_sells_short_trade
    @short_sells_short_trade.execute
    portfolio = @short_sells_short_trade.trade_order.portfolio
    assert_equal 254905, portfolio.cash

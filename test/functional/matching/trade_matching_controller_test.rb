@@ -72,6 +72,10 @@ class TradeMatchingControllerTest < ActionController::IntegrationTest
     assert_equal [99, 99, 101, 50, 50, 50], trades.map(&:quantity)
     assert_equal ['55.50', '55.50', '22.80', '3.35', '3.35', '4.20'],
                  trades.map { |trade| '%.2f' % trade.price.to_f }
+                 
+    trades.map(&:trade_order).uniq.each do |trade_order|
+      assert trade_order.filled?, "Order unfilled: #{trade_order.inspect}"
+    end
     
     # Bought 99 MS @ 55.50 and 101 MS @ 22.80 and 50 GS @ 3.35 and 50 GS @ 4.20
     #     => -8,174.8
