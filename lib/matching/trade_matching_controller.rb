@@ -69,8 +69,7 @@ class Matching::TradeMatchingController
   def round
     sync_store
     trades = generate_trades
-    # TODO(overmind): uncomment the line below after folding in execution
-    #execute_trades trades
+    execute_trades trades
     return trades
   end
 end

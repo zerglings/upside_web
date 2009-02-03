@@ -72,7 +72,13 @@ class TradeMatchingControllerTest < ActionController::IntegrationTest
     assert_equal [99, 99, 101, 50, 50, 50], trades.map(&:quantity)
     assert_equal ['55.50', '55.50', '22.80', '3.35', '3.35', '4.20'],
                  trades.map { |trade| '%.2f' % trade.price.to_f }
-        
-    # TODO(overmind): test that execution changed portfolios
+    
+    # Bought 99 MS @ 55.50 and 101 MS @ 22.80 and 50 GS @ 3.35 and 50 GS @ 4.20
+    #     => -8,174.8
+    assert_in_delta 241_825.20, portfolios(:match_buyer).cash, 0.001,
+                 'Cash in buyer portfolio modified incorrectly'
+    # Sold 99 MS @ 55.50 and 50 GS @ 3.35 => +5,662.0
+    assert_in_delta 255_662.00, portfolios(:match_seller).cash, 0.001,
+                 'Cash in seller portfolio modified incorrectly'
   end
 end

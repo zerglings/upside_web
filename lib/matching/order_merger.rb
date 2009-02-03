@@ -4,7 +4,8 @@ class Matching::OrderMerger
     trade = Trade.new :quantity => quantity,
                       :price => price,
                       :trade_order => order,
-                      :counterpart_id => nil
+                      :counterpart_id => nil,
+                      :time => Time.now
     order.unfilled_quantity -= quantity
     queue.shift if order.unfilled_quantity == 0
     trade_list << trade

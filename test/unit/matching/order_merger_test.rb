@@ -35,6 +35,7 @@ class OrderMergerTest < ActiveSupport::TestCase
                  'Incorrect order linked to generated trade'
     assert_equal 600, fill_queue.first.quantity, 'Incorrect quantity traded'
     assert_in_delta 90.0, fill_queue.first.price, 0.001, 'Incorrect trade price'
+    assert_in_delta Time.now, fill_queue.first.time, 0.5, 'Incorrect trade time'
   end
   
   def test_fill_order_completely
@@ -50,6 +51,7 @@ class OrderMergerTest < ActiveSupport::TestCase
                  'Incorrect order linked to generated trade'
     assert_equal 1000, fill_queue.first.quantity, 'Incorrect quantity traded'
     assert_in_delta 90.0, fill_queue.first.price, 0.001, 'Incorrect trade price'
+    assert_in_delta Time.now, fill_queue.first.time, 0.5, 'Incorrect trade time'
   end
   
   def test_first_buy_order
