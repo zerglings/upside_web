@@ -1,0 +1,17 @@
+--- 
+:daemons: 
+  matcher:
+    :pids: tmp/TradeMatcher.pid
+    :binary: script/background/trade_matcher.rb 
+    :start_args: start <%= RAILS_ENV %>
+    :stop_args: stop
+    :delay_before_kill: 1.0
+    :disabled: false
+    
+
+:disabled: false
+:root_path: <%= RAILS_ROOT %>
+:logger: stdout
+:disabled_for: 
+- 'rake'
+- 'script/generate'
