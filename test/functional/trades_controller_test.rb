@@ -57,7 +57,7 @@ class AdminTradeControllerTest < ActionController::TestCase
                                               :price => @trade.price }
     
     assert_equal 'Trade was successfully updated.', flash[:notice]
-    assert_equal trades(:order_filled_with_market).quantity, @trade.quantity # assertion fails...FIX THIS
+    assert_equal trades(:order_filled_with_market).quantity, @trade.reload.quantity 
     assert_redirected_to trade_path(assigns(:trade))
   end
   
