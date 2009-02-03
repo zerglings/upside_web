@@ -20,3 +20,17 @@ admin:
   password_salt: 3412
   pseudo_user: false
   is_admin: true
+  
+short_lover:
+  name: short_lover
+  password_hash: <%= User.hash_password 'password', '1234' %>
+  password_salt: 1234
+  pseudo_user: false
+  is_admin: false
+  
+long_lover:
+  name: long_lover
+  password_hash: <%= User.hash_password 'password', '1234' %>
+  password_salt: 1234
+  pseudo_user: false
+  is_admin: false
