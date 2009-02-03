@@ -5,7 +5,7 @@ class Trade < ActiveRecord::Base
   
   # trade execution time
   validates_datetime :time,
-                      :allow_nil => false
+                     :allow_nil => false
   
   # quantity / number of shares exchanged
   validates_presence_of :quantity,

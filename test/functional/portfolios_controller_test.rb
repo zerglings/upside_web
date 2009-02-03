@@ -81,13 +81,13 @@ class AdminPortfoliosControllerTest < ActionController::TestCase
   end
   
   test "admin can edit portfolios" do
-    get :edit, :id => portfolios(:site_user).id
+    get :edit, :id => portfolios(:device_user).id
     assert_response :success
   end
   
   test "admin can update other users' portfolios" do
-    put :update, :id => portfolios(:site_user).id
-    assert_redirected_to portfolios(:site_user)
+    put :update, :id => portfolios(:device_user).id
+    assert_redirected_to portfolios(:device_user)
   end
 end
 
@@ -107,7 +107,7 @@ class PortfoliosControllerTest < ActionController::TestCase
   end
   
   test "users cannot see the portfolio of another user" do
-    get :show, :id => portfolios(:site_user).id
+    get :show, :id => portfolios(:device_user).id
     assert_redirected_to @portfolio
   end
   

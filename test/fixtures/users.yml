@@ -20,3 +20,17 @@ admin:
   password_salt: 3412
   pseudo_user: false
   is_admin: true
+
+match_seller:
+  name: seller
+  password_hash: <%= User.hash_password 'password', '1234' %>
+  password_salt: 1234
+  pseudo_user: false
+  is_admin: false
+
+match_buyer:
+  name: buyer
+  password_hash: <%= User.hash_password 'password', '1234' %>
+  password_salt: 1234
+  pseudo_user: false
+  is_admin: false
