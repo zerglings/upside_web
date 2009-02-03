@@ -1,4 +1,6 @@
 class TradesController < ApplicationController
+  before_filter :ensure_admin_authenticated
+  
   # GET /trades
   # GET /trades.xml
   def index
