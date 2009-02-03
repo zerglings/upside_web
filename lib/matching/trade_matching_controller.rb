@@ -25,7 +25,7 @@ class Matching::TradeMatchingController
   def spreads_in_store
     stock_ids = @store.stock_ids
     tickers = stock_ids.map { |id| Stock.find(id).ticker }
-    spreads = YahooFetcher.spread_data_for_tickers(tickers).map do |data|
+    spreads = YahooFetcher.spreads_for_tickers(tickers).map do |data|
       [data[:bid], data[:ask]]
     end
     return stock_ids.zip(spreads)

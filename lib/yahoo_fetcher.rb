@@ -37,6 +37,25 @@ module YahooFetcher
     end
   end
   
+  # Official spreads for the given tickers. Assumes the tickers are valid.
+  #
+  # This is called very often (once every second) by the trade matcher, and has
+  # to process a lot of tickers. The Web service call is optimized to ask for
+  # the minimum information needed to do the job, and therefore cannot detect
+  # invalid tickers. 
+  def self.spreads_for_tickers(tickers)
+    # format: real-time ask and bid, last close, previous day close
+    parse_response fetch_data(tickers, "b2b3l1p") do |result|
+      ask, bid = result[0].to_f, result[1].to_f
+      last = result[2].to_f
+      last = result[3].to_f if last == 0
+      # If there's no real bid / ask, simulate some.
+      bid = (last * 98.0).round / 100.0 if bid == 0  # 98%, rounded to cents
+      ask = (last * 102.0).round / 100.0 if ask == 0  # 102%, rounded to cents
+      {:ask => ask, :bid => bid}
+    end
+  end
+  
   # Generic method for pulling information from Yahoo finance.
   def self.fetch_data(tickers, data_codes)
     query = "/d/?s=#{URI.encode(tickers.join("+"))}&f=#{data_codes}"

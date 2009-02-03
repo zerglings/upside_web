@@ -41,7 +41,7 @@ class TradeMatchingControllerTest < ActionController::IntegrationTest
   end
   
   def mock_yahoo_fetcher
-    flexmock(YahooFetcher).should_receive(:spread_data_for_tickers).
+    flexmock(YahooFetcher).should_receive(:spreads_for_tickers).
                            with(['MS', 'GS']).
                            and_return([{:ask => 22.8, :bid => 20.5},
                                        {:ask => 4.20, :bid => 3.50}])    
@@ -80,5 +80,11 @@ class TradeMatchingControllerTest < ActionController::IntegrationTest
     # Sold 99 MS @ 55.50 and 50 GS @ 3.35 => +5,662.0
     assert_in_delta 255_662.00, portfolios(:match_seller).cash, 0.001,
                  'Cash in seller portfolio modified incorrectly'
+  end
+  
+  # test all the logic with live Yahoo data, to make sure nothing crashes 
+  def test_round_live
+    trades = @controller.round
+    assert trades.length > 2, 'Market trade orders were not executed'
   end
 end

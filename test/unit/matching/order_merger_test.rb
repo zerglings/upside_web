@@ -178,13 +178,13 @@ class OrderMergerTest < ActiveSupport::TestCase
     
     buy_queue = [[high_bid, low_bid], [market_bid]]
     sell_queue = [[low_ask, high_ask], [market_ask]]
-    trades = @merger.merge_queues buy_queue, sell_queue, [91.0, 94.5]
+    trades = @merger.merge_queues buy_queue, sell_queue, [91.0, 94.55]
     
     assert_equal [[low_bid], []], buy_queue, 'Buy queue improperly processed'
     assert_equal [[high_ask], []], sell_queue, 'Sell queue improperly processed'
-    assert_equal ['92.50', '92.50', '93.00', '93.00', '92.75', '92.75',
-                  '94.50'],
-                 trades.map { |t| '%.2f' % t.price.to_f }, 'Bad trade prices'
+    assert_equal ['92.500', '92.500', '93.000', '93.000', '92.780', '92.780',
+                  '94.550'],
+                 trades.map { |t| '%.3f' % t.price.to_f }, 'Bad trade prices'
     assert_equal [500, 500, 500, 500, 100, 100, 400],
                  trades.map(&:quantity), 'Bad trade quantities'
     assert_equal [high_bid, low_ask, high_bid, market_ask,
