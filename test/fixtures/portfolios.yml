@@ -12,6 +12,14 @@ admin:
   user: admin
   cash: 25_000.00
 
+short_lover:
+  user: short_lover
+  cash: 250000
+  
+long_lover:
+  user: long_lover
+  cash: 250000
+
 match_buyer:
   user: match_buyer
   cash: 250_000.00
