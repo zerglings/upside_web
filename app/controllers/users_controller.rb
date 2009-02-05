@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_filter :ensure_admin_authenticated
+  
   # GET /users
   # GET /users.xml
   def index
@@ -64,7 +66,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.update_attributes(params[:user])
         flash[:notice] = "User #{@user.name} was successfully updated."
-        format.html { redirect_to(:action => :index) }
+        format.html { redirect_to(:controller => :portfolios, :action => @user.portfolio.id) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

@@ -11,13 +11,11 @@ class SessionsControllerTest < ActionController::TestCase
   def test_index_without_user
     get :index
     assert_redirected_to :action => :new
-    assert_equal "Please log in", flash[:error]
   end
   
-  def test_index_with_user
+  def test_index_with_valid_user
     get :index, {}, { :user_id => users(:rich_kid).id }
-    assert_response :success
-    assert_template "index"
+    assert_redirected_to @user.portfolio
   end
   
   def test_login_good_user_and_password

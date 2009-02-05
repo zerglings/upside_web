@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+  before_filter :ensure_user_authenticated, :only => [:index]
   protect_from_forgery :except => [:create]
   
   def new
@@ -37,11 +38,7 @@ class SessionsController < ApplicationController
   end
 
   def index
-    if session[:user_id] != nil
       @user = User.find session[:user_id]
-    else
-      flash[:error] = "Please log in"
-      redirect_to :action => :new
-    end
+      redirect_to @user.portfolio
   end
 end

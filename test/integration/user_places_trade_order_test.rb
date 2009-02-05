@@ -4,6 +4,43 @@ class UserPlacesTradeOrderTest < ActionController::IntegrationTest
   fixtures :all
 
 =begin
+Existent user returns to the site and logs in. 
+User views his portfolio and decides to place an order. 
+User creates and places a new order.
+The trade order is added to the trade order table.
+User is redirected to his portfolio and sees the new order in list of trade orders.
+User logs out. 
+=end
+  test "existing user places trade order" do
+    
+    @user = users(:rich_kid)
+    @portfolio = @user.portfolio
+    get "/sessions/new"
+    assert_response :success
+    
+    post_via_redirect "/sessions", :name => @user.name,
+                                   :password => 'password'
+ 
+    assert_equal @user.id, session[:user_id]
+    assert_response :success
+    
+    assert_equal 3, @user.portfolio.trade_orders.length
+    assert_equal 10_000_000.000, @portfolio.cash
+    
+    post "/trade_orders", :trade_order => {:is_limit => false, 
+                                           :ticker => "MS", 
+                                           :quantity => 40, 
+                                           :is_buy => true,
+                                           :is_long => true}
+    assert_redirected_to "/portfolios/#{@portfolio.id}"
+    assert 4, @user.portfolio.trade_orders.length
+    
+    delete "/sessions/1"
+    assert_redirected_to "/sessions/new"
+    assert_equal nil, session[:user_id]
+  end
+  
+=begin
 User decides to create a new account on the website.
 An associated portfolio is automatically created.
   
@@ -15,7 +52,7 @@ The trade order is added to the trade order table.
 User is redirected to his portfolio and sees the new order in a list of trade
 orders.
 User finally logs out.
-=end
+
   test "user places trade order" do
     get "/users/new"
     assert_response :success
@@ -55,4 +92,5 @@ User finally logs out.
     assert_redirected_to "/sessions/new"
     assert_equal nil, session[:user_id]
   end
+=end  
 end
