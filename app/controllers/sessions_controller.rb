@@ -38,7 +38,6 @@ class SessionsController < ApplicationController
   end
 
   def index
-      @user = User.find session[:user_id]
-      redirect_to @user.portfolio
+    redirect_to @s_user.portfolio
   end
 end
