@@ -5,7 +5,7 @@ class Trade < ActiveRecord::Base
   
   # trade execution time
   validates_datetime :time,
-                      :allow_nil => false
+                     :allow_nil => false
   
   # quantity / number of shares exchanged
   validates_presence_of :quantity,
@@ -64,6 +64,9 @@ class Trade < ActiveRecord::Base
     adjust_portfolio_cash! portfolio
     position.save!
     portfolio.save!
+    
+    trade_order.unfilled_quantity -= quantity
+    trade_order.save!
   end
   private :execute_without_transaction!
   

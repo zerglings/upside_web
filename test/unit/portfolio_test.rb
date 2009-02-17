@@ -12,7 +12,7 @@ class PortfolioTest < ActiveSupport::TestCase
   end
   
   def test_unique_user_id
-    @portfolio.user_id = portfolios(:site_user).user_id
+    @portfolio.user_id = portfolios(:device_user).user_id
     assert !@portfolio.valid?
   end
   

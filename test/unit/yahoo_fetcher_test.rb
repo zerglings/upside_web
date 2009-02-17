@@ -53,4 +53,30 @@ END
     markets_array = YahooFetcher.markets_for_tickers(["mrk", "qwerty","cvs"])
     assert_equal ["NYSE", :not_found, "NYSE"], markets_array
   end
+  
+  def test_spreads_for_tickers_parsing
+    fetched_data = <<END
+96.27,0.00,91.51,90.13
+0.00,330.15,0.00,338.53
+18.00,17.05,17.83,17.10
+END
+    flexmock(YahooFetcher).should_receive(:fetch_data).with_any_args.
+                           and_return(fetched_data)
+
+    tickers = ['AAPL', 'GOOG', 'MSFT']
+    golden_spreads = [{:ask => 96.27, :bid => 89.68},
+                      {:ask => 345.30, :bid => 330.15},
+                      {:ask => 18.00, :bid => 17.05}]
+    assert_equal golden_spreads, YahooFetcher.spreads_for_tickers(tickers)
+  end
+  
+  def test_spreads_for_tickers_live
+    tickers = ['AAPL', 'GOOG', 'MSFT']    
+    spreads = YahooFetcher.spreads_for_tickers(tickers)
+    assert_equal 3, spreads.length
+    spreads.each_with_index do |spread, index|
+      assert spread[:ask] > 0.0, "Zero ask in spread for #{tickers[index]}"
+      assert spread[:bid] > 0.0, "Zero bid in spread for #{tickers[index]}"
+    end
+  end
 end

@@ -20,7 +20,7 @@ buy_long_with_stop_order:
   limit_price: 
   expiration_time: 2020-01-10 14:42:17
   quantity: 2000
-  unfilled_quantity: 2000
+  unfilled_quantity: 0
 
 buy_short_with_limit_order:
   portfolio: rich_kid
@@ -31,7 +31,7 @@ buy_short_with_limit_order:
   limit_price: 14.98
   expiration_time: 2010-01-10 14:42:17
   quantity: 200
-  unfilled_quantity: 200
+  unfilled_quantity: 0
   
 sell_long_without_stop_or_limit_orders: 
   portfolio: admin 
@@ -42,7 +42,8 @@ sell_long_without_stop_or_limit_orders:
   limit_price:
   expiration_time: 2010-03-10 14:42:17
   quantity: 40000
-  unfilled_quantity: 40000
+  unfilled_quantity: 0
+
   
 sell_short_without_stop_or_limit_orders: 
   portfolio: some_guy
@@ -98,3 +99,47 @@ long_lover_covers_gs_short_without_stop_or_limit_orders:
   expiration_time: 2010-02-14 14:42:17
   quantity: 900
   unfilled_quantity: 0
+
+buy_gs_at_market:
+  portfolio: match_buyer
+  stock: gs
+  is_buy: true
+  is_long: true
+  stop_price: 
+  limit_price:
+  expiration_time: 2010-03-10 14:42:17
+  quantity: 100
+  unfilled_quantity: 100
+  
+sell_gs_low:
+  portfolio: match_seller
+  stock: gs
+  is_buy: false
+  is_long: true
+  stop_price: 
+  limit_price: 2.50
+  expiration_time: 2010-03-10 14:42:17
+  quantity: 100
+  unfilled_quantity: 50
+
+buy_ms_high:
+  portfolio: match_buyer
+  stock: ms
+  is_buy: true
+  is_long: true
+  stop_price: 
+  limit_price: 90.5
+  expiration_time: 2010-03-10 14:42:17
+  quantity: 200
+  unfilled_quantity: 200
+  
+sell_ms_at_market:
+  portfolio: match_seller
+  stock: ms
+  is_buy: false
+  is_long: true
+  stop_price:
+  limit_price:
+  expiration_time: 2010-03-10 14:42:17
+  quantity: 150
+  unfilled_quantity: 99

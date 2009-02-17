@@ -4,8 +4,8 @@ rich_kid:
   user: rich_kid
   cash: 10_000_000.00
 
-site_user:
-  user: site_user
+device_user:
+  user: device_user
   cash: 9.99
   
 admin:
@@ -19,3 +19,11 @@ short_lover:
 long_lover:
   user: long_lover
   cash: 250000
+
+match_buyer:
+  user: match_buyer
+  cash: 250_000.00
+
+match_seller:
+  user: match_seller
+  cash: 250_000.00
