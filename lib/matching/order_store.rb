@@ -5,7 +5,7 @@ class Matching::OrderStore
     # @limit_orders and @market_orders are similar data structures. Each is a
     # two-level hash, where the first level separates buy and sell orders, and
     # the second level separates trades according to their stock IDs.
-    # Example: @limit_orders[true][5] holds all the buy orders for stock 2.
+    # Example: @limit_orders[true][2] holds all the buy orders for stock 2.
     #
     # The final values in @limit_orders and @market_orders are priority queues
     # holding orders of the same kind (limit/market, buy/sell) for some stock.
