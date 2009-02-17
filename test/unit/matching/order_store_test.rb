@@ -13,10 +13,15 @@ module Enumerable
 end
 
 class OrderStoreTest < ActiveSupport::TestCase
-  def trade_order_from_line(line)
-    TradeOrder.new :ticker => line[0], :is_buy => line[1],
-                   :quantity => line[2], :limit_price => line[3],
-                   :is_long => true, :expiration_time => Time.now + 1.day                   
+  @@trade_order_id = 0
+  def trade_order_from_line(line)    
+    returning TradeOrder.new(:ticker => line[0], :is_buy => line[1],
+                             :quantity => line[2], :limit_price => line[3],
+                             :is_long => true,
+                             :expiration_time => Time.now + 1.day) do |order|
+      @@trade_order_id += 1
+      order.id = @@trade_order_id
+    end
   end
   
   def setup
@@ -46,10 +51,10 @@ class OrderStoreTest < ActiveSupport::TestCase
     
     assert_equal [@aapl.id, @goog.id, @msft.id].sort, @store.stock_ids.sort
     assert_equal [BigDecimal('75.3'), BigDecimal('79.8')],
-                 @store.spread(@aapl.id)
+                 @store.internal_spread(@aapl.id)
     assert_equal [BigDecimal('299.5'), BigDecimal('298.5')],
-                 @store.spread(@goog.id)
-    assert_equal [nil, nil], @store.spread(@msft.id)
+                 @store.internal_spread(@goog.id)
+    assert_equal [nil, nil], @store.internal_spread(@msft.id)
   end
     
   def test_fill_appl
@@ -59,7 +64,7 @@ class OrderStoreTest < ActiveSupport::TestCase
     deleted = @store.delete_orders @aapl.id, false, 80.7
     assert_equal([[4, 3], [2]].deep_map { |i| @orders[i] }, deleted)
     
-    assert_equal [nil, nil], @store.spread(@aapl.id)
+    assert_equal [nil, nil], @store.internal_spread(@aapl.id)
     assert_equal [@goog.id, @msft.id].sort, @store.stock_ids.sort
   end
   

@@ -2,6 +2,16 @@
 # to determine when the orders can be filled.
 class Matching::OrderStore
   def initialize
+    # @limit_orders and @market_orders are similar data structures. Each is a
+    # two-level hash, where the first level separates buy and sell orders, and
+    # the second level separates trades according to their stock IDs.
+    # Example: @limit_orders[true][5] holds all the buy orders for stock 2.
+    #
+    # The final values in @limit_orders and @market_orders are priority queues
+    # holding orders of the same kind (limit/market, buy/sell) for some stock.
+    # The priorities reflect the order that trade orders should be filled in
+    # (higher bids before lower bids, earlier orders before later orders).   
+    
     @limit_orders = {
       true => Hash.new,
       false => Hash.new
@@ -17,12 +27,17 @@ class Matching::OrderStore
   # queue. 
   def self.order_priority(trade_order)
     if trade_order.is_buy?
-      return 1_000_000_000.0 unless trade_order.is_limit?
-      return trade_order.limit_price
+      price_priority = trade_order.limit_price || 1_000_000_000.0
     else
-      return 0.0 unless trade_order.is_limit?
-      return -trade_order.limit_price
+      # When limit_price is an ask, using its negative as a priority puts lower
+      # asks before higher asks. All prices are positive, so all limit orders
+      # have negative priorities. So market orders, with priority 0, will go
+      # before limit orders.
+      price_priority = -(trade_order.limit_price || 0.0)
     end
+    # ActiveRecord IDs reflect the order that models are created in. Therefore,
+    # using their negatives prioritizes early orders over late orders. 
+    return [price_priority, -trade_order.id]
   end
   
   # Inserts a new order in the data structure.
@@ -32,7 +47,7 @@ class Matching::OrderStore
       priority = Matching::OrderStore.order_priority trade_order
       bucket = @limit_orders[trade_order.is_buy?]
       bucket[stock_id] ||= Matching::PriorityQueue.new
-      bucket[stock_id].insert [priority, trade_order.id || 0], trade_order
+      bucket[stock_id].insert priority, trade_order
     else
       bucket = @market_orders[trade_order.is_buy?]
       bucket[stock_id] ||= Array.new
@@ -47,16 +62,18 @@ class Matching::OrderStore
     @stock_ids.to_a
   end
   
-  # The top market price among all the orders for a stock.
-  def market_price(stock_id, is_buy)
+  # The internal market price for a stock.
+  def internal_market_price(stock_id, is_buy)
     return nil unless bucket = @limit_orders[is_buy][stock_id]
     return nil unless top_priority = bucket.top_priority
     return is_buy ? top_priority.first : -top_priority.first
   end
   
-  # The spread ([highest buy, lowest sell]) for a stock ID.
-  def spread(stock_id)
-    [market_price(stock_id, true), market_price(stock_id, false)]
+  # The spread ([highest buy, lowest sell]) for a stock ID, on the internal
+  # market.
+  def internal_spread(stock_id)
+    [internal_market_price(stock_id, true),
+     internal_market_price(stock_id, false)]
   end
   
   # Extracts the market orders for a ticker that meet a given limit price.
@@ -69,7 +86,7 @@ class Matching::OrderStore
   
   # Extracts the limit orders for a ticker that meet a given limit price.
   #
-  # Does not update stock IDs. Clients should use extract_orders.
+  # Does not update stock IDs. Clients should use delete_orders.
   def delete_limit_orders(stock_id, is_buy, limit_price)
     orders = []
     bucket = @limit_orders[is_buy][stock_id]
