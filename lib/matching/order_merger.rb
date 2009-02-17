@@ -17,6 +17,8 @@ class Matching::OrderMerger
   # Market orders are interleaved with limit orders, assuming their prices are
   # set at the official ask price.
   def first_buy_order(buy_orders, official_spread)
+    # buy_orders[0] is the queue for limit orders
+    # buy_orders[1] is the queue for market orders
     return buy_orders[1], buy_orders[1].first if buy_orders[0].empty?
     
     limit_order = buy_orders[0].first
@@ -31,6 +33,8 @@ class Matching::OrderMerger
   # Market orders are interleaved with limit orders, assuming their prices are
   # set at the official bid price.
   def first_sell_order(sell_orders, official_spread)
+    # sell_orders[0] is the queue for limit orders
+    # sell_orders[1] is the queue for market orders
     return sell_orders[1], sell_orders[1].first if sell_orders[0].empty?
     
     limit_order = sell_orders[0].first
