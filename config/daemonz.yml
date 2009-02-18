@@ -44,8 +44,8 @@
 # stop_binary.
 :root_path: <%= RAILS_ROOT %>
 
-# Where daemonz should log - set to either stdout or stderr.
-:logger: stdout
+# Where daemonz should log - set to stdout, stderr, or rails.
+:logger: rails
 
 # Set to true to completely disable daemonz, and not load any plugins.
 :disabled: false
