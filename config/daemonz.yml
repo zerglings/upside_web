@@ -1,17 +1,58 @@
+# Configuration file for the daemonz plugin.
+#
+# For documentation and examples, refer to the original template in
+# vendor/daemonz/config_template.yml
+
 --- 
+# Descriptions of the daemons to be managed by daemonz.
+#
+# daemonz starts the daemons according to the alphabetic order of their names.
+# start_order can be used to override this order. Daemons will be stored in the
+# reverse order of their starting order.
+#
+# daemonz likes to ensure that multiple instances of a daemon don't run at the
+# same time, as this can be fatal for daemons with on-disk state, like ferret.
+# So daemonz ensures that a daemon is dead before starting it, and right after
+# stopping it. This is achieved using the following means:
+#   * Stop commands: first, daemonz uses the stop command supplied in the daemon
+#                    configuration
+#   * PID files: if the daemon has .pid files, daemonz tries to read the file
+#                and find the corresponding processes, then tree-kills them
+#   * Process table: if possible, daemonz dumps the process table, looks for the 
+#                    processes that look like the daemon, and tree-kills them
+#   * Pattern matching: processes whose command lines have the same arguments as
+#                       those given to daemon "look like" that daemon
+#   * Tree killing: a daemon is killed by killing its main process, together
+#                   with all processes descending from that process; a process
+#                   is first sent SIGTERM and, if it's still alive after a
+#                   couple of seconds, it's sent a SIGKILL
 :daemons: 
   matcher:
+    # Pattern for the PID file(s) used by the daemon.
     :pids: tmp/TradeMatcher.pid
+    # The same binary is used to start and stop starling.  
     :binary: script/background/trade_matcher.rb 
+    # The arguments to be given to the start and stop commands.
     :start_args: start <%= RAILS_ENV %>
     :stop_args: stop
+    # Time to wait after sending the stop command, before killing the daemon.    
     :delay_before_kill: 1.0
+    # daemonz will ignore this daemon configuration when this flag is true    
     :disabled: false
     
-
-:disabled: false
+# The base path for daemon binaries specified in binary, start_binary and
+# stop_binary.
 :root_path: <%= RAILS_ROOT %>
+
+# Where daemonz should log - set to either stdout or stderr.
 :logger: stdout
+
+# Set to true to completely disable daemonz, and not load any plugins.
+:disabled: false
+
+# daemonz is loaded every time the Rails framework is loaded. Sometimes
+# (e.g. when performing migrations) daemons aren't required, so we shouldn't
+# have to wait for the few seconds it takes to start / stop daemons. 
 :disabled_for: 
 - 'rake'
 - 'script/generate'
