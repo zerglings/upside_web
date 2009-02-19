@@ -1,3 +1,14 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: markets
+#
+#  id         :integer         not null, primary key
+#  name       :string(64)      not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class Market < ActiveRecord::Base
   has_many :stocks, :dependent => :nullify
   

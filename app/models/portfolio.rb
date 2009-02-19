@@ -1,3 +1,15 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: portfolios
+#
+#  id         :integer         not null, primary key
+#  user_id    :integer         not null
+#  cash       :decimal(20, 2)  default(250000.0), not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class Portfolio < ActiveRecord::Base
   MAX_CASH = (10**13 -0.01)
   NEW_PLAYER_CASH = 250000

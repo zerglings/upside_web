@@ -1,3 +1,13 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: order_cancellations
+#
+#  id             :integer         not null, primary key
+#  trade_order_id :integer         not null
+#  created_at     :datetime
+#
+
 class OrderCancellation < ActiveRecord::Base
   belongs_to :trade_order
   

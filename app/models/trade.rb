@@ -1,3 +1,17 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: trades
+#
+#  id             :integer         not null, primary key
+#  time           :datetime        not null
+#  quantity       :integer(22)     not null
+#  trade_order_id :integer(16)     not null
+#  counterpart_id :integer(16)
+#  price          :decimal(8, 2)   not null
+#  created_at     :datetime
+#
+
 class Trade < ActiveRecord::Base
   include ModelLimits
   

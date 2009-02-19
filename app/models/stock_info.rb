@@ -1,3 +1,15 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: stock_infos
+#
+#  id           :integer         not null, primary key
+#  stock_id     :integer         not null
+#  company_name :string(128)     not null
+#  created_at   :datetime
+#  updated_at   :datetime
+#
+
 class StockInfo < ActiveRecord::Base
   belongs_to :stock
   

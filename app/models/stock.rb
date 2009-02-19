@@ -1,3 +1,13 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: stocks
+#
+#  id        :integer         not null, primary key
+#  ticker    :string(16)      not null
+#  market_id :integer         not null
+#
+
 class Stock < ActiveRecord::Base
   belongs_to :market
   has_one :stock_info

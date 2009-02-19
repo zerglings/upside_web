@@ -1,3 +1,18 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: users
+#
+#  id            :integer         not null, primary key
+#  name          :string(64)      not null
+#  password_hash :string(64)      not null
+#  password_salt :string(4)       not null
+#  pseudo_user   :boolean         default(TRUE), not null
+#  is_admin      :boolean         not null
+#  created_at    :datetime
+#  updated_at    :datetime
+#
+
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 rich_kid:

@@ -1,3 +1,22 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: trade_orders
+#
+#  id                :integer         not null, primary key
+#  portfolio_id      :integer(64)     not null
+#  stock_id          :integer(64)     not null
+#  is_buy            :boolean         default(TRUE), not null
+#  is_long           :boolean         default(TRUE), not null
+#  stop_price        :decimal(8, 2)
+#  limit_price       :decimal(8, 2)
+#  expiration_time   :datetime
+#  quantity          :integer(64)     not null
+#  unfilled_quantity :integer(64)     not null
+#  created_at        :datetime
+#  updated_at        :datetime
+#
+
 class TradeOrder < ActiveRecord::Base
   include ModelLimits
   

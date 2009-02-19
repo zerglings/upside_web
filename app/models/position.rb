@@ -1,3 +1,19 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: positions
+#
+#  id                :integer         not null, primary key
+#  portfolio_id      :integer         not null
+#  stock_id          :integer         not null
+#  is_long           :boolean         not null
+#  quantity          :integer         not null
+#  average_base_cost :float
+#  decimal           :float
+#  created_at        :datetime
+#  updated_at        :datetime
+#
+
 class Position < ActiveRecord::Base
   belongs_to :portfolio
   belongs_to :stock

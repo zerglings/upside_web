@@ -1,3 +1,16 @@
+# == Schema Information
+# Schema version: 20090120032718
+#
+# Table name: devices
+#
+#  id              :integer         not null, primary key
+#  unique_id       :string(64)      not null
+#  last_activation :datetime        not null
+#  user_id         :integer         not null
+#  created_at      :datetime
+#  updated_at      :datetime
+#
+
 class Device < ActiveRecord::Base
   belongs_to :user
   
