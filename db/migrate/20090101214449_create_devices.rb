@@ -3,7 +3,7 @@ class CreateDevices < ActiveRecord::Migration
     create_table :devices do |t|
       t.string :unique_id, :limit => 64, :null => false
       t.datetime :last_activation, :null => false
-      t.integer :user_id, :null => false
+      t.integer :user_id, :limit => 64, :null => false
 
       t.timestamps
     end

@@ -3,8 +3,8 @@ class CreateTrades < ActiveRecord::Migration
     create_table :trades do |t|
       t.datetime :time, :null => false
       t.integer :quantity, :null => false, :limit => 22
-      t.integer :trade_order_id, :null => false, :limit => 16
-      t.integer :counterpart_id, :null => true, :limit => 16
+      t.integer :trade_order_id, :limit => 64, :null => false
+      t.integer :counterpart_id, :limit => 64, :null => true
       t.decimal :price, :null => false, :precision => 8, :scale => 2
 
       t.datetime :created_at
