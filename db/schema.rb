@@ -12,102 +12,102 @@
 ActiveRecord::Schema.define(:version => 20090120032718) do
 
   create_table "devices", :force => true do |t|
-    t.column "unique_id",       :string,   :limit => 64, :null => false
-    t.column "last_activation", :datetime,               :null => false
-    t.column "user_id",         :integer,                :null => false
-    t.column "created_at",      :datetime
-    t.column "updated_at",      :datetime
+    t.string   "unique_id",       :limit => 64, :null => false
+    t.datetime "last_activation",               :null => false
+    t.integer  "user_id",                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true
   add_index "devices", ["user_id"], :name => "index_devices_on_user_id"
 
   create_table "markets", :force => true do |t|
-    t.column "name",       :string,   :limit => 64, :null => false
-    t.column "created_at", :datetime
-    t.column "updated_at", :datetime
+    t.string   "name",       :limit => 64, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "order_cancellations", :force => true do |t|
-    t.column "trade_order_id", :integer,  :null => false
-    t.column "created_at",     :datetime
+    t.integer  "trade_order_id", :null => false
+    t.datetime "created_at"
   end
 
   add_index "order_cancellations", ["trade_order_id"], :name => "index_order_cancellations_on_trade_order_id", :unique => true
 
   create_table "portfolios", :force => true do |t|
-    t.column "user_id",    :integer,                                                       :null => false
-    t.column "cash",       :decimal,  :precision => 20, :scale => 2, :default => 250000.0, :null => false
-    t.column "created_at", :datetime
-    t.column "updated_at", :datetime
+    t.integer  "user_id",                                                         :null => false
+    t.decimal  "cash",       :precision => 20, :scale => 2, :default => 250000.0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "portfolios", ["user_id"], :name => "index_portfolios_on_user_id", :unique => true
 
   create_table "positions", :force => true do |t|
-    t.column "portfolio_id",      :integer,  :null => false
-    t.column "stock_id",          :integer,  :null => false
-    t.column "is_long",           :boolean,  :null => false
-    t.column "quantity",          :integer,  :null => false
-    t.column "average_base_cost", :float
-    t.column "decimal",           :float
-    t.column "created_at",        :datetime
-    t.column "updated_at",        :datetime
+    t.integer  "portfolio_id",      :null => false
+    t.integer  "stock_id",          :null => false
+    t.boolean  "is_long",           :null => false
+    t.integer  "quantity",          :null => false
+    t.float    "average_base_cost"
+    t.float    "decimal"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "positions", ["portfolio_id", "stock_id", "is_long"], :name => "index_positions_on_portfolio_id_and_stock_id_and_is_long", :unique => true
 
   create_table "stock_infos", :force => true do |t|
-    t.column "stock_id",     :integer,                 :null => false
-    t.column "company_name", :string,   :limit => 128, :null => false
-    t.column "created_at",   :datetime
-    t.column "updated_at",   :datetime
+    t.integer  "stock_id",                    :null => false
+    t.string   "company_name", :limit => 128, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "stock_infos", ["stock_id"], :name => "index_stock_infos_on_stock_id", :unique => true
 
   create_table "stocks", :force => true do |t|
-    t.column "ticker",    :string,  :limit => 16, :null => false
-    t.column "market_id", :integer,               :null => false
+    t.string  "ticker",    :limit => 16, :null => false
+    t.integer "market_id",               :null => false
   end
 
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
-    t.column "portfolio_id",      :integer,                                                  :null => false
-    t.column "stock_id",          :integer,                                                  :null => false
-    t.column "is_buy",            :boolean,                                :default => true, :null => false
-    t.column "is_long",           :boolean,                                :default => true, :null => false
-    t.column "stop_price",        :decimal,  :precision => 8, :scale => 2
-    t.column "limit_price",       :decimal,  :precision => 8, :scale => 2
-    t.column "expiration_time",   :datetime
-    t.column "quantity",          :integer,                                                  :null => false
-    t.column "unfilled_quantity", :integer,                                                  :null => false
-    t.column "created_at",        :datetime
-    t.column "updated_at",        :datetime
+    t.integer  "portfolio_id",                                                      :null => false
+    t.integer  "stock_id",                                                          :null => false
+    t.boolean  "is_buy",                                          :default => true, :null => false
+    t.boolean  "is_long",                                         :default => true, :null => false
+    t.decimal  "stop_price",        :precision => 8, :scale => 2
+    t.decimal  "limit_price",       :precision => 8, :scale => 2
+    t.datetime "expiration_time"
+    t.integer  "quantity",                                                          :null => false
+    t.integer  "unfilled_quantity",                                                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "trade_orders", ["portfolio_id"], :name => "index_trade_orders_on_portfolio_id"
 
   create_table "trades", :force => true do |t|
-    t.column "time",           :datetime,                               :null => false
-    t.column "quantity",       :integer,                                :null => false
-    t.column "trade_order_id", :integer,                                :null => false
-    t.column "counterpart_id", :integer
-    t.column "price",          :decimal,  :precision => 8, :scale => 2, :null => false
-    t.column "created_at",     :datetime
+    t.datetime "time",                                         :null => false
+    t.integer  "quantity",                                     :null => false
+    t.integer  "trade_order_id",                               :null => false
+    t.integer  "counterpart_id"
+    t.decimal  "price",          :precision => 8, :scale => 2, :null => false
+    t.datetime "created_at"
   end
 
   add_index "trades", ["trade_order_id"], :name => "index_trades_on_trade_order_id"
 
   create_table "users", :force => true do |t|
-    t.column "name",          :string,   :limit => 64,                    :null => false
-    t.column "password_hash", :string,   :limit => 64,                    :null => false
-    t.column "password_salt", :string,   :limit => 4,                     :null => false
-    t.column "pseudo_user",   :boolean,                :default => true,  :null => false
-    t.column "is_admin",      :boolean,                :default => false, :null => false
-    t.column "created_at",    :datetime
-    t.column "updated_at",    :datetime
+    t.string   "name",          :limit => 64,                    :null => false
+    t.string   "password_hash", :limit => 64,                    :null => false
+    t.string   "password_salt", :limit => 4,                     :null => false
+    t.boolean  "pseudo_user",                 :default => true,  :null => false
+    t.boolean  "is_admin",                    :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "users", ["name"], :name => "index_users_on_name", :unique => true

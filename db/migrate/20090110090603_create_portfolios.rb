@@ -1,7 +1,7 @@
 class CreatePortfolios < ActiveRecord::Migration
   def self.up
     create_table :portfolios do |t|
-      t.integer :user_id, :limit => 64, :null => false
+      t.integer :user_id, :limit => 20, :null => false
       t.decimal :cash, :precision => 20, :scale => 2, :null => false,
                        :default => Portfolio::NEW_PLAYER_CASH
 
