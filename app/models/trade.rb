@@ -73,7 +73,7 @@ class Trade < ActiveRecord::Base
                               :stock_id => trade_order.stock_id, 
                               :is_long => trade_order.is_long,
                               :quantity => quantity,
-                              :average_base_cost => 0)
+                              :average_base_cost => price)
     end
     adjust_portfolio_cash! portfolio
     position.save!
@@ -102,7 +102,7 @@ class Trade < ActiveRecord::Base
   private :adjust_portfolio_cash!
   
   def adjust_position_average_base_cost!(position)
-    
+    # TODO(nightshade): implement and test average base price
   end
   private :adjust_position_average_base_cost!
   
