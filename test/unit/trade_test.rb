@@ -115,12 +115,14 @@ class TradeTest < ActiveSupport::TestCase
    assert !@trade.valid?
  end
  
- # Boosts a trade order's unfilled shares, so a trade can execute. 
+ # Boosts a trade order's unfilled shares, so a trade can execute.
+ # This is a hack we're using so we can use fixtures that have unfilled_quantity
+ # set to 0. Changing the fixtures would break other tests. One day...
  def boost_unfilled_quantity(trade)
    trade.trade_order.unfilled_quantity = trade.quantity
  end
  
- def test_create_trade_also_creates_position_if_position_is_initially_nonexistent
+ def test_execute_trade_creates_position
    boost_unfilled_quantity @long_buys_long_trade
    @long_buys_long_trade.trade_order.save!
    @long_buys_long_trade.execute
@@ -133,7 +135,7 @@ class TradeTest < ActiveSupport::TestCase
    assert_equal 0, @long_buys_long_trade.trade_order.unfilled_quantity
  end
  
- def test_create_trade_also_updates_position_if_position_is_initially_existent
+ def test_execute_trade_updates_position
    @short_position = Position.find(:first, 
                                    :conditions => {:stock_id => @short_sells_short_trade.trade_order.stock_id,
                                                    :portfolio_id => @short_sells_short_trade.trade_order.portfolio_id,
