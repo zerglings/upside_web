@@ -10,9 +10,10 @@ class Matching::TradeMatchingController
   # Fetches orders from the database that have not been fetched before.
   # Returns a list of the newly fetched orders.  
   def sync_store
-    new_orders =
-        TradeOrder.find(:all, :conditions =>
-                        "id > #{@last_order_id} AND unfilled_quantity > 0")
+    new_orders = TradeOrder.uncached do
+      TradeOrder.find(:all, :conditions =>
+                      "id > #{@last_order_id} AND unfilled_quantity > 0")
+    end
     new_orders.each do |order|
       @store << order
       @last_order_id = order.id if order.id > @last_order_id

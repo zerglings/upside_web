@@ -1,10 +1,10 @@
 class CreatePositions < ActiveRecord::Migration
   def self.up
     create_table :positions do |t|
-      t.integer :portfolio_id, :null => false
-      t.integer :stock_id, :null => false
+      t.integer :portfolio_id, :limit => 20, :null => false
+      t.integer :stock_id, :limit => 20, :null => false
       t.boolean :is_long, :null => false
-      t.integer :quantity, :null => false
+      t.integer :quantity, :limit => 20, :null => false
       t.float :average_base_cost, :decimal, :precision => 8, :scale => 2
 
       t.timestamps

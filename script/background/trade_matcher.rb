@@ -5,6 +5,14 @@ RAILS_ENV = ARGV[1] || 'development'
 require File.dirname(__FILE__) + '/../../config/environment.rb'
 
 require 'simple-daemon'
+
+# Restore timestamps in the log.
+class Logger
+  def format_message(severity, timestamp, progname, msg)
+    "#{severity[0,1]} [#{timestamp} PID:#{$$}] #{progname}: #{msg}\n"
+  end
+end
+
 class TradeMatcher < SimpleDaemon::Base
   SimpleDaemon::WORKING_DIRECTORY = "#{RAILS_ROOT}/log"
   
@@ -12,7 +20,7 @@ class TradeMatcher < SimpleDaemon::Base
     STDOUT.sync = true
     @logger = Logger.new(STDOUT)
     @logger.level = RAILS_ENV =~ /prod/ ? Logger::INFO : Logger::DEBUG
-    unless RAILS_ENV =~ /prod/
+    unless RAILS_ENV =~ /prod/ || RAILS_ENV == 'test'
       # disable SQL logging that would happen every second
       ActiveRecord::Base.logger.level = Logger::INFO
     end
@@ -27,6 +35,7 @@ class TradeMatcher < SimpleDaemon::Base
       # execute tasks
       begin
         @controller.round
+        @logger.debug "Completed round" if RAILS_ENV == 'test'
       rescue Exception => e
         @logger.error "Error in matching - #{e.class.name}: #{e}"
         @logger.info e.backtrace.join("\n")

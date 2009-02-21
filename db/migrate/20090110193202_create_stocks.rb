@@ -2,7 +2,7 @@ class CreateStocks < ActiveRecord::Migration
   def self.up
     create_table :stocks do |t|
       t.string :ticker, :limit => 16, :null => false
-      t.integer :market_id, :null => false
+      t.integer :market_id, :limit => 20, :null => false
     end
     
     # Get the stock with a certain ticker.

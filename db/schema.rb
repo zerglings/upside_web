@@ -74,15 +74,15 @@ ActiveRecord::Schema.define(:version => 20090120032718) do
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
-    t.integer  "portfolio_id",      :limit => 64,                                                 :null => false
-    t.integer  "stock_id",          :limit => 64,                                                 :null => false
-    t.boolean  "is_buy",                                                        :default => true, :null => false
-    t.boolean  "is_long",                                                       :default => true, :null => false
-    t.decimal  "stop_price",                      :precision => 8, :scale => 2
-    t.decimal  "limit_price",                     :precision => 8, :scale => 2
+    t.integer  "portfolio_id",                                                      :null => false
+    t.integer  "stock_id",                                                          :null => false
+    t.boolean  "is_buy",                                          :default => true, :null => false
+    t.boolean  "is_long",                                         :default => true, :null => false
+    t.decimal  "stop_price",        :precision => 8, :scale => 2
+    t.decimal  "limit_price",       :precision => 8, :scale => 2
     t.datetime "expiration_time"
-    t.integer  "quantity",          :limit => 64,                                                 :null => false
-    t.integer  "unfilled_quantity", :limit => 64,                                                 :null => false
+    t.integer  "quantity",                                                          :null => false
+    t.integer  "unfilled_quantity",                                                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -90,11 +90,11 @@ ActiveRecord::Schema.define(:version => 20090120032718) do
   add_index "trade_orders", ["portfolio_id"], :name => "index_trade_orders_on_portfolio_id"
 
   create_table "trades", :force => true do |t|
-    t.datetime "time",                                                       :null => false
-    t.integer  "quantity",       :limit => 22,                               :null => false
-    t.integer  "trade_order_id", :limit => 16,                               :null => false
-    t.integer  "counterpart_id", :limit => 16
-    t.decimal  "price",                        :precision => 8, :scale => 2, :null => false
+    t.datetime "time",                                         :null => false
+    t.integer  "quantity",                                     :null => false
+    t.integer  "trade_order_id",                               :null => false
+    t.integer  "counterpart_id"
+    t.decimal  "price",          :precision => 8, :scale => 2, :null => false
     t.datetime "created_at"
   end
 
