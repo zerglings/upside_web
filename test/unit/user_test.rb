@@ -124,7 +124,7 @@ class UserTest < ActiveSupport::TestCase
   end  
 end
 
-class PseudoUserTest < Test::Unit::TestCase
+class PseudoUserTest < ActiveSupport::TestCase
   include CommonUserTests
   
   def setup

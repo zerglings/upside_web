@@ -1,3 +1,5 @@
+require 'date'
+
 module ValidatesTimeliness
   
   # A date and time format regular expression generator. Allows you to 
@@ -10,16 +12,14 @@ module ValidatesTimeliness
   # string values.
   #
   class Formats
-    cattr_accessor :time_formats
-    cattr_accessor :date_formats
-    cattr_accessor :datetime_formats
-    
-    cattr_accessor :time_expressions
-    cattr_accessor :date_expressions
-    cattr_accessor :datetime_expressions
-    
-    cattr_accessor :format_tokens
-    cattr_accessor :format_proc_args
+    cattr_accessor :time_formats,
+                   :date_formats,
+                   :datetime_formats,
+                   :time_expressions,
+                   :date_expressions,
+                   :datetime_expressions,
+                   :format_tokens,
+                   :format_proc_args
     
     # Format tokens:   
     #       y = year
@@ -115,7 +115,7 @@ module ValidatesTimeliness
       { 'mm'   => [ /m{2}/,  '(\d{2})',   :month ] },
       { 'm'    => [ /(\A|[^ap])m{1}/, '(\d{1,2})', :month ] },
       { 'yyyy' => [ /y{4,}/, '(\d{4})',   :year ] },
-      { 'yy'   => [ /y{2,}/, '(\d{2}|\d{4})', :year ] },
+      { 'yy'   => [ /y{2,}/, '(\d{4}|\d{2})', :year ] },
       { 'hh'   => [ /h{2,}/, '(\d{2})',   :hour ] },
       { 'h'    => [ /h{1}/,  '(\d{1,2})', :hour ] },
       { 'nn'   => [ /n{2,}/, '(\d{2})',   :min ]  },
@@ -139,13 +139,13 @@ module ValidatesTimeliness
     # should just be the arg name.
     #
     @@format_proc_args = {
-      :year     => [0, 'y', 'unambiguous_year(y)'],
-      :month    => [1, 'm', 'month_index(m)'],
-      :day      => [2, 'd', 'd'],
-      :hour     => [3, 'h', 'full_hour(h,md)'],
-      :min      => [4, 'n', 'n'],
-      :sec      => [5, 's', 's'],
-      :usec     => [6, 'u', 'microseconds(u)'],
+      :year     => [0,   'y', 'unambiguous_year(y)'],
+      :month    => [1,   'm', 'month_index(m)'],
+      :day      => [2,   'd', 'd'],
+      :hour     => [3,   'h', 'full_hour(h,md)'],
+      :min      => [4,   'n', 'n'],
+      :sec      => [5,   's', 's'],
+      :usec     => [6,   'u', 'microseconds(u)'],
       :meridian => [nil, 'md', nil]
     }
     
@@ -163,17 +163,18 @@ module ValidatesTimeliness
       # Returns 7 part time array.
       def parse(string, type, strict=true)
         return string unless string.is_a?(String)
-        
-        expressions = expression_set(type, string)
-        time_array = nil
-        expressions.each do |(regexp, processor)|
-          regexp = strict || type == :datetime ? /\A#{regexp}\Z/ : (type == :date ? /\A#{regexp}/ : /#{regexp}\Z/)
-          if matches = regexp.match(string.strip)
-            time_array = processor.call(*matches[1..7])
-            break
+
+        matches = nil
+        exp, processor = expression_set(type, string).find do |regexp, proc|
+          full = /\A#{regexp}\Z/ if strict
+          full ||= case type
+          when :date     then /\A#{regexp}/
+          when :time     then /#{regexp}\Z/
+          when :datetime then /\A#{regexp}\Z/
           end
+          matches = full.match(string.strip)
         end
-        return time_array
+        processor.call(*matches[1..7]) if matches
       end   
       
       # Delete formats of specified type. Error raised if format not found.
@@ -223,7 +224,7 @@ module ValidatesTimeliness
       def format_expression_generator(string_format)
         regexp = string_format.dup      
         order  = {}
-        regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes ]/
+        regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes
         
         format_tokens.each do |token|
           token_name = token.keys.first
@@ -260,24 +261,24 @@ module ValidatesTimeliness
       end
       
       def compile_formats(formats)
-        formats.collect { |format| regexp, format_proc = format_expression_generator(format) }
+        formats.map { |format| regexp, format_proc = format_expression_generator(format) }
       end
   
       # Pick expression set and combine date and datetimes for 
       # datetime attributes to allow date string as datetime
       def expression_set(type, string)
         case type
-          when :date
-            date_expressions
-          when :time
-            time_expressions
-          when :datetime
-            # gives a speed-up for date string as datetime attributes
-            if string.length < 11
-              date_expressions + datetime_expressions
-            else
-              datetime_expressions + date_expressions
-            end
+        when :date
+          date_expressions
+        when :time
+          time_expressions
+        when :datetime
+          # gives a speed-up for date string as datetime attributes
+          if string.length < 11
+            date_expressions + datetime_expressions
+          else
+            datetime_expressions + date_expressions
+          end
         end
       end
  
@@ -298,12 +299,22 @@ module ValidatesTimeliness
       
       def month_index(month)
         return month.to_i if month.to_i.nonzero?
-        Date::ABBR_MONTHNAMES.index(month.capitalize) || Date::MONTHNAMES.index(month.capitalize)
+        abbr_month_names.index(month.capitalize) || month_names.index(month.capitalize)
       end
-    
+
+      def month_names
+        defined?(I18n) ? I18n.t('date.month_names') : Date::MONTHNAMES
+      end
+
+      def abbr_month_names
+        defined?(I18n) ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
+      end
+
       def microseconds(usec)
         (".#{usec}".to_f * 1_000_000).to_i
       end
     end
   end
 end
+
+ValidatesTimeliness::Formats.compile_format_expressions

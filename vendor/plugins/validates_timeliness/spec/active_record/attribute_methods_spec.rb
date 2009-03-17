@@ -1,9 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
-  include ValidatesTimeliness::ActiveRecord::AttributeMethods
-  include ValidatesTimeliness::ValidationMethods
-  
   before do
     @person = Person.new
   end
@@ -21,6 +18,24 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
   it "should call write_date_time_attribute when datetime attribute assigned value" do
     @person.should_receive(:write_date_time_attribute)
     @person.birth_date_and_time = "2000-01-01 12:00"
+  end
+
+  it "should call read_date_time_attribute when date attribute is retrieved" do
+    @person.should_receive(:read_date_time_attribute)
+    @person.birth_date = "2000-01-01"
+    @person.birth_date
+  end
+
+  it "should call read_date_time_attribute when time attribute is retrieved" do
+    @person.should_receive(:read_date_time_attribute)
+    @person.birth_time = "12:00"
+    @person.birth_time
+  end
+
+  it "should call read_date_time_attribute when datetime attribute is retrieved" do
+    @person.should_receive(:read_date_time_attribute)
+    @person.birth_date_and_time = "2000-01-01 12:00"
+    @person.birth_date_and_time
   end
 
   it "should call parser on write for datetime attribute" do
@@ -51,6 +66,11 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
 
   it "should return Time object for datetime attribute read method when assigned Time object" do
     @person.birth_date_and_time = Time.now
+    @person.birth_date_and_time.should be_kind_of(Time)
+  end
+
+  it "should return Time object for datetime attribute read method when assigned Date object" do
+    @person.birth_date_and_time = Date.today
     @person.birth_date_and_time.should be_kind_of(Time)
   end
 

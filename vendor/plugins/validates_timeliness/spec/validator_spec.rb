@@ -16,55 +16,71 @@ describe ValidatesTimeliness::Validator do
     @person = Person.new
   end
 
-  describe "restriction_value" do
+  describe "option keys validation" do
+    before do
+      keys = ValidatesTimeliness::Validator::VALID_OPTIONS - [:invalid_date_message, :invalid_time_message, :with_date, :with_time]
+      @valid_options = keys.inject({}) {|hash, opt| hash[opt] = nil; hash }
+    end
+
+    it "should raise error if invalid option key passed" do
+      @valid_options.update(:invalid_key => 'will not open lock')
+      lambda { Person.validates_datetime(@valid_options) }.should raise_error(ArgumentError)
+    end
+
+    it "should not raise error if option keys are valid" do
+      lambda { Person.validates_datetime(@valid_options) }.should_not raise_error(ArgumentError)
+    end
+  end
+
+  describe "evaluate_option_value" do
     it "should return Time object when restriction is Time object" do
-      restriction_value(Time.now, :datetime).should be_kind_of(Time)
+      evaluate_option_value(Time.now, :datetime).should be_kind_of(Time)
     end
 
     it "should return Time object when restriction is string" do
-      restriction_value("2007-01-01 12:00", :datetime).should be_kind_of(Time)
+      evaluate_option_value("2007-01-01 12:00", :datetime).should be_kind_of(Time)
     end
 
     it "should return Time object when restriction is method and method returns Time object" do
       person.stub!(:datetime_attr).and_return(Time.now)
-      restriction_value(:datetime_attr, :datetime).should be_kind_of(Time)
+      evaluate_option_value(:datetime_attr, :datetime).should be_kind_of(Time)
     end
 
     it "should return Time object when restriction is method and method returns string" do
       person.stub!(:datetime_attr).and_return("2007-01-01 12:00")
-      restriction_value(:datetime_attr, :datetime).should be_kind_of(Time)
+      evaluate_option_value(:datetime_attr, :datetime).should be_kind_of(Time)
     end
 
     it "should return Time object when restriction is proc which returns Time object" do
-      restriction_value(lambda { Time.now }, :datetime).should be_kind_of(Time)
+      evaluate_option_value(lambda { Time.now }, :datetime).should be_kind_of(Time)
     end
 
     it "should return Time object when restriction is proc which returns string" do
-      restriction_value(lambda {"2007-01-01 12:00"}, :datetime).should be_kind_of(Time)
+      evaluate_option_value(lambda {"2007-01-01 12:00"}, :datetime).should be_kind_of(Time)
     end
 
     it "should return array of Time objects when restriction is array of Time objects" do
       time1, time2 = Time.now, 1.day.ago
-      restriction_value([time1, time2], :datetime).should == [time2, time1]
+      evaluate_option_value([time1, time2], :datetime).should == [time2, time1]
     end
 
     it "should return array of Time objects when restriction is array of strings" do
       time1, time2 = "2000-01-02", "2000-01-01"
-      restriction_value([time1, time2], :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
+      evaluate_option_value([time1, time2], :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
     end
 
     it "should return array of Time objects when restriction is Range of Time objects" do
       time1, time2 = Time.now, 1.day.ago
-      restriction_value(time1..time2, :datetime).should == [time2, time1]
+      evaluate_option_value(time1..time2, :datetime).should == [time2, time1]
     end
 
     it "should return array of Time objects when restriction is Range of time strings" do
       time1, time2 = "2000-01-02", "2000-01-01"
-      restriction_value(time1..time2, :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
+      evaluate_option_value(time1..time2, :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
     end
-    def restriction_value(restriction, type)
+    def evaluate_option_value(restriction, type)
       configure_validator(:type => type)
-      validator.send(:restriction_value, restriction, person)
+      validator.class.send(:evaluate_option_value, restriction, type, person)
     end
   end
 
@@ -330,6 +346,37 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "instance with :with_time option" do
+
+    it "should validate date attribute as datetime combining value of :with_time against restrictions " do
+      configure_validator(:type => :date, :with_time => '12:31', :on_or_before => Time.mktime(2000,1,1,12,30))
+      validate_with(:birth_date, "2000-01-01")
+      should_have_error(:birth_date, :on_or_before)
+    end
+
+    it "should skip restriction validation if :with_time value is nil" do
+      configure_validator(:type => :date, :with_time => nil, :on_or_before => Time.mktime(2000,1,1,12,30))
+      validate_with(:birth_date, "2000-01-01")
+      should_have_no_error(:birth_date, :on_or_before)
+    end
+
+  end
+
+  describe "instance with :with_date option" do
+
+    it "should validate time attribute as datetime combining value of :with_date against restrictions " do
+      configure_validator(:type => :time, :with_date => '2009-01-01', :on_or_before => Time.mktime(2000,1,1,12,30))
+      validate_with(:birth_date, "12:30")
+      should_have_error(:birth_date, :on_or_before)
+    end
+
+    it "should skip restriction validation if :with_date value is nil" do
+      configure_validator(:type => :time, :with_date => nil, :on_or_before => Time.mktime(2000,1,1,12,30))
+      validate_with(:birth_date, "12:30")
+      should_have_no_error(:birth_date, :on_or_before)
+    end
+  end
+
   describe "instance with mixed value and restriction types" do
 
     it "should validate datetime attribute with Date restriction" do
@@ -483,7 +530,7 @@ describe ValidatesTimeliness::Validator do
 
   def validate_with(attr_name, value)
     person.send("#{attr_name}=", value)
-    validator.call(person, attr_name)
+    validator.call(person, attr_name, value)
   end
 
   def should_have_error(attr_name, error)
