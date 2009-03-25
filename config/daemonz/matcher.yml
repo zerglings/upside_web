@@ -1,0 +1,13 @@
+---
+matcher:
+  # Pattern for the PID file(s) used by the daemon.
+  :pids: tmp/TradeMatcher.pid
+  # The same binary is used to start and stop starling.  
+  :binary: script/background/trade_matcher.rb 
+  # The arguments to be given to the start and stop commands.
+  :start_args: start <%= RAILS_ENV %>
+  :stop_args: stop
+  # Time to wait after sending the stop command, before killing the daemon.    
+  :delay_before_kill: 1.0
+  # daemonz will ignore this daemon configuration when this flag is true    
+  :disabled: false
