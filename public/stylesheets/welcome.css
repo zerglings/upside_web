@@ -51,19 +51,21 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 	color: #fff;
 }
 
-#welcome_body {
+.welcome_body {
 	background-color: #FDFCF4;
-	padding: 30px 0px;
+	padding-top: 30px;
+	overflow:hidden;
 }
 
-#welcome_body_left {
+.welcome_body_left {
 	width: 670px;
 }
 
-#welcome_body_right {
+.welcome_body_right {
 	width: 296px;
 	float: right;
 	margin: 0 50px 0 0;
+	display: inline-block;
 }
 
 #sign_in {	
@@ -78,6 +80,16 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 #header_quote {
 	width: 250px;
 	float: left;
+}
+
+#logo {
+  float: left;
+  width: 410px;
+  font-size: 50px;
+  line-height: 108px;
+  vertical-align: middle;
+  color: #fff;
+  padding-left: 40px;
 }
 
 /* sign in box */
@@ -110,19 +122,6 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 	padding: 8px 0px 8px 90px;
 }
 
-#sign_up {
- 	font-size: 16px;	
-	text-align: center;
-	padding: 3px 0px 8px 0px;
-}
-
-#app_store_badge {
-  border: none;
-}
-#app_store_badge img {
-	border: none;
-}
-
 /* sell */
 #sell {
 	margin-top: 25px;
@@ -134,7 +133,7 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 	font-style: italic;
 }
 
-/* screenshots and introduction */
+/* screenshots */
 #screenshots {
 	width: 592px;
 	height: 325px;
@@ -143,19 +142,22 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 	text-align:center;
 }
 
+/* introduction and sign up */
 #introduction p {
-	padding: 30px 20px 0px 50px;	
-	line-height: 22px;
+	padding: 0px 20px 0px 55px;	
+	line-height: 24px;
 }
 
-#logo {
-	float: left;
-	width: 410px;
-	font-size: 50px;
-	line-height: 108px;
-	vertical-align: middle;
-	color: #fff;
-	padding-left: 40px;
+#sign_up {
+  font-size: 16px;  
+  text-align: center;
+  padding: 3px 0px 8px 0px;
 }
 
-
+#app_store_badge {
+  border: none;
+}
+#app_store_badge img {
+  border: none;
+	margin: -6px 0px;
+}
