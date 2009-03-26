@@ -1,12 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!DOCTYPE html>
 
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-		<title>StockPlay</title>
+		<title>Welcome to StockPlay</title>
 		<link rel="stylesheet" href="stylesheets/welcome.css" 
-			type="text/css" media="screen" charset="utf-8" /> 
+			type="text/css" charset="utf-8" /> 
 	</head>
 	<body>
 		<div id="page"> 
@@ -17,19 +15,24 @@
 					<div id="header_graph"></div>
 				</div> 
 				<div id="welcome_body"> 
-					<div class="divider"></div>
 					<div id="welcome_body_right">
-						<div id="sign_in" class="border">
-							<%= render :partial => 'sessions/new' %>
-							<p id="sign_up">Don't have an account? Sign up!</p>
-						</div>
-						<div id="sell" class="border">
-							<p>...the leading virtual stock trading game for the iPhone and iPod Touch</p>
+						<div id="sign_in" class="welcome_border">
+              <%= render :partial => 'sessions/new' %>
+            </div>
+						<div id="sell" class="welcome_border">
+              <p>...the leading virtual stock trading game for the iPhone and iPod Touch</p>
+            </div>
+						
+						<div id="sign_up">	
+							<p>
+								Don't have an account? Get the app!
+							</p>
+							<a href="http://www.apple.com" id="app_store_badge"><img src="/images/welcome/app_store_badge.png" /></a>
 						</div>
 					</div>	
 					<div id="welcome_body_left">
-						<div id="screenshots" class="border">
-							<img src="images/welcome/screenshots.png" height="350px" width="592px" alt="screenshots of iPhone app" /> 
+						<div id="screenshots" class="welcome_border">
+							<img src="images/welcome/screenshots.png" height="325px" width="552px" alt="screenshots of iPhone app" /> 
 						</div>
 						<div id="introduction">
 							<p>Can you beat the market? Try StockPlay, the iPhone application that 
@@ -38,7 +41,6 @@
 							</p>					
 						</div>
 					</div>
-					<div class="divider"></div>
 				</div> 
 				<div id="welcome_footer"> 
 					<p id="copyright">Copyright &copy; 2009 Zergling.net, all rights reserved.</p>
