@@ -8,10 +8,9 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 	color: #555454;
 } 
 
-#page {
+body {
 	background-image: url(/images/welcome/gray_stripes_background.png);
 	background-repeat: repeat;
-	height: 800px;
 }
 
 #page_contents {
@@ -119,7 +118,7 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 
 #submit_button input {
 	border: none;
-	padding: 8px 0px 8px 75px;
+	padding: 8px 0px 8px 80px;
 }
 
 /* sell */
