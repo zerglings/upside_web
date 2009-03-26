@@ -1,0 +1,159 @@
+body, p, h1, h2, h3, h4, h5, h6, ul, li, form{ 
+	margin:0; 
+	padding:0; 
+	line-height:18px; 
+	font-family: Trebuchet, Lucida Sans, Arial, sans-serif;
+	color:#555454;
+} 
+
+#page{
+	background-image:url(/images/welcome/gray_stripes_background.png);
+	background-repeat:repeat;
+	height:800px;
+}
+
+#page_contents{
+	display:block;
+	width:1024px;
+	margin: 0px auto;
+	padding-top:8px;
+}
+
+.divider{
+	height:30px;
+	background-color:#FDFCF4;
+}
+
+.border{
+	border: 4px solid #A8A878;
+}
+
+/* basic page layouts */
+#welcome_header{
+	height:108px;
+	width:100%;
+	background-color:#4BA50F;
+	background-image: url(/images/welcome/welcome_header.png);
+	background-repeat:no-repeat;
+}
+
+#welcome_footer{
+	height:36px;
+	width:100%;
+	clear:both;
+	background-color:#4BA50F;
+	background-image: url(/images/welcome/welcome_footer.png);
+	background-repeat:no-repeat;	
+}
+
+#copyright{
+	font-size:12px;
+	line-height:36px;
+	vertical-align:text-bottom;	
+	text-align:center;
+	color:#fff;
+}
+
+#welcome_body{
+	background-color:#FDFCF4;
+}
+
+#welcome_body_left{
+	width:670px;
+}
+
+#welcome_body_right{
+	width:296px;
+	float:right;
+	margin: 0 50px 0 0;
+}
+
+#sign_in{	
+	background-color:#b8b8b8;
+	background-image:url(/images/welcome/sign_in_box.png);
+}
+
+#header_graph{
+	width:324px;
+	float:right;
+}
+
+#header_quote{
+	width:250px;
+	float:left;
+}
+
+/* sign in box */
+#sign_in fieldset{
+	border:none;
+	margin:0px;
+	padding:0px;
+}
+
+#sign_in legend{
+	font-size:28px;
+	line-height:32px;
+	width:330px;
+	padding: 8px 0px 7px 40px;
+}
+
+#sign_in fieldset p{
+	padding:3px 3px 3px 8px;
+}
+
+#sign_in fieldset p label{
+	width:68px;
+	padding:3px 10px;
+	display: inline-block;
+	font-size:14px;
+}
+
+#submit_button input{
+	background-image:url(/images/welcome/login_button_98.png);
+	background-repeat:no-repeat;
+	border:none;
+	height:35px;
+	width:98px;
+	margin:10px 0px 0px 90px;
+}
+
+#sign_up{
+ 	font-size:14px;	
+	text-align:center;
+	padding:3px 0px 8px 0px;
+}
+
+/* sell */
+#sell{
+	margin-top:25px;
+}
+
+#sell p{
+	font:26px "Myriad Pro", sans-serif;
+	padding:15px 11px;
+	font-style:italic;
+}
+
+/* screenshots and introduction */
+#screenshots{
+	width:592px;
+	height:350px;
+	margin: 0px 20px 0px 50px;
+}
+
+#introduction p{
+	padding: 30px 20px 0px 50px;	
+	line-height:22px;
+}
+
+#logo{
+	float:left;
+	width:410px;
+	font-size:50px;
+	line-height:108px;
+	vertical-align:middle;
+	color:#fff;
+	padding-left:40px;
+}
+
+
