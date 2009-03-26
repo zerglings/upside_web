@@ -16,7 +16,7 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 
 #page_contents {
 	display: block;
-	width: 1024px;
+	width: 980px;
 	margin: 0px auto;
 	padding-top: 8px;
 }
@@ -53,18 +53,18 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 
 .welcome_body {
 	background-color: #FDFCF4;
-	padding-top: 30px;
+	padding-top: 25px;
 	overflow:hidden;
 }
 
 .welcome_body_left {
-	width: 670px;
+	width: 628px; 
 }
 
 .welcome_body_right {
-	width: 296px;
+	width: 275px;
 	float: right;
-	margin: 0 50px 0 0;
+	margin: 0 44px 0 0;
 	display: inline-block;
 }
 
@@ -102,8 +102,8 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 #sign_in legend {
 	font-size: 28px;
 	line-height: 32px;
-	width: 330px;
-	padding: 8px 0px 7px 40px;
+	width: 248px;
+	padding: 8px 0px 7px 38px;
 }
 
 #sign_in fieldset p {
@@ -112,14 +112,14 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 
 #sign_in fieldset p label {
 	width: 68px;
-	padding: 3px 10px;
+	padding: 3px 5px;
 	display: inline-block;
 	font-size: 14px;
 }
 
 #submit_button input {
 	border: none;
-	padding: 8px 0px 8px 90px;
+	padding: 8px 0px 8px 75px;
 }
 
 /* sell */
@@ -128,28 +128,30 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 }
 
 #sell p {
-	font: 26px "Myriad Pro", sans-serif;
-	padding: 15px 10px;
+	font: 23px "Myriad Pro", sans-serif;
+	padding: 12px;
 	font-style: italic;
+	line-height: 30px;
+	text-align:center;
 }
 
 /* screenshots */
 #screenshots {
-	width: 592px;
-	height: 325px;
-	margin: 0px 20px 0px 50px;
-	padding-top: 20px;
+	width: 580px;
+	height: 318px;
+	margin: 0px 18px 0px 44px;
+	padding: 10px 0 5px 0;
 	text-align:center;
 }
 
 /* introduction and sign up */
 #introduction p {
-	padding: 0px 20px 0px 55px;	
+	padding: 0px 15px 0px 55px;	
 	line-height: 24px;
 }
 
 #sign_up {
-  font-size: 16px;  
+  font-size: 15px;  
   text-align: center;
   padding: 3px 0px 8px 0px;
 }
@@ -159,5 +161,5 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
 }
 #app_store_badge img {
   border: none;
-	margin: -6px 0px;
+	margin: -5px 0px -15px 0px;
 }
