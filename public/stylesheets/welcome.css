@@ -13,7 +13,7 @@ body {
 	background-repeat: repeat;
 }
 
-#page_contents {
+#page {
 	display: block;
 	width: 980px;
 	margin: 0px auto;
@@ -124,14 +124,11 @@ body {
 /* sell */
 #sell {
 	margin-top: 25px;
-}
-
-#sell p {
-	font: 23px "Myriad Pro", sans-serif;
-	padding: 12px;
-	font-style: italic;
-	line-height: 30px;
-	text-align:center;
+  font: 23px "Myriad Pro", sans-serif;
+  padding: 12px;
+  font-style: italic;
+  line-height: 30px;
+  text-align:center;
 }
 
 /* screenshots */
@@ -144,7 +141,7 @@ body {
 }
 
 /* introduction and sign up */
-#introduction p {
+#introduction {
 	padding: 0px 15px 0px 55px;	
 	line-height: 24px;
 }
