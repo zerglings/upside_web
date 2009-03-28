@@ -124,7 +124,7 @@ body {
 /* sell */
 #sell {
 	margin-top: 25px;
-  font: 23px "Myriad Pro", sans-serif;
+  font: 23px "Myriad Pro", "Verdana", sans-serif;
   padding: 12px;
   font-style: italic;
   line-height: 30px;
