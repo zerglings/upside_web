@@ -41,7 +41,7 @@ module UserFilters
     respond_to do |format|
       format.html do
         flash[:error] = 'Admin access only.'
-        redirect_to @s_user.portfolio
+        redirect_to :controller => :welcome, :action => :dashboard
       end
       format.xml do
         render :sml => { :error => { :message => 'Admin access only.',

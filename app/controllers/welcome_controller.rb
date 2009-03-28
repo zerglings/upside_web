@@ -5,7 +5,7 @@ class WelcomeController < ApplicationController
     end
   end
   
-  def welcome
+  def dashboard
     respond_to do |format|
       format.html
     end

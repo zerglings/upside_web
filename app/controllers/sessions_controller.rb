@@ -6,6 +6,7 @@ class SessionsController < ApplicationController
     session[:user_id] = nil
     respond_to do |format|
       format.html # new.html.erb
+      format.js # TODO(overmind): javascript login
     end
   end
   
@@ -20,7 +21,9 @@ class SessionsController < ApplicationController
           device.update_attributes! :user => @user if device
         end
         
-        format.html { redirect_to @user.portfolio }
+        format.html do
+          redirect_to :controller => :welcome, :action => :dashboard
+        end
         format.xml # create.xml.builder
       else
         session[:user_id] = nil
@@ -38,6 +41,6 @@ class SessionsController < ApplicationController
   end
 
   def index
-    redirect_to @s_user.portfolio
+    redirect_to :controller => :welcome, :action => :dashboard
   end
 end
