@@ -1,0 +1,27 @@
+<% if flash[:error] %>
+<div style="color: red;">
+<%= flash[:error] %>
+</div>
+<% end %>
+
+<% form_tag :controller => :sessions, :action => :create do %>
+	
+	<fieldset>
+	  <legend>Please Sign In</legend>	
+	  
+	  <p>
+	  	<label for="name">Username:</label>
+		<%= text_field_tag :name, params[:name] %>
+	  </p>	
+	  
+	  <p>
+	  	<label for="password">Password:</label>
+		<%= password_field_tag :password, params[:password] %>
+	  </p>
+	  
+	  <p id="submit_button">
+	  	<%= image_submit_tag "welcome/login_button_98.png" %>
+	  </p>
+	</fieldset>
+	
+<% end %>

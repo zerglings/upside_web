@@ -1,0 +1,161 @@
+/* Copyright (c) 2009 Zergling.net, all rights reserved.*/
+
+body, p, h1, h2, h3, h4, h5, h6, ul, li, form { 
+	margin: 0; 
+	padding: 0; 
+	line-height: 18px; 
+	font-family: Trebuchet, Lucida Sans, Arial, sans-serif;
+	color: #555454;
+} 
+
+body {
+	background-image: url(/images/welcome/gray_stripes_background.png);
+	background-repeat: repeat;
+}
+
+#page {
+	display: block;
+	width: 980px;
+	margin: 0px auto;
+	padding-top: 8px;
+}
+
+.welcome_border {
+	border: 4px solid #A8A878;
+}
+
+/* basic page layouts */
+#welcome_header {
+	height: 108px;
+	width: 100%;
+	background-color: #4BA50F;
+	background-image: url(/images/welcome/welcome_header.png);
+	background-repeat: no-repeat;
+}
+
+#welcome_footer {
+	height: 36px;
+	width: 100%;
+	clear: both;
+	background-color: #4BA50F;
+	background-image: url(/images/welcome/welcome_footer.png);
+	background-repeat: no-repeat;	
+}
+
+#copyright {
+	font-size: 12px;
+	line-height: 36px;
+	vertical-align: text-bottom;	
+	text-align: center;
+	color: #fff;
+}
+
+.welcome_body {
+	background-color: #FDFCF4;
+	padding-top: 25px;
+	overflow:hidden;
+}
+
+.welcome_body_left {
+	width: 628px; 
+}
+
+.welcome_body_right {
+	width: 275px;
+	float: right;
+	margin: 0 44px 0 0;
+	display: inline-block;
+}
+
+#sign_in {	
+	background-color: #DADAC9;
+}
+
+#header_graph {
+	width: 324px;
+	float: right;
+}
+
+#header_quote {
+	width: 250px;
+	float: left;
+}
+
+#logo {
+  float: left;
+  width: 410px;
+  font-size: 50px;
+  line-height: 108px;
+  vertical-align: middle;
+  color: #fff;
+  padding-left: 40px;
+}
+
+/* sign in box */
+#sign_in fieldset {
+	border: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+#sign_in legend {
+	font-size: 28px;
+	line-height: 32px;
+	width: 248px;
+	padding: 8px 0px 7px 38px;
+}
+
+#sign_in fieldset p {
+	padding: 3px 3px 3px 8px;
+}
+
+#sign_in fieldset p label {
+	width: 68px;
+	padding: 3px 5px;
+	display: inline-block;
+	font-size: 14px;
+}
+
+#submit_button input {
+	border: none;
+	padding: 8px 0px 8px 80px;
+}
+
+/* sell */
+#sell {
+	margin-top: 25px;
+  font: 23px "Myriad Pro", "Verdana", sans-serif;
+  padding: 12px;
+  font-style: italic;
+  line-height: 30px;
+  text-align:center;
+}
+
+/* screenshots */
+#screenshots {
+	width: 580px;
+	height: 318px;
+	margin: 0px 18px 0px 44px;
+	padding: 10px 0 5px 0;
+	text-align:center;
+}
+
+/* introduction and sign up */
+#introduction {
+	padding: 0px 15px 0px 55px;	
+	line-height: 24px;
+}
+
+#sign_up {
+  font-size: 15px;  
+  text-align: center;
+  padding: 3px 0px 8px 0px;
+}
+
+#app_store_badge {
+  border: none;
+}
+#app_store_badge img {
+  border: none;
+	margin: -5px 0px -15px 0px;
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to StockPlay</title>
+    <link rel="stylesheet" href="stylesheets/welcome.css" type="text/css" charset="utf-8" />
+  </head>
+  <body>
+    <div id="page">
+      <div id="welcome_header">
+        <div id="logo">
+          StockPlay
+        </div>
+        <div id="header_quote">
+        </div>
+        <div id="header_graph">
+        </div>
+      </div>
+      <div class="welcome_body">
+        <div class="welcome_body_right">
+          <div id="sign_in" class="welcome_border">
+            <%= render :partial => 'sessions/new' %>
+          </div>
+          <p id="sell" class="welcome_border">
+            ...the leading virtual stock trading game for the iPhone and iPod Touch
+          </p>
+        </div>
+        <div class="welcome_body_left">
+          <div id="screenshots" class="welcome_border">
+            <img src="images/welcome/screenshots.png" height="325px" width="552px" alt="screenshots of iPhone app" />
+          </div>
+        </div>
+      </div>
+      <div class="welcome_body">
+        <div class="welcome_body_right">
+          <p id="sign_up">
+            Don't have an account? Get the app!<a href="http://www.apple.com" id="app_store_badge"><img src="/images/welcome/app_store_badge.png" /></a>
+          </p>
+        </div>
+        <div class="welcome_body_left">
+          <p id="introduction">
+            Can you beat the market? Try StockPlay, the iPhone application that 
+            lets you test out your skills with no risks involved.  We give you $250,000 
+            and the rest is up to you.  We wish you good luck!
+          </p>
+        </div>
+      </div>
+      <div id="welcome_footer">
+        <p id="copyright">
+          Copyright &copy; 2009 Zergling.net, all rights reserved.
+        </p>
+      </div>
+    </div>
+    <%= render :partial => '/layouts/google_analytics' %>
+  </body>
+</html>
