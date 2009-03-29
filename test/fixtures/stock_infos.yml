@@ -3,8 +3,8 @@
 #
 # Table name: stock_infos
 #
-#  id           :integer         not null, primary key
-#  stock_id     :integer         not null
+#  id           :integer(4)      not null, primary key
+#  stock_id     :integer(4)      not null
 #  company_name :string(128)     not null
 #  created_at   :datetime
 #  updated_at   :datetime

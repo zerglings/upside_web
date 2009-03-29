@@ -15,12 +15,12 @@ class SessionsControllerTest < ActionController::TestCase
   
   def test_index_with_valid_user
     get :index, {}, { :user_id => users(:rich_kid).id }
-    assert_redirected_to @user.portfolio
+    assert_redirected_to :controller => :welcome, :action => :dashboard
   end
   
   def test_login_good_user_and_password
     post :create, :name => @user.name, :password => @password
-    assert_redirected_to :controller => :portfolios, :action => @user.id
+    assert_redirected_to :controller => :welcome, :action => :dashboard
     assert_equal @user.id, session[:user_id]
   end
   

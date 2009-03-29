@@ -5,6 +5,11 @@ module CommonTradeOrderTests
     @request.session[:user_id] = @user.id
   end
   
+  def assert_access_denied
+    assert_redirected_to :controller => :welcome, :action => :dashboard
+    assert_equal "Admin access only.", flash[:error]
+  end  
+  
   def test_new_order_should_expire_30_days_from_now
     get :new
     trade_order = @controller.instance_variable_get :@trade_order
@@ -108,12 +113,12 @@ class TradeOrdersControllerTest < ActionController::TestCase
   
   test "user should not see index of trade orders" do
     get :index
-    assert_redirected_to @user.portfolio
+    assert_access_denied
   end
   
   test "user should not be able to edit trade orders" do
     get :edit, :id => trade_orders(:buy_long_with_stop_order).id
-    assert_redirected_to @user.portfolio
+    assert_access_denied
   end
   
   test "user should not be albe to destroy trade orders" do
@@ -121,6 +126,6 @@ class TradeOrdersControllerTest < ActionController::TestCase
       delete :destroy, :id => @trade_order.id
     end
 
-    assert_redirected_to @user.portfolio
+    assert_access_denied
   end
 end

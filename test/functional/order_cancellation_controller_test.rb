@@ -41,7 +41,7 @@ class OrderCancellationControllerTest < ActionController::TestCase
     post :create, :trade_order_id => trade_orders(:sell_long_without_stop_or_limit_orders).id
     count_after = OrderCancellation.count
     assert_equal count_before, count_after
-    assert_redirected_to @portfolio
+    assert_redirected_to :controller => :welcome, :action => :dashboard
   end
 end
 

@@ -7,8 +7,8 @@ module CommonTradeControllerTests
     @trade = trades(:normal_trade)
   end
   
-  def verify_access_denied
-    assert_redirected_to @portfolio
+  def assert_access_denied
+    assert_redirected_to :controller => :welcome, :action => :dashboard
     assert_equal "Admin access only.", flash[:error]
   end
 end
@@ -81,17 +81,17 @@ class TradesControllerTest < ActionController::TestCase
   
   test "user not allowed to view index of trades" do
     get :index
-    verify_access_denied
+    assert_access_denied
   end
    
   test "user not allwed to view trades" do
     get :show, :id => @trade.id
-    verify_access_denied
+    assert_access_denied
   end
 
   test "user not allowed to get new" do
     get :new
-    verify_access_denied
+    assert_access_denied
   end
   
   test "user not allowed to create trade" do
@@ -102,7 +102,7 @@ class TradesControllerTest < ActionController::TestCase
                                :price => @trade.price }
     count_after = Trade.count
     assert_equal count_after, count_before
-    verify_access_denied
+    assert_access_denied
   end
 
   test "user not allowed to update trade" do
@@ -111,7 +111,7 @@ class TradesControllerTest < ActionController::TestCase
                                               :trade_order_id => @trade.trade_order_id,
                                               :price => @trade.price }
     
-    verify_access_denied
+    assert_access_denied
   end
   
   test "user not allowed to destroy trade" do
@@ -119,6 +119,6 @@ class TradesControllerTest < ActionController::TestCase
       delete :destroy, :id => trades(:normal_trade).id
     end
 
-    verify_access_denied
+    assert_access_denied
   end
 end

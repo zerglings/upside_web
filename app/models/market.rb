@@ -3,7 +3,7 @@
 #
 # Table name: markets
 #
-#  id         :integer         not null, primary key
+#  id         :integer(4)      not null, primary key
 #  name       :string(64)      not null
 #  created_at :datetime
 #  updated_at :datetime

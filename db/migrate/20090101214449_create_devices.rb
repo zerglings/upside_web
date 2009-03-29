@@ -2,6 +2,10 @@ class CreateDevices < ActiveRecord::Migration
   def self.up
     create_table :devices do |t|
       t.string :unique_id, :limit => 64, :null => false
+      t.string :hardware_model, :limit => 32, :null => false
+      t.string :os_name, :limit => 32, :null => false
+      t.string :os_version, :limit => 32, :null => false
+      t.string :app_version, :limit => 16, :null => false
       t.datetime :last_activation, :null => false
       t.integer :user_id, :limit => 20, :null => false
 

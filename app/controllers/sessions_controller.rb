@@ -15,10 +15,20 @@ class SessionsController < ApplicationController
     respond_to do |format|
       if @user
         session[:user_id] = @user.id
-        if params[:device_id]
+        if params[:device]
+          # Client above v0.1
+          device_id = params[:device][:unique_id]
+          device = Device.find :first,
+                               :conditions => { :unique_id => device_id }
+          device.user = @user
+          params[:device].delete :model_id
+          device.update_attributes! params[:device]
+          device.save!
+        else
+          # iPhone client v0.1
           device = Device.find :first,
                                :conditions => {:unique_id => params[:device_id]}
-          device.update_attributes! :user => @user if device
+          device.update_attributes! :user => @user if device          
         end
         
         format.html do

@@ -3,11 +3,11 @@
 #
 # Table name: positions
 #
-#  id                :integer         not null, primary key
-#  portfolio_id      :integer         not null
-#  stock_id          :integer         not null
-#  is_long           :boolean         not null
-#  quantity          :integer         not null
+#  id                :integer(4)      not null, primary key
+#  portfolio_id      :integer(4)      not null
+#  stock_id          :integer(4)      not null
+#  is_long           :boolean(1)      not null
+#  quantity          :integer(4)      not null
 #  average_base_cost :float
 #  decimal           :float
 #  created_at        :datetime

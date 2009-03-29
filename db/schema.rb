@@ -13,6 +13,10 @@ ActiveRecord::Schema.define(:version => 20090120032718) do
 
   create_table "devices", :force => true do |t|
     t.string   "unique_id",       :limit => 64, :null => false
+    t.string   "hardware_model",  :limit => 32, :null => false
+    t.string   "os_name",         :limit => 32, :null => false
+    t.string   "os_version",      :limit => 32, :null => false
+    t.string   "app_version",     :limit => 16, :null => false
     t.datetime "last_activation",               :null => false
     t.integer  "user_id",                       :null => false
     t.datetime "created_at"

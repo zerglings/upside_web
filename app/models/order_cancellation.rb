@@ -3,8 +3,8 @@
 #
 # Table name: order_cancellations
 #
-#  id             :integer         not null, primary key
-#  trade_order_id :integer         not null
+#  id             :integer(4)      not null, primary key
+#  trade_order_id :integer(4)      not null
 #  created_at     :datetime
 #
 

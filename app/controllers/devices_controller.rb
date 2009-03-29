@@ -97,13 +97,24 @@ class DevicesController < ApplicationController
         format.html { redirect_to(@device) }
         format.xml # register.xml.builder 
       else
-        @user = User.new_pseudo_user(params[:unique_id])
-        @user.save!
-        @device = Device.new
-        @device.unique_id = params[:unique_id]
-        @device.last_activation = Time.now 
-        @device.user = @user
-        @device.save!
+        User.transaction do
+          @user = User.new_pseudo_user(params[:unique_id])
+          @user.save!
+          if params[:device]
+            # client above 0.1
+            params[:device].delete :model_id
+            @device = Device.new params[:device]
+          else
+            @device = Device.new :hardware_model => 'unknown',
+                                 :app_version => '1.0',
+                                 :os_name => 'iPhone OS',
+                                 :os_version => 'unknown'
+            @device.unique_id = params[:unique_id]
+          end
+          @device.last_activation = Time.now
+          @device.user = @user
+          @device.save!
+        end
         
         format.xml # register.xml.builder
       end

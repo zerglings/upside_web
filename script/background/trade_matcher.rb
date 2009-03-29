@@ -50,4 +50,5 @@ class TradeMatcher < SimpleDaemon::Base
   end
 end
 
+ARGV.replace ARGV[0, 1]
 TradeMatcher.daemonize

@@ -3,12 +3,12 @@
 #
 # Table name: users
 #
-#  id            :integer         not null, primary key
+#  id            :integer(4)      not null, primary key
 #  name          :string(64)      not null
 #  password_hash :string(64)      not null
 #  password_salt :string(4)       not null
-#  pseudo_user   :boolean         default(TRUE), not null
-#  is_admin      :boolean         not null
+#  pseudo_user   :boolean(1)      default(TRUE), not null
+#  is_admin      :boolean(1)      not null
 #  created_at    :datetime
 #  updated_at    :datetime
 #

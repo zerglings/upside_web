@@ -3,10 +3,14 @@
 #
 # Table name: devices
 #
-#  id              :integer         not null, primary key
+#  id              :integer(4)      not null, primary key
 #  unique_id       :string(64)      not null
+#  hardware_model  :string(32)      not null
+#  os_name         :string(32)      not null
+#  os_version      :string(32)      not null
+#  app_version     :string(16)      not null
 #  last_activation :datetime        not null
-#  user_id         :integer         not null
+#  user_id         :integer(4)      not null
 #  created_at      :datetime
 #  updated_at      :datetime
 #
@@ -15,10 +19,18 @@
 
 iphone_3g:
   unique_id: <%= '11111' * 8 %>
+  hardware_model: iPhone1,2
+  os_name: iPhone OS
+  os_version: 2.0
+  app_version: 1.0
   last_activation: 2009-01-01 16:44:49
   user: rich_kid
 
 ipod_touch_2g:
   unique_id: <%= '22222' * 8 %>
+  hardware_model: iPod2,1
+  os_name: iPhone OS
+  os_version: 2.0
+  app_version: 1.0
   last_activation: 2009-01-01 16:44:49
   user: admin

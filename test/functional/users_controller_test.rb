@@ -6,8 +6,8 @@ module CommonUserControllerTests
     @portfolio = @user.portfolio
   end
   
-  def verify_access_denied
-    assert_redirected_to @portfolio
+  def assert_access_denied
+    assert_redirected_to :controller => :welcome, :action => :dashboard
     assert_equal "Admin access only.", flash[:error]
   end
 end
@@ -78,17 +78,17 @@ class UsersControllerTest < ActionController::TestCase
   
   test "user not authorized to get index" do
     get :index
-    verify_access_denied
+    assert_access_denied
   end
   
   test "user not authorized to get new" do
     get :new
-    verify_access_denied
+    assert_access_denied
   end
   
   test "user not authorized to show" do
     get :show, :id => users(:rich_kid).id
-    verify_access_denied
+    assert_access_denied
   end
   
   test "user not authorized to create user" do
@@ -97,17 +97,17 @@ class UsersControllerTest < ActionController::TestCase
                             :password_confirmation => "blah"}
     user = User.find_by_name "createuser"
     assert_nil user, "User was created"
-    verify_access_denied             
+    assert_access_denied             
   end
   
   test "user not authorized to get edit" do
     get :edit, :id => users(:rich_kid).id
-    verify_access_denied
+    assert_access_denied
   end
 
   test "user not authorized to update user" do
     put :update, :id => users(:rich_kid).id, :user => { }
-    verify_access_denied
+    assert_access_denied
   end
 
   test "user not authorized to destroy user" do
@@ -115,7 +115,7 @@ class UsersControllerTest < ActionController::TestCase
       delete :destroy, :id => users(:rich_kid).id
     end
 
-    verify_access_denied
+    assert_access_denied
   end
 
   def test_is_admin_set_to_true_if_user_name_is_admin

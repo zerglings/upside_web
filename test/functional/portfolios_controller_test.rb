@@ -6,6 +6,11 @@ module CommonPortfolioTests
     @portfolio = portfolios(:rich_kid)    
   end
   
+  def assert_access_denied
+    assert_redirected_to :controller => :welcome, :action => :dashboard
+    assert_equal "Admin access only.", flash[:error]
+  end
+  
   def test_should_show_portfolio
     get :show, :id => @portfolio.id
     assert_response :success
@@ -103,22 +108,22 @@ class PortfoliosControllerTest < ActionController::TestCase
   test "user should not see index" do
     @request.session[:user_id] = users(:rich_kid).id  
     get :index
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
   
   test "users cannot see the portfolio of another user" do
     get :show, :id => portfolios(:device_user).id
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
   
   test "user cannot edit his/her own portfolio" do
     get :edit, :id => @portfolio.id
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
   
   test "users cannot update his/her own portfolio" do
     put :update, :id => @portfolio.id
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
   
   def test_xml_sync_rejects_unquthenticated_sessions

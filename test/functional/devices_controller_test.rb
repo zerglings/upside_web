@@ -15,35 +15,41 @@ class AdminDevicesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:devices)
   end
   
-  test "should get new" do
+  test "admin should get new" do
     get :new
     assert_response :success
   end
   
-  test "should create device" do
+  test "admin should create device" do
     assert_difference('Device.count') do
-      post :create, :device => {:unique_id => "12345" * 8, :last_activation => Time.now, :user_id => users(:device_user).id }
+      post :create, :device => { :unique_id => "12345" * 8,
+                                 :last_activation => Time.now,
+                                 :user_id => users(:device_user).id,
+                                 :hardware_model => 'iPhone1,1',
+                                 :os_name => 'iPhone OS',
+                                 :os_version => '2.0',
+                                 :app_version => '1.0' }
     end
 
     assert_redirected_to device_path(assigns(:device))
   end
 
-  test "should show device" do
+  test "admin should show device" do
     get :show, :id => devices(:iphone_3g).id
     assert_response :success
   end
 
-  test "should get edit" do
+  test "admin should get edit" do
     get :edit, :id => devices(:iphone_3g).id
     assert_response :success
   end
 
-  test "should update device" do
+  test "admin should update device" do
     put :update, :id => devices(:iphone_3g).id, :device => { }
     assert_redirected_to device_path(assigns(:device))
   end
 
-  test "should destroy device" do
+  test "admin should destroy device" do
     assert_difference('Device.count', -1) do
       delete :destroy, :id => devices(:iphone_3g).id
     end
@@ -62,37 +68,48 @@ class UserDevicesControllerTest < ActionController::TestCase
     @portfolio = @user.portfolio
   end
   
+  def assert_access_denied
+    assert_redirected_to :controller => :welcome, :action => :dashboard
+    assert_equal "Admin access only.", flash[:error]
+  end
+  
   test "user not authorized to get index" do
     get :index
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
   
   test "user not authorized to get new" do
     get :new
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
   
   test "user not authorized to create device" do
     count_before = Device.count
-    post :create, :device => {:unique_id => "12345" * 8, :last_activation => Time.now, :user_id => users(:device_user).id }
+      post :create, :device => { :unique_id => "12345" * 8,
+                                 :last_activation => Time.now,
+                                 :user_id => users(:device_user).id,
+                                 :hardware_model => 'iPhone1,1',
+                                 :os_name => 'iPhone OS',
+                                 :os_version => '2.0',
+                                 :app_version => '1.0' }
     count_after = Device.count
     assert_equal 0, count_after - count_before
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
 
   test "user not authorized to show device" do
     get :show, :id => devices(:iphone_3g).id
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
 
   test "user not authorized to get edit" do
     get :edit, :id => devices(:iphone_3g).id
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
 
   test "user not authorized to update device" do
     put :update, :id => devices(:iphone_3g).id, :device => { }
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
 
   test "user not authoried to destroy device" do
@@ -100,7 +117,7 @@ class UserDevicesControllerTest < ActionController::TestCase
     delete :destroy, :id => devices(:iphone_3g).id
     count_after = Device.count
     assert_equal 0, count_after - count_before
-    assert_redirected_to @portfolio
+    assert_access_denied
   end
 end
 
@@ -113,11 +130,18 @@ class DevicesControllerTest < ActionController::TestCase
     device1.save!
   end
 
-  test "register new device" do
+  test "register new device with v0.2" do
     unique_id = '88888' * 8
     post :register, :unique_id => unique_id, :format => 'xml',
                     :device_sig => IphoneAuthFilters.signature(unique_id),
-                    :device_sig_v => IphoneAuthFilters.signature_version
+                    :device_sig_v => IphoneAuthFilters.signature_version,
+                    :device => { :unique_id => unique_id,
+                                 :model_id => 0,
+                                 :user_id => 0,
+                                 :hardware_model => 'iPhone1,1',
+                                 :app_version => '1.0',
+                                 :os_name => 'iPhone OS',
+                                 :os_version => '2.1' } 
     device = Device.find_by_unique_id unique_id
     assert_not_nil device, "Device not created when registering a new device"
     assert_equal unique_id, device.unique_id
@@ -133,6 +157,10 @@ class DevicesControllerTest < ActionController::TestCase
       assert_select "model_id", device.id.to_s
       assert_select "unique_id", unique_id
       assert_select "user_id", user.id.to_s
+      assert_select "hardware_model", 'iPhone1,1'
+      assert_select "app_version", '1.0'
+      assert_select "os_name", 'iPhone OS'
+      assert_select "os_version", '2.1'
     end
     
     assert_select "user" do
@@ -140,6 +168,19 @@ class DevicesControllerTest < ActionController::TestCase
       assert_select "name", user.name
       assert_select "is_pseudo_user", "true"
     end
+  end  
+
+  test "register new device with v0.1" do
+    unique_id = '88888' * 8
+    post :register, :unique_id => unique_id, :format => 'xml',
+                    :device_sig => IphoneAuthFilters.signature(unique_id),
+                    :device_sig_v => IphoneAuthFilters.signature_version
+    device = Device.find_by_unique_id unique_id
+    assert_not_nil device, "Device not created when registering a new device"
+    assert_equal unique_id, device.unique_id
+    user = device.user
+    assert_not_nil user, "User not created when registering a new device"
+    assert user.pseudo_user?, "New device's user should be a pseudo-user"
   end  
   
   test "try registering existing device" do
