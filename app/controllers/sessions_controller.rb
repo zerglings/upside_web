@@ -15,17 +15,20 @@ class SessionsController < ApplicationController
     respond_to do |format|
       if @user
         session[:user_id] = @user.id
-        if params[:device]
-          # Client above v0.1
+        if params[:device]  # Client software newer than v0.1
           device_id = params[:device][:unique_id]
           device = Device.find :first,
                                :conditions => { :unique_id => device_id }
           device.user = @user
-          params[:device].delete :model_id
+          
+          # Clients will send some attributes that they use internally.
+          # We need to remove them so ActiveRecord doesn't throw an exception.
+          params[:device].delete_if do |key, value|
+            not Device.column_names.include? key 
+          end
           device.update_attributes! params[:device]
           device.save!
-        else
-          # iPhone client v0.1
+        else  # Client software v0.1          
           device = Device.find :first,
                                :conditions => {:unique_id => params[:device_id]}
           device.update_attributes! :user => @user if device          

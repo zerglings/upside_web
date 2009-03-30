@@ -100,9 +100,12 @@ class DevicesController < ApplicationController
         User.transaction do
           @user = User.new_pseudo_user(params[:unique_id])
           @user.save!
-          if params[:device]
-            # client above 0.1
-            params[:device].delete :model_id
+          if params[:device]  # Client software newer than v0.1
+            # Clients will send some attributes that they use internally.
+            # We need to remove them so ActiveRecord doesn't throw an exception.
+            params[:device].delete_if do |key, value|
+              not Device.column_names.include? key 
+            end
             @device = Device.new params[:device]
           else
             @device = Device.new :hardware_model => 'unknown',

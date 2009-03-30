@@ -6,6 +6,8 @@ class SessionsControllerTest < ActionController::TestCase
   def setup
     @user = users :rich_kid
     @password = 'password'
+    @device = devices :iphone_3g
+    @other_device = devices :ipod_touch_2g 
   end
   
   def test_index_without_user
@@ -59,6 +61,42 @@ class SessionsControllerTest < ActionController::TestCase
     assert_select "error" do
       assert_select "reason", "auth"
       assert_select "message"
+    end
+  end
+  
+  def test_xml_login_with_device_info
+    impossible_device_info = { :hardware_model => 'iPhone3,1',
+                               :unique_id => @device.unique_id,
+                               :os_name => 'Awesome OS',
+                               :os_version => 'V1' } 
+    
+    post :create, :name => @user.name, :password => @password, :format => 'xml',
+         :device => { :model_id => 0 }.merge(impossible_device_info)
+    assert_equal @user.id, session[:user_id], "Session not set properly"
+    assert_select "user" do
+      assert_select "model_id", @user.id.to_s
+      assert_select "name", @user.name
+      assert_select "is_pseudo_user", "false"
+    end
+    @device.reload
+    impossible_device_info.each do |key, value|
+      assert_equal value, @device.send(key),
+                   "Logging in did not update device #{key}"
+    end
+    
+    impossible_device_info[:unique_id] = @other_device.unique_id
+    post :create, :name => @user.name, :password => "wrong", :format => 'xml',
+         :device => { :model_id => 0 }.merge(impossible_device_info)
+    assert_equal nil, session[:user_id], "Session not set properly"
+    assert_select "error" do
+      assert_select "reason", "auth"
+      assert_select "message"
+    end
+    @other_device.reload
+    impossible_device_info.each do |key, value|
+      next if key == :unique_id  # the unique ID will match, nothing else should 
+      assert_not_equal value, @other_device.send(key),
+                       "Failed login mistakenly updated device #{key}"
     end
   end
 end
