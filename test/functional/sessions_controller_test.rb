@@ -94,7 +94,7 @@ class SessionsControllerTest < ActionController::TestCase
     end
     @other_device.reload
     impossible_device_info.each do |key, value|
-      next if key == :unique_id  # the unique ID will match, nothing else should 
+      next if key == :unique_id  # the unique ID will match, nothing else should
       assert_not_equal value, @other_device.send(key),
                        "Failed login mistakenly updated device #{key}"
     end
