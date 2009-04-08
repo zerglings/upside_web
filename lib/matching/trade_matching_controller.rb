@@ -27,7 +27,14 @@ class Matching::TradeMatchingController
     stock_ids = @store.stock_ids
     tickers = stock_ids.map { |id| Stock.find(id).ticker }
     spreads = YahooFetcher.spreads_for_tickers(tickers).map do |data|
-      [data[:bid], data[:ask]]
+      if data == :not_found
+        # This should not happen. But it did. So, instead of crashing the
+        # matcher, we set a fake spread that will let people liquidate their
+        # orders quickly.
+        [1.0, 1.0]
+      else
+        [data[:bid], data[:ask]]
+      end      
     end
     return stock_ids.zip(spreads)
   end

@@ -44,13 +44,21 @@ class TradeMatchingControllerTest < ActionController::IntegrationTest
     flexmock(YahooFetcher).should_receive(:spreads_for_tickers).
                            with(['MS', 'GS']).
                            and_return([{:ask => 22.8, :bid => 20.5},
-                                       {:ask => 4.20, :bid => 3.50}])    
+                                       {:ask => 4.20, :bid => 3.50}])
   end
   
   def test_spreads_in_store
+    trade_order_from_line(['AAPL', true, 50, 95.5]).save!
     @controller.sync_store
-    mock_yahoo_fetcher
-    assert_equal [[stocks(:ms).id, [20.5, 22.8]],
+
+    flexmock(YahooFetcher).should_receive(:spreads_for_tickers).
+                           with(['AAPL', 'MS', 'GS']).
+                           and_return([:not_found,
+                                       {:ask => 22.8, :bid => 20.5},
+                                       {:ask => 4.20, :bid => 3.50}])    
+
+    assert_equal [[stocks(:aapl).id, [1.0, 1.0]],
+                  [stocks(:ms).id, [20.5, 22.8]],
                   [stocks(:gs).id, [3.50, 4.20]]],
                  @controller.spreads_in_store
   end
