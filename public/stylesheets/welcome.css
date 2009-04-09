@@ -152,6 +152,9 @@ body {
   padding: 3px 0px 8px 0px;
 }
 
+#app_store_badge {
+  border: none;
+}
 #app_store_badge:visited {
   border: none;
 }
