@@ -152,7 +152,7 @@ body {
   padding: 3px 0px 8px 0px;
 }
 
-#app_store_badge {
+#app_store_badge:visited {
   border: none;
 }
 #app_store_badge img {
