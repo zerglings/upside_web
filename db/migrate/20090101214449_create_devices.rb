@@ -7,7 +7,7 @@ class CreateDevices < ActiveRecord::Migration
       t.string :os_version, :limit => 32, :null => false
       t.string :app_version, :limit => 16, :null => false
       t.datetime :last_activation, :null => false
-      t.integer :user_id, :limit => 20, :null => false
+      t.integer :user_id, :limit => 8, :null => false
 
       t.timestamps
     end

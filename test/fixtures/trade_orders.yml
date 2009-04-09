@@ -1,20 +1,21 @@
 # == Schema Information
-# Schema version: 20090120032718
+# Schema version: 20090409160908
 #
 # Table name: trade_orders
 #
-#  id                :integer(4)      not null, primary key
-#  portfolio_id      :integer(4)      not null
-#  stock_id          :integer(4)      not null
-#  is_buy            :boolean(1)      default(TRUE), not null
-#  is_long           :boolean(1)      default(TRUE), not null
-#  stop_price        :decimal(8, 2)
-#  limit_price       :decimal(8, 2)
-#  expiration_time   :datetime
-#  quantity          :integer(4)      not null
-#  unfilled_quantity :integer(4)      not null
-#  created_at        :datetime
-#  updated_at        :datetime
+#  id                 :integer(4)      not null, primary key
+#  portfolio_id       :integer(8)      not null
+#  stock_id           :integer(4)      not null
+#  is_buy             :boolean(1)      default(TRUE), not null
+#  is_long            :boolean(1)      default(TRUE), not null
+#  stop_price         :decimal(8, 2)
+#  limit_price        :decimal(8, 2)
+#  expiration_time    :datetime
+#  quantity           :integer(8)      not null
+#  unfilled_quantity  :integer(8)      not null
+#  created_at         :datetime
+#  updated_at         :datetime
+#  adjusting_order_id :integer(8)
 #
 
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
@@ -22,7 +23,7 @@
 buy_to_cover_short_with_stop_and_limit_orders:
   portfolio: rich_kid
   stock: ms
-  is_buy: false
+  is_buy: true
   is_long: false
   stop_price: 9.99
   limit_price: 9.99
@@ -68,7 +69,7 @@ sell_short_without_stop_or_limit_orders:
   portfolio: some_guy
   stock: gs
   is_buy: false
-  is_long: true
+  is_long: false
   stop_price: 
   limit_price:
   expiration_time: 2010-02-14 14:42:17
@@ -134,7 +135,7 @@ sell_gs_low:
   portfolio: match_seller
   stock: gs
   is_buy: false
-  is_long: true
+  is_long: false
   stop_price: 
   limit_price: 2.50
   expiration_time: 2010-03-10 14:42:17
@@ -156,7 +157,7 @@ sell_ms_at_market:
   portfolio: match_seller
   stock: ms
   is_buy: false
-  is_long: true
+  is_long: false
   stop_price:
   limit_price:
   expiration_time: 2010-03-10 14:42:17

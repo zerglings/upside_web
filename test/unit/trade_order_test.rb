@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class TradeOrderTest < ActiveSupport::TestCase
-  fixtures :stocks  
+  fixtures :stocks, :positions, :trade_orders
   
   def setup 
     order = trade_orders(:buy_to_cover_short_with_stop_and_limit_orders)
@@ -211,5 +211,14 @@ class TradeOrderTest < ActiveSupport::TestCase
     @trade_order.ticker = 'QWERTY'
     assert_equal nil, @trade_order.stock
     assert_equal 'QWERTY', @trade_order.ticker
+  end
+  
+  def test_target_position
+    assert_equal positions(:ms_short),
+                 trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).
+                     target_position
+                     
+    assert_equal positions(:ms_long),
+                 trade_orders(:buy_long_with_stop_order).target_position
   end
 end

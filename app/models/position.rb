@@ -1,13 +1,13 @@
 # == Schema Information
-# Schema version: 20090120032718
+# Schema version: 20090409160908
 #
 # Table name: positions
 #
 #  id                :integer(4)      not null, primary key
-#  portfolio_id      :integer(4)      not null
+#  portfolio_id      :integer(8)      not null
 #  stock_id          :integer(4)      not null
 #  is_long           :boolean(1)      not null
-#  quantity          :integer(4)      not null
+#  quantity          :integer(8)      not null
 #  average_base_cost :float
 #  decimal           :float
 #  created_at        :datetime

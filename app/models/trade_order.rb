@@ -1,20 +1,21 @@
 # == Schema Information
-# Schema version: 20090120032718
+# Schema version: 20090409160908
 #
 # Table name: trade_orders
 #
-#  id                :integer(4)      not null, primary key
-#  portfolio_id      :integer(4)      not null
-#  stock_id          :integer(4)      not null
-#  is_buy            :boolean(1)      default(TRUE), not null
-#  is_long           :boolean(1)      default(TRUE), not null
-#  stop_price        :decimal(8, 2)
-#  limit_price       :decimal(8, 2)
-#  expiration_time   :datetime
-#  quantity          :integer(4)      not null
-#  unfilled_quantity :integer(4)      not null
-#  created_at        :datetime
-#  updated_at        :datetime
+#  id                 :integer(4)      not null, primary key
+#  portfolio_id       :integer(8)      not null
+#  stock_id           :integer(4)      not null
+#  is_buy             :boolean(1)      default(TRUE), not null
+#  is_long            :boolean(1)      default(TRUE), not null
+#  stop_price         :decimal(8, 2)
+#  limit_price        :decimal(8, 2)
+#  expiration_time    :datetime
+#  quantity           :integer(8)      not null
+#  unfilled_quantity  :integer(8)      not null
+#  created_at         :datetime
+#  updated_at         :datetime
+#  adjusting_order_id :integer(8)
 #
 
 class TradeOrder < ActiveRecord::Base
@@ -79,6 +80,13 @@ class TradeOrder < ActiveRecord::Base
     next unless order.unfilled_quantity > order.quantity
     order.errors.add attr, 'Shares unfilled cannot exceed total shares.'
   end
+  
+  # the order that is adjusted by this order
+  belongs_to :adjusting_order, :class_name => 'TradeOrder',
+             :foreign_key => 'adjusting_order_id'
+  validates_presence_of :adjusting_order,
+                        :if => lambda { |o| o.adjusting_order_id }
+  
 
   # override quantity assignment to set unfilled_quantity
   def quantity=(new_quantity)
@@ -89,7 +97,29 @@ class TradeOrder < ActiveRecord::Base
   # true if this order has been filled
   def filled?()
     unfilled_quantity == 0
-  end                            
+  end
+  
+  # The position that should be impacted by this trade order.
+  #
+  # :call-seq:
+  #   trade_order.target_position -> Position
+  #
+  # The position is looked up in the database. If no position exists, a dummy
+  # position is created with 0 stocks. The dummy position is a new record, and
+  # it will not be saved if you don't take specific measures to ensure that.
+  #
+  # For testing purposes, you can use Position#new_record? to verify if the
+  # position returned by this method exists in the database.
+  def target_position
+    Position.find(:first, :conditions => { :portfolio_id => portfolio_id,
+                                           :stock_id => stock_id,
+                                           :is_long => is_long }) ||    
+        Position.new(:portfolio_id => portfolio_id,
+                     :stock_id => stock_id,
+                     :is_long => is_long,
+                     :quantity => 0,
+                     :average_base_cost => 0)    
+  end
 end
 
 # Virtual attributes for display
