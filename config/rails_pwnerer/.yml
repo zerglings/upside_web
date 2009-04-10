@@ -1,5 +1,5 @@
 --- 
-gems: flexmock,rbtree,simple-daemon,starling
+gems: flexmock,json,rbtree,simple-daemon,starling
 # Use less frontends that the usual because 1 core will be taken by the daemons
 # doing feed parsers and order filling
 frontends_per_core: 1
