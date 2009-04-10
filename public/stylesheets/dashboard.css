@@ -1,0 +1,37 @@
+#header {
+  height: 54px;
+  width: 100%;
+  background-color: #4BA50F;
+  background-image: url(/images/layout/header.png);
+  background-repeat: repeat-x;
+}
+
+#left_sidebar {
+  float: left;
+  display:inline-block;
+  width: 260px;
+  margin-left: 40px;
+}
+
+#body_right {
+  width: 680px;
+  margin: 0 40px 0 340px; 
+}
+
+.sidebar_box {
+  margin-bottom: 20px;
+  padding: 8px;
+}
+
+#logo {
+  color: #fff;
+  font-size: 26px;
+  padding: 15px 0 0 25px;
+}
+
+.positions_table {
+  background-color: #fff;
+  outline: 1px solid black;
+  padding: 0 35px;
+}
+

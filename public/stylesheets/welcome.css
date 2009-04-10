@@ -1,45 +1,11 @@
-/* Copyright (c) 2009 Zergling.net, all rights reserved.*/
-
-body, p, h1, h2, h3, h4, h5, h6, ul, li, form { 
-	margin: 0; 
-	padding: 0; 
-	line-height: 18px; 
-	font-family: Trebuchet, Lucida Sans, Arial, sans-serif;
-	color: #555454;
-} 
-
-body {
-	background-image: url(/images/welcome/gray_stripes_background.png);
-	background-repeat: repeat;
-}
-
-#page {
-	display: block;
-	width: 980px;
-	margin: 0px auto;
-	padding-top: 8px;
-}
-
-.welcome_border {
-	border: 4px solid #A8A878;
-}
-
 /* basic page layouts */
 #welcome_header {
 	height: 108px;
 	width: 100%;
 	background-color: #4BA50F;
 	background-image: url(/images/welcome/welcome_header.png);
-	background-repeat: no-repeat;
-}
-
-#welcome_footer {
-	height: 36px;
-	width: 100%;
-	clear: both;
-	background-color: #4BA50F;
-	background-image: url(/images/welcome/welcome_footer.png);
-	background-repeat: no-repeat;	
+	background-repeat: repeat-x;;
+  overflow: hidden;
 }
 
 #copyright {
@@ -48,12 +14,6 @@ body {
 	vertical-align: text-bottom;	
 	text-align: center;
 	color: #fff;
-}
-
-.welcome_body {
-	background-color: #FDFCF4;
-	padding-top: 25px;
-	overflow:hidden;
 }
 
 .welcome_body_left {
@@ -84,11 +44,21 @@ body {
 #logo {
   float: left;
   width: 410px;
-  font-size: 50px;
   line-height: 108px;
-  vertical-align: middle;
   color: #fff;
   padding-left: 40px;
+}
+
+#logowork {
+  vertical-align: text-bottom;
+  padding-top: 0px;
+}
+
+#app_name {
+  padding-left: 30px;
+  font-size: 50px;
+  vertical-align: middle;  
+  padding-bottom: 55px;
 }
 
 /* sign in box */
@@ -141,7 +111,7 @@ body {
 }
 
 /* introduction and sign up */
-#introduction {
+.introduction {
 	padding: 0px 15px 0px 55px;	
 	line-height: 24px;
 }
@@ -149,16 +119,21 @@ body {
 #sign_up {
   font-size: 15px;  
   text-align: center;
-  padding: 3px 0px 8px 0px;
+  padding: 3px 0px 0px 0px;
 }
 
-#app_store_badge {
-  border: none;
-}
-#app_store_badge:visited {
-  border: none;
-}
 #app_store_badge img {
   border: none;
-	margin: -5px 0px -15px 0px;
+	margin: -5px 0px -25px 0px;
+}
+
+#publicity {
+  padding-bottom: 20px;
+  padding-top: 0px;
+}
+
+#contact {
+  font-size: 15px;
+  text-align: center;
+  padding: 3px 0px 0px 0px;  
 }
