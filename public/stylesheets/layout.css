@@ -4,7 +4,7 @@ body, p, h1, h2, h3, h4, h5, h6, ul, li, form {
   margin: 0; 
   padding: 0; 
   line-height: 18px; 
-  font-family: Trebuchet, Lucida Sans, Arial, sans-serif;
+  font-family: Trebuchet, "Trebuchet MS", 'Lucida Sans', Helvetica, Arial, sans-serif;
   color: #555454;
 } 
 
@@ -43,12 +43,12 @@ a:visited img {
 }
 
 #footer a {
-  color: #FFFFFF;
+  color: #fff;
   text-decoration: none;
 }
 
 #footer a:visited {
-  color: #FFFFFF;
+  color: #fff;
 }
 
 .border {
