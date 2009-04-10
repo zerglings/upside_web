@@ -1,0 +1,62 @@
+/* Copyright (c) 2009 Zergling.net, all rights reserved.*/
+
+body, p, h1, h2, h3, h4, h5, h6, ul, li, form { 
+  margin: 0; 
+  padding: 0; 
+  line-height: 18px; 
+  font-family: Trebuchet, Lucida Sans, Arial, sans-serif;
+  color: #555454;
+} 
+
+body {
+  background-image: url(/images/welcome/gray_stripes_background.png);
+  background-repeat: repeat;
+}
+
+a {
+  color: #555454;
+}
+a:visited {
+  color: #555454;
+}
+a img {
+  border: none;
+}
+a:visited img {
+  border: none;
+}
+
+#page {
+  display: block;
+  width: 980px;
+  margin: 0px auto;
+  padding-top: 8px;
+}
+
+#footer {
+  height: 36px;
+  width: 100%;
+  clear: both;
+  background-color: #4BA50F;
+  background-image: url(/images/layout/footer.png);
+  background-repeat: no-repeat; 
+}
+
+#footer a {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+#footer a:visited {
+  color: #FFFFFF;
+}
+
+.border {
+  border: 4px solid #A8A878;
+}
+
+.body {
+  background-color: #FDFCF4;
+  padding-top: 25px;
+  overflow:hidden;
+}
