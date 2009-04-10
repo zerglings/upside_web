@@ -1,0 +1,21 @@
+/* Copyright 2009 Zergling.Net, All Rights Reserved. */
+
+#ui_main {
+  width: 160px;
+}
+
+.stat_div {
+	line-height: 18px;
+}
+.stat_div .stat_name {
+	width: 75px;
+	display: inline-block;
+}
+.stat_div .stat_name:after {
+	content: ":";
+}
+.stat_div .stat_value {
+	width: 80px;
+	display: inline-block;
+	text-align: right;
+}
