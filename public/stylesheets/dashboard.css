@@ -3,7 +3,7 @@
   width: 100%;
   background-color: #4BA50F;
   background-image: url(/images/layout/header.png);
-  background-repeat: no-repeat;
+  background-repeat: repeat-x;
 }
 
 #left_sidebar {

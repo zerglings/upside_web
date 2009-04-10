@@ -39,7 +39,7 @@ a:visited img {
   clear: both;
   background-color: #4BA50F;
   background-image: url(/images/layout/footer.png);
-  background-repeat: no-repeat; 
+  background-repeat: repeat-x; 
 }
 
 #footer a {
