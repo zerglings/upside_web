@@ -62,12 +62,21 @@ class TradeMatchingControllerTest < ActionController::IntegrationTest
                   [stocks(:gs).id, [3.50, 4.20]]],
                  @controller.spreads_in_store
   end
-  
+    
   def test_queues_for_stock
     @controller.sync_store
     assert_equal [[[trade_orders(:buy_ms_high)], []],
                   [[], [trade_orders(:sell_ms_at_market)]]],
                  @controller.queues_for_stock(stocks(:ms).id, [20.5, 22.8])
+  end
+  
+  def test_trades_for_stock_with_no_spread
+    @controller.sync_store
+    
+    assert_equal [], @controller.trades_for_stock(stocks(:ms).id, [20.5, 0]),
+                 "No trading when we don't have an ask"
+    assert_equal [], @controller.trades_for_stock(stocks(:ms).id, [0, 22.8]),
+                 "No trading when we don't have a bid"
   end
   
   def test_round

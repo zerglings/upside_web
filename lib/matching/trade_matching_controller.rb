@@ -48,6 +48,12 @@ class Matching::TradeMatchingController
   
   # Generate trades from the pending orders for a stock.
   def trades_for_stock(stock_id, official_spread)
+    # NOTE: sometimes, the markets are closed, and no after-hours asks or bids
+    #       are available on the open market; we don't do any trades in that
+    #       case, to protect the buyers from accidents like selling a stock
+    #       worth around $100 using an ask of $10
+    return [] if official_spread.first == 0 || official_spread.last == 0
+    
     buy_queue, sell_queue = queues_for_stock(stock_id, official_spread)
     orders = [buy_queue, sell_queue].flatten
     trades = @merger.merge_queues buy_queue, sell_queue, official_spread

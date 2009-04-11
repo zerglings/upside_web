@@ -37,6 +37,9 @@ class TradeMatcher < SimpleDaemon::Base
         @controller.round
         @logger.debug "Completed round" if RAILS_ENV == 'test'
       rescue Exception => e
+        # This gets thrown when we need to get out.
+        break if e.kind_of? SystemExit
+        
         @logger.error "Error in matching - #{e.class.name}: #{e}"
         @logger.info e.backtrace.join("\n")
       end
@@ -50,5 +53,4 @@ class TradeMatcher < SimpleDaemon::Base
   end
 end
 
-ARGV.replace ARGV[0, 1]
 TradeMatcher.daemonize
