@@ -33,7 +33,9 @@ class Matching::TradeMatchingController
         # orders quickly.
         [1.0, 1.0]
       else
-        [data[:bid], data[:ask]]
+        # Sometimes Yahoo throws us a curve ball and gives us prices with more
+        # than 2 decimals. We don't like that, so we round.
+        [data[:bid], data[:ask]].map { |p| (p * 100.0).round / 100.0 }
       end      
     end
     return stock_ids.zip(spreads)

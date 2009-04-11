@@ -55,11 +55,12 @@ class TradeMatchingControllerTest < ActionController::IntegrationTest
                            with(['AAPL', 'MS', 'GS']).
                            and_return([:not_found,
                                        {:ask => 22.8, :bid => 20.5},
-                                       {:ask => 4.20, :bid => 3.50}])    
+                                       # Yes, we're testing unclean data here.
+                                       {:ask => 4.204, :bid => 3.506}])    
 
     assert_equal [[stocks(:aapl).id, [1.0, 1.0]],
                   [stocks(:ms).id, [20.5, 22.8]],
-                  [stocks(:gs).id, [3.50, 4.20]]],
+                  [stocks(:gs).id, [3.51, 4.20]]],
                  @controller.spreads_in_store
   end
     
