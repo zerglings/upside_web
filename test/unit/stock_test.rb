@@ -1,7 +1,8 @@
+require 'set'
 require 'test_helper'
 
 class StockTest < ActiveSupport::TestCase
-  fixtures :markets, :stocks
+  fixtures :markets, :stocks, :positions
   
   def setup
     @stock = Stock.new :ticker => "A", :market => markets(:nyse)
@@ -60,5 +61,13 @@ class StockTest < ActiveSupport::TestCase
     count_after = Stock.count
     assert_equal nil, qwerty
     assert_equal 0, count_after - count_before
+  end
+  
+  def test_all_in_positions
+    # Create a random stock, so we have at least one dead stock in our db.
+    Stock.new(:ticker => 'NOPE', :market => markets(:nyse)).save!
+
+    live_stocks = Set.new([:ms, :gs].map { |sym| stocks sym })
+    assert_equal live_stocks, Set.new(Stock.all_in_positions)
   end
 end

@@ -52,10 +52,10 @@ module YahooFetcher
       # If there's no real bid / ask, simulate some.
       bid = (last * 98.0).round / 100.0 if bid == 0  # 98%, rounded to cents
       ask = (last * 102.0).round / 100.0 if ask == 0  # 102%, rounded to cents
-      {:ask => ask, :bid => bid}
+      {:ask => ask, :bid => bid, :close => last}
     end
   end
-  
+    
   # Generic method for pulling information from Yahoo finance.
   def self.fetch_data(tickers, data_codes)
     query = "/d/?s=#{URI.encode(tickers.join("+"))}&f=#{data_codes}"

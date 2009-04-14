@@ -9,7 +9,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090409160908) do
+ActiveRecord::Schema.define(:version => 20090414171653) do
+
+  create_table "config_variables", :force => true do |t|
+    t.string   "name",       :limit => 64,   :null => false
+    t.integer  "instance",                   :null => false
+    t.string   "value",      :limit => 1024, :null => false
+    t.datetime "updated_at"
+  end
+
+  add_index "config_variables", ["name", "instance"], :name => "index_config_variables_on_name_and_instance", :unique => true
 
   create_table "devices", :force => true do |t|
     t.string   "unique_id",       :limit => 64, :null => false
@@ -18,7 +27,7 @@ ActiveRecord::Schema.define(:version => 20090409160908) do
     t.string   "os_version",      :limit => 32, :null => false
     t.string   "app_version",     :limit => 16, :null => false
     t.datetime "last_activation",               :null => false
-    t.integer  "user_id",         :limit => 8,  :null => false
+    t.integer  "user_id",                       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -33,15 +42,25 @@ ActiveRecord::Schema.define(:version => 20090409160908) do
   end
 
   create_table "order_cancellations", :force => true do |t|
-    t.integer  "trade_order_id", :limit => 8, :null => false
+    t.integer  "trade_order_id", :null => false
     t.datetime "created_at"
   end
 
   add_index "order_cancellations", ["trade_order_id"], :name => "index_order_cancellations_on_trade_order_id", :unique => true
 
+  create_table "portfolio_stats", :force => true do |t|
+    t.integer "frequency",    :limit => 1,                                :null => false
+    t.integer "portfolio_id", :limit => 8,                                :null => false
+    t.decimal "net_worth",                 :precision => 20, :scale => 2, :null => false
+    t.integer "rank",         :limit => 8
+  end
+
+  add_index "portfolio_stats", ["frequency", "rank"], :name => "index_portfolio_stats_on_frequency_and_rank"
+  add_index "portfolio_stats", ["portfolio_id", "frequency"], :name => "index_portfolio_stats_on_portfolio_id_and_frequency", :unique => true
+
   create_table "portfolios", :force => true do |t|
-    t.integer  "user_id",    :limit => 8,                                                      :null => false
-    t.decimal  "cash",                    :precision => 20, :scale => 2, :default => 250000.0, :null => false
+    t.integer  "user_id",                                                         :null => false
+    t.decimal  "cash",       :precision => 20, :scale => 2, :default => 250000.0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -49,10 +68,10 @@ ActiveRecord::Schema.define(:version => 20090409160908) do
   add_index "portfolios", ["user_id"], :name => "index_portfolios_on_user_id", :unique => true
 
   create_table "positions", :force => true do |t|
-    t.integer  "portfolio_id",      :limit => 8, :null => false
-    t.integer  "stock_id",                       :null => false
-    t.boolean  "is_long",                        :null => false
-    t.integer  "quantity",          :limit => 8, :null => false
+    t.integer  "portfolio_id",      :null => false
+    t.integer  "stock_id",          :null => false
+    t.boolean  "is_long",           :null => false
+    t.integer  "quantity",          :null => false
     t.float    "average_base_cost"
     t.float    "decimal"
     t.datetime "created_at"
@@ -78,15 +97,15 @@ ActiveRecord::Schema.define(:version => 20090409160908) do
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
-    t.integer  "portfolio_id",       :limit => 8,                                                 :null => false
+    t.integer  "portfolio_id",                                                                    :null => false
     t.integer  "stock_id",                                                                        :null => false
     t.boolean  "is_buy",                                                        :default => true, :null => false
     t.boolean  "is_long",                                                       :default => true, :null => false
     t.decimal  "stop_price",                      :precision => 8, :scale => 2
     t.decimal  "limit_price",                     :precision => 8, :scale => 2
     t.datetime "expiration_time"
-    t.integer  "quantity",           :limit => 8,                                                 :null => false
-    t.integer  "unfilled_quantity",  :limit => 8,                                                 :null => false
+    t.integer  "quantity",                                                                        :null => false
+    t.integer  "unfilled_quantity",                                                               :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "adjusting_order_id", :limit => 8
@@ -95,11 +114,11 @@ ActiveRecord::Schema.define(:version => 20090409160908) do
   add_index "trade_orders", ["portfolio_id"], :name => "index_trade_orders_on_portfolio_id"
 
   create_table "trades", :force => true do |t|
-    t.datetime "time",                                                      :null => false
-    t.integer  "quantity",       :limit => 8,                               :null => false
-    t.integer  "trade_order_id", :limit => 8,                               :null => false
-    t.integer  "counterpart_id", :limit => 8
-    t.decimal  "price",                       :precision => 8, :scale => 2, :null => false
+    t.datetime "time",                                         :null => false
+    t.integer  "quantity",                                     :null => false
+    t.integer  "trade_order_id",                               :null => false
+    t.integer  "counterpart_id"
+    t.decimal  "price",          :precision => 8, :scale => 2, :null => false
     t.datetime "created_at"
   end
 
