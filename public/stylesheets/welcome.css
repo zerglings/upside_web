@@ -137,3 +137,25 @@
   text-align: center;
   padding: 3px 0px 0px 0px;  
 }
+
+#nav_bar {
+  background-image: url(/images/layout/nav_item.png);
+  background-repeat: repeat-x;
+}
+
+.nav_item {
+  display:inline-block;
+  height: 28px;
+  padding: 0px 25px;
+}
+
+.nav_item a {
+  text-decoration:none;
+  font-variant:small-caps;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+#nav_first {
+  padding-left: 135px;
+}
