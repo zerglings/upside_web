@@ -80,6 +80,7 @@ class PortfolioStatTest < ActiveSupport::TestCase
     assert_equal @admin, device_daily.portfolio, 'Wrong portfolio on new stats'
     assert_equal PortfolioStat::Frequencies::DAILY, device_daily.frequency,
                  'Wrong frequency on new stats'
-    assert_nil device_daily.rank, 'New (unsaved) portfolio should not be ranked'
+    assert_nil device_daily.rank,
+               'Stats created by PortfolioStat.for should not contain a rank'
   end
 end
