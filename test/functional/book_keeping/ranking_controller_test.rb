@@ -55,9 +55,12 @@ class RankingControllerTest < ActionController::IntegrationTest
     @controller.update_ranks HOURLY
     
     assert_equal 1, @rich_kid.stats_for(HOURLY).rank
-    assert_equal Set.new([2, 3]),
-                 Set.new([:match_buyer, :match_seller].map { |sym|
-                     portfolios(sym).stats_for(HOURLY).rank })                 
+    
+    portfolio_syms = [:match_buyer, :match_seller, :admin].sort_by do |sym|
+      [-portfolios(sym).cash, -portfolios(sym).id]
+    end
+    assert_equal [2, 3, 6], portfolio_syms.map { |sym|
+      portfolios(sym).stats_for(HOURLY).rank }
   end
   
   def test_copy_stats    

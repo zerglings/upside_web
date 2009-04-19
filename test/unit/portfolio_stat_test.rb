@@ -47,9 +47,9 @@ class PortfolioStatTest < ActiveSupport::TestCase
     assert !@stat.valid?
   end
   
-  def test_net_worth_should_be_positive
-    @stat.net_worth = -1.0
-    assert @stat.valid?
+  def test_net_worth_lower_bound
+    @stat.net_worth = -Portfolio::MAX_CASH - 0.01;
+    assert !@stat.valid?
   end
   
   def test_net_worth_upper_bound
@@ -80,6 +80,6 @@ class PortfolioStatTest < ActiveSupport::TestCase
     assert_equal @admin, device_daily.portfolio, 'Wrong portfolio on new stats'
     assert_equal PortfolioStat::Frequencies::DAILY, device_daily.frequency,
                  'Wrong frequency on new stats'
-    assert_nil device_daily.rank, 'New portfolio should not be ranked'
+    assert_nil device_daily.rank, 'New (unsaved) portfolio should not be ranked'
   end
 end

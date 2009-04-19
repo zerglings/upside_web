@@ -25,7 +25,8 @@ class BookKeeping::RankingController
   # Updates the ranks in PortfolioStats based on the networths.
   def update_ranks(frequency)
     PortfolioStat.all(:conditions => { :frequency => frequency },
-                      :order => 'net_worth DESC').each_with_index do |stat, i|
+                      :order => 'net_worth DESC, portfolio_id DESC').
+                  each_with_index do |stat, i|
       stat.update_attributes! :rank => i + 1
     end
     record_stats_update frequency    
