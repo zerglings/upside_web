@@ -55,7 +55,7 @@ class Matching::OrderMerger
     sell_price = sell_order.limit_price || official_spread.first
     return false if buy_price < sell_price
     # divides by 2 and rounds to cents
-    price = ((buy_price + sell_price) * 50.0).round / 100.0
+    price = Stock.clean_price((buy_price + sell_price) / 2)
     quantity = [buy_order.unfilled_quantity, sell_order.unfilled_quantity].min
     
     order_filler.call buy_queue, buy_order, price, quantity

@@ -11,7 +11,7 @@ module YahooFetcher
   #    an array of hashes with each hash accounting for one of the stock tickers  
   #    ex. [{:ask=>316.18, :bid=>315.0}, {:ask=>19.6, :bid=>19.58}]
   def self.stock_data_for_tickers(tickers)
-    parse_response fetch_data(tickers, "xab") do |result|
+    fetch_and_parse tickers, "xab" do |result|
       { :stock_exchange => result[0],
         :ask => result[1].to_f,
         :bid => result[2].to_f
@@ -26,13 +26,13 @@ module YahooFetcher
   #  Returns:
   #   an array with a boolean per ticker (true = exists, false = does not exist)
   def self.tickers_exist?(tickers)
-    parse_response(fetch_data(tickers, "x"), false) { |result| true }
+    fetch_and_parse(tickers, "x", false) { |result| true }
   end
   
   # Determine the markets for stocks
   # Take in array of tickers and returns array of markets
   def self.markets_for_tickers(tickers)
-    parse_response fetch_data(tickers, "x") do |result|
+    fetch_and_parse tickers, "x" do |result|
       (result[0].to_s == "N/A") ? :not_found : result[0] 
     end
   end
@@ -43,24 +43,45 @@ module YahooFetcher
   # to process a lot of tickers. The Web service call is optimized to ask for
   # the minimum information needed to do the job, and therefore cannot detect
   # invalid tickers. 
-  def self.spreads_for_tickers(tickers)
+  def self.spreads_for_tickers(tickers)    
     # format: real-time ask and bid, last close, previous day close
-    parse_response fetch_data(tickers, "b2b3l1p") do |result|
+    fetch_and_parse tickers, "b2b3l1p", :disable_not_found do |result|
       ask, bid = result[0].to_f, result[1].to_f
-      last = result[2].to_f
-      last = result[3].to_f if last == 0
+      closing = result[2].to_f
+      closing = result[3].to_f if closing == 0
       # If there's no real bid / ask, simulate some.
-      bid = (last * 98.0).round / 100.0 if bid == 0  # 98%, rounded to cents
-      ask = (last * 102.0).round / 100.0 if ask == 0  # 102%, rounded to cents
-      {:ask => ask, :bid => bid, :close => last}
+      bid = Stock.clean_price(closing * 0.98) if bid == 0
+      ask = Stock.clean_price(closing * 1.02) if ask == 0
+      { :ask => ask, :bid => bid, :close => Stock.clean_price(closing) }
     end
+  end
+
+  # TODO(overmind): spec this
+  def self.fetch_and_parse(tickers, data_codes,
+                           not_found_placeholder = :not_found, &block)
+    max_tickers = 150  # Yahoo will crash if we ask for more than 200 tickers
+    i = 0
+    answer = []
+    while i < tickers.length
+      round_tickers = tickers[i, max_tickers]
+      response = fetch_data(round_tickers, data_codes)
+      answer_chunk = parse_response response, not_found_placeholder, &block 
+      i += answer_chunk.length
+      answer += answer_chunk
+    end
+    answer
   end
     
   # Generic method for pulling information from Yahoo finance.
   def self.fetch_data(tickers, data_codes)
-    query = "/d/?s=#{URI.encode(tickers.join("+"))}&f=#{data_codes}"
+    # TODO(overmind): we should ensure that we don't get garbage in our system,
+    #                 instead of filtering it here
+    ticker_string = tickers.map { |t| t.gsub('_', ' ') }.join("+")
+    query = "/d/?s=#{URI.encode(ticker_string)}&f=#{data_codes}"
     
-    response = Net::HTTP.start("download.finance.yahoo.com", 80) { |http| http.get query}
+    response = Net::HTTP.start "download.finance.yahoo.com", 80 do |http|
+      http.get query
+    end
     unless response.kind_of? Net::HTTPSuccess
       raise "Failed to pull Yahoo stock data - #{response.inspect}"
     end
@@ -70,13 +91,14 @@ module YahooFetcher
   # Generic parser for data returned from Yahoo finance.
   # Assumes the first column for each stock is N/A if the stock does not exist.
   def self.parse_response(response, not_found_placeholder = :not_found)
-    results = CSV.parse(response)
- 
+    results = CSV.parse response
     results.map do |result|
-      next not_found_placeholder if result.first == "N/A"      
+      if not_found_placeholder != :disable_not_found && result.first == "N/A"
+        next not_found_placeholder
+      end
       yield result
-    end 
-  end
+    end
+  end  
 end
 
 if __FILE__ == $0

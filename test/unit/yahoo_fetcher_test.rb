@@ -57,14 +57,16 @@ END
   def test_spreads_for_tickers_parsing
     fetched_data = <<END
 96.27,0.00,91.51,90.13
-0.00,330.15,0.00,338.53
+N/A,N/A,0.00,0.00
+0.00,330.15,0.00,338.5301
 18.00,17.05,17.83,17.10
 END
     flexmock(YahooFetcher).should_receive(:fetch_data).with_any_args.
                            and_return(fetched_data)
 
-    tickers = ['AAPL', 'GOOG', 'MSFT']
+    tickers = ['AAPL', 'XXXX', 'GOOG', 'MSFT']
     golden_spreads = [{:ask => 96.27, :bid => 89.68, :close => 91.51},
+                      {:ask => 0.0, :bid => 0.0, :close => 0.0},
                       {:ask => 345.30, :bid => 330.15, :close => 338.53},
                       {:ask => 18.00, :bid => 17.05, :close => 17.83}]
     assert_equal golden_spreads, YahooFetcher.spreads_for_tickers(tickers)

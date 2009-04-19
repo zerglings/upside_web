@@ -38,4 +38,11 @@ class Stock < ActiveRecord::Base
   def self.all_in_positions
     Stock.find(:all, :joins => [:positions], :group => :id)
   end
+
+  # Clean up an externally received stock price.
+  #
+  # The returned price is rounded to 2 decimal points.
+  def self.clean_price(price)
+    (price * 100.0).round / 100.0
+  end  
 end

@@ -70,4 +70,16 @@ class StockTest < ActiveSupport::TestCase
     live_stocks = Set.new([:ms, :gs].map { |sym| stocks sym })
     assert_equal live_stocks, Set.new(Stock.all_in_positions)
   end
+  
+  def test_clean_price_rounding
+    [[0, 0], [1.01, 1.01], [-1.02, -1.02], [10.51, 10.51], [-10.99, -10.99],
+     [1_000_000.00, 1_000_000.00], [1.515, 1.52], [-1.515, -1.52],
+     [0.005, 0.01], [0.0049, 0], [-0.005, -0.01],
+     [BigDecimal.new("123456789012345.6789"),
+      BigDecimal.new("123456789012345.68")],
+     [BigDecimal.new("-98765432109876.5432"),
+      BigDecimal.new("-98765432109876.54")]].each do |test|
+      assert_equal test.last, Stock.clean_price(test.first)
+    end
+  end
 end

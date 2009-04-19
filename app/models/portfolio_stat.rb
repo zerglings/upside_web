@@ -32,7 +32,7 @@ class PortfolioStat < ActiveRecord::Base
   validates_numericality_of :net_worth, :allow_nil => false,
                             :greater_than_or_equal_to => -Portfolio::MAX_CASH,
                             :less_than_or_equal_to => Portfolio::MAX_CASH,
-                            :message => "Cash balance exceeds $10 billion"
+                            :message => "Cash balance exceeds $10 trillion"
   validates_format_of :net_worth,
                       :with => /\.\d{0,2}$/
 

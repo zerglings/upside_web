@@ -60,6 +60,16 @@ class PortfolioStatTest < ActiveSupport::TestCase
   def test_net_worth_scale
     @stat.net_worth = 3.141
     assert !@stat.valid?
+    
+    @stat.net_worth = BigDecimal.new("1234567890123.45")
+    assert @stat.valid?, 'BigDecimal with 2 precision digits'
+    @stat.net_worth = BigDecimal.new("1234567890123.4567")
+    assert !@stat.valid?, 'BigDecimal with 4 precision digits'
+
+    @stat.net_worth = BigDecimal.new("-1234567890123.45")
+    assert @stat.valid?, 'Negative BigDecimal with 2 precision digits'
+    @stat.net_worth = BigDecimal.new("-1234567890123.4567")
+    assert !@stat.valid?, 'Negative BigDecimal with 4 precision digits'
   end
   
   def test_frequency_string

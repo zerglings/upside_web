@@ -11,7 +11,7 @@
 #
 
 class Portfolio < ActiveRecord::Base
-  MAX_CASH = (10**13 -0.01)
+  MAX_CASH = (10**13 - 0.01)
   NEW_PLAYER_CASH = 250000
   
   belongs_to :user
@@ -36,7 +36,7 @@ class Portfolio < ActiveRecord::Base
   # Convenience method for PortfolioStat#for
   def stats_for(frequency)
     PortfolioStat.for self, frequency
-  end
+  end  
 end
 
 class Portfolio
@@ -44,8 +44,8 @@ class Portfolio
   #
   # Assumes stock_spreads contains the spreads for all the portfolio's stocks.
   def net_worth(stock_spreads)
-    positions.inject cash do |sum, position|
-      sum + position.net_worth(stock_spreads)
-    end
+    positions.inject((cash * 100).to_i) { |sum, position|
+      sum + (position.net_worth(stock_spreads) * 100).to_i
+    } / 100.0
   end
 end
