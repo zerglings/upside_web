@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class PositionTest < ActiveSupport::TestCase
+  fixtures :positions, :portfolios, :stocks
   
   def setup
     @position = Position.new :stock_id => 8, :portfolio_id => 123,
@@ -63,4 +64,17 @@ class PositionTest < ActiveSupport::TestCase
     assert !@position.valid?
   end
   
+  def test_net_worth
+    spreads = { stocks(:ms) => { :close => 13.14 },
+                stocks(:gs) => { :close => 70.5 } }
+    
+    assert_equal 13.14 * 500, positions(:ms_long).net_worth(spreads),
+                 'Networth for MS long'
+    assert_equal 13.14 * -300, positions(:ms_short).net_worth(spreads),
+                 'Networth for MS short'
+    assert_equal 70.5 * 200, positions(:gs_long).net_worth(spreads),
+                 'Networth for GS long'
+    assert_equal 70.5 * -450, positions(:gs_short).net_worth(spreads),
+                 'Networth for GS short'
+  end
 end

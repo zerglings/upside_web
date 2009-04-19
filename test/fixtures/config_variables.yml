@@ -1,0 +1,23 @@
+# == Schema Information
+# Schema version: 20090414171653
+#
+# Table name: config_variables
+#
+#  id         :integer(4)      not null, primary key
+#  name       :string(64)      not null
+#  instance   :integer(4)      not null
+#  value      :string(1024)    not null
+#  updated_at :datetime
+#
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+testing_var_root:
+  name: testing_name
+  instance: 0
+  value: Awesomeness
+
+testing_var_extra:
+  name: testing_name
+  instance: 1
+  value: <%= {:one => 'one', :two => [3, 4] }.to_yaml.inspect %>

@@ -1,13 +1,13 @@
 # == Schema Information
-# Schema version: 20090409160908
+# Schema version: 20090414171653
 #
 # Table name: positions
 #
 #  id                :integer(4)      not null, primary key
-#  portfolio_id      :integer(8)      not null
+#  portfolio_id      :integer(4)      not null
 #  stock_id          :integer(4)      not null
 #  is_long           :boolean(1)      not null
-#  quantity          :integer(8)      not null
+#  quantity          :integer(4)      not null
 #  average_base_cost :float
 #  decimal           :float
 #  created_at        :datetime
@@ -34,4 +34,14 @@ class Position < ActiveRecord::Base
   # True for long positions, false for shorts.
   validates_inclusion_of :is_long, :in => [true, false], :allow_nil => false
   validates_uniqueness_of :is_long, :scope => [:portfolio_id, :stock_id]
+end
+
+class Position
+  # The net worth of this position.
+  #
+  # Assumes stock_spreads contains the spread for this position's stock.
+  def net_worth(stock_spreads)
+    absolute_worth = stock_spreads[stock][:close] * quantity
+    is_long ? absolute_worth : -absolute_worth
+  end
 end

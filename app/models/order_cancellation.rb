@@ -1,10 +1,10 @@
 # == Schema Information
-# Schema version: 20090409160908
+# Schema version: 20090414171653
 #
 # Table name: order_cancellations
 #
 #  id             :integer(4)      not null, primary key
-#  trade_order_id :integer(8)      not null
+#  trade_order_id :integer(4)      not null
 #  created_at     :datetime
 #
 

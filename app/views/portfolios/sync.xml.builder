@@ -18,6 +18,14 @@ xml.sync do |sync|
     trade_order_to_xml_builder sync, trade_order
   end
   
+  @stats.each do |portfolio_stat|
+    sync.portfolio_stat do |output|
+      output.frequency portfolio_stat.frequency_string
+      output.rank portfolio_stat.rank
+      output.net_worth portfolio_stat.net_worth
+    end
+  end
+  
   @trades.each do |trade|
     sync.trade do |output|
       output.model_id trade.id

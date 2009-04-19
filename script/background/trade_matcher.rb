@@ -27,20 +27,37 @@ class TradeMatcher < SimpleDaemon::Base
     
     @logger.info "Creating trade matcher"
     
-    @controller = Matching::TradeMatchingController.new
+    @matching_controller = Matching::TradeMatchingController.new
+    @ranking_controller = BookKeeping::RankingController.new
         
     @logger.info "Started trade matcher"
     
     loop do 
       # execute tasks
       begin
-        @controller.round
+        @matching_controller.round
         @logger.debug "Completed round" if RAILS_ENV == 'test'
       rescue Exception => e
         # This gets thrown when we need to get out.
         break if e.kind_of? SystemExit
         
         @logger.error "Error in matching - #{e.class.name}: #{e}"
+        @logger.info e.backtrace.join("\n")
+      end
+      
+      # NOTE: these controllers are executed in the same loop to get consistency
+      #       for free. No trades will be executed during ranking, so the
+      #       portfolios content are constant while the ranking controller runs.
+      #       We'll have to figure out synchronization when we'll need to shard
+      #       out matching.
+      begin
+        @ranking_controller.round
+        @logger.debug "Completed round" if RAILS_ENV == 'test'
+      rescue Exception => e
+        # This gets thrown when we need to get out.
+        break if e.kind_of? SystemExit
+        
+        @logger.error "Error in ranking - #{e.class.name}: #{e}"
         @logger.info e.backtrace.join("\n")
       end
 

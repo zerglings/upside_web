@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090409160908
+# Schema version: 20090414171653
 #
 # Table name: stocks
 #
@@ -11,6 +11,7 @@
 class Stock < ActiveRecord::Base
   belongs_to :market
   has_one :stock_info
+  has_many :positions
     
   validates_uniqueness_of :ticker, :allow_nil => false
   validates_length_of :ticker, :in => 1..10
@@ -31,5 +32,10 @@ class Stock < ActiveRecord::Base
     end 
     
     return stock
+  end
+  
+  # Retrieves all the stocks that are associated with live positions. 
+  def self.all_in_positions
+    Stock.find(:all, :joins => [:positions], :group => :id)
   end
 end

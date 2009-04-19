@@ -64,9 +64,9 @@ END
                            and_return(fetched_data)
 
     tickers = ['AAPL', 'GOOG', 'MSFT']
-    golden_spreads = [{:ask => 96.27, :bid => 89.68},
-                      {:ask => 345.30, :bid => 330.15},
-                      {:ask => 18.00, :bid => 17.05}]
+    golden_spreads = [{:ask => 96.27, :bid => 89.68, :close => 91.51},
+                      {:ask => 345.30, :bid => 330.15, :close => 338.53},
+                      {:ask => 18.00, :bid => 17.05, :close => 17.83}]
     assert_equal golden_spreads, YahooFetcher.spreads_for_tickers(tickers)
   end
   

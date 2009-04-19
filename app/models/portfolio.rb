@@ -1,10 +1,10 @@
 # == Schema Information
-# Schema version: 20090409160908
+# Schema version: 20090414171653
 #
 # Table name: portfolios
 #
 #  id         :integer(4)      not null, primary key
-#  user_id    :integer(8)      not null
+#  user_id    :integer(4)      not null
 #  cash       :decimal(20, 2)  default(250000.0), not null
 #  created_at :datetime
 #  updated_at :datetime
@@ -18,6 +18,7 @@ class Portfolio < ActiveRecord::Base
   has_many :trade_orders, :dependent => :destroy
   has_many :trades, :through => :trade_orders
   has_many :positions
+  has_many :stats, :class_name => 'PortfolioStat'
   
   # user id
   validates_presence_of :user_id   
@@ -31,5 +32,20 @@ class Portfolio < ActiveRecord::Base
                             :message => "Cash balance exceeds $10 billion"
   validates_format_of :cash,
                       :with => /\.\d{0,2}$/
-                                    
+
+  # Convenience method for PortfolioStat#for
+  def stats_for(frequency)
+    PortfolioStat.for self, frequency
+  end
+end
+
+class Portfolio
+  # The net worth of all the assets in the portfolio.
+  #
+  # Assumes stock_spreads contains the spreads for all the portfolio's stocks.
+  def net_worth(stock_spreads)
+    positions.inject cash do |sum, position|
+      sum + position.net_worth(stock_spreads)
+    end
+  end
 end

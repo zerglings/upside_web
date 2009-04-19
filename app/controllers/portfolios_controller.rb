@@ -53,6 +53,7 @@ class PortfoliosController < ApplicationController
     @positions = @portfolio.positions
     @trade_orders = @portfolio.trade_orders.reject { |o| o.adjusting_order_id }
     @trades = @portfolio.trades
+    @stats = @portfolio.stats
     
     respond_to do |format|
       format.html { redirect_to @portfolio }

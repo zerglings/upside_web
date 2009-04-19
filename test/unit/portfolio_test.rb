@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class PortfolioTest < ActiveSupport::TestCase
+  fixtures :portfolios, :positions, :stocks
 
   def setup
     @portfolio = Portfolio.new :cash => portfolios(:rich_kid).cash,
@@ -44,5 +45,14 @@ class PortfolioTest < ActiveSupport::TestCase
   def test_cash_balance_starts_at_quarter_million
     newport = Portfolio.new
     assert_equal Portfolio::NEW_PLAYER_CASH, newport.cash
+  end
+  
+  def test_net_worth
+    spreads = { stocks(:ms) => { :close => 13.14 },
+                stocks(:gs) => { :close => 70.5 } }
+    
+    # 10_000_000 + 13.14 * (500 - 300) + 70.5 * (200 - 450)
+    assert_equal 9_985_003.0, portfolios(:rich_kid).net_worth(spreads),
+                 'Networth for rich_kid'
   end
 end

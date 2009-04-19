@@ -59,13 +59,21 @@ module CommonPortfolioTests
       end
     end
     
+    @portfolio.stats.each do |stat|
+      assert_select('portfolio_stat') do
+        assert_select 'frequency', stat.frequency_string
+        assert_select 'net_worth', stat.net_worth.to_s
+        assert_select 'rank', stat.rank.to_s
+      end
+    end    
+
     @portfolio.trades.each do |trade|
       assert_select('trade') do
         assert_select 'model_id', trade.id.to_s
         assert_select 'quantity', trade.quantity.to_s
         assert_select 'price', trade.price.to_s
       end
-    end
+    end    
   end  
 end
 
