@@ -24,7 +24,7 @@
 .welcome_body_right {
 	width: 275px;
 	float: right;
-	margin: 0px;
+	margin: 0;
 	display: inline-block;
   padding-right: 40px;
 }
@@ -39,7 +39,7 @@
 
 #logowork {
 	vertical-align: text-bottom;
-  padding-top: 0px;
+  padding-top: 0;
 }
 
 #app_name {
@@ -58,14 +58,14 @@
 
 #sign_in fieldset {
   border: none;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 .login_field input {
   width: 110px;
-  margin: 0px 5px;
-  padding: 0px;
+  margin: 0 5px;
+  padding: 0;
 }
 
 input.grayed_out {
@@ -74,7 +74,7 @@ input.grayed_out {
 
 #submit_button input {
   border: none;
-  padding: 0px;
+  padding: 0;
   width: 66px;
   height: 24px; 
   vertical-align: middle;
@@ -82,9 +82,9 @@ input.grayed_out {
 
 /* tagline/quote we use to market stockplay */
 #sell {
-  margin-top: 0px;
+  margin-top: 0;
   font: 23px "Myriad Pro", "Verdana", sans-serif;
-  padding: 0px 0px 20px 20px;
+  padding: 0 0 20px 20px;
   font-style: italic;
   background: #FDFCF4;
   vertical-align: middle;
@@ -102,7 +102,7 @@ input.grayed_out {
 #screenshots {
 	width: 580px;
 	height: 318px;
-	margin: 0px 18px 0px 0px;
+	margin: 0 18px 0 0;
 	padding: 10px 0 5px 0;
 	text-align: center;
 }
@@ -110,13 +110,13 @@ input.grayed_out {
 /* links to the stockplay blog, twitter, zergling, and contact us */
 #publicity_links {
   background-color: #e4f9d7;
-  padding: 0px;
-  margin: 0px; 
+  padding: 0;
+  margin: 0; 
 }
 
 .nav_item {
   height: 60px;
-  padding: 0px;
+  padding: 0;
 }
 
 .nav_item:hover {
@@ -139,12 +139,12 @@ input.grayed_out {
 }
 
 .nav_name {
-  padding: 5px 0px 0px 65px;
+  padding: 5px 0 0 65px;
 }
 
 .nav_item_description {
   font-size: 12px;
-  padding: 1px 0px 0px 65px;
+  padding: 1px 0 0 65px;
 }
 
 .nav_divider {
