@@ -68,7 +68,7 @@
   padding: 0px;
 }
 
-.initial_gray input {
+input.grayed_out {
   color: gray; 
 }
 

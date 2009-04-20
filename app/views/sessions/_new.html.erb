@@ -7,9 +7,9 @@
 <% form_tag :controller => :sessions, :action => :create do %>
 	
 	<fieldset>
-	  <p class= "login_field initial_gray">
-		  <span id="username"><%= text_field_tag :name, params[:name] %></span>
-		  <span id="password"><%= password_field_tag :password, params[:password] %></span>
+	  <p class= "login_field">
+		  <span id="username"><%= text_field_tag :name, params[:name], :class => 'iphone_field', :grayed_out_text => 'user name' %></span>
+		  <span id="password"><%= password_field_tag :password, params[:password], :class => 'iphone_field', :grayed_out_text => 'password' %></span>
       <span id="submit_button"><%= image_submit_tag "welcome/header_login_button.png" %></span>
 	  </p>
 	</fieldset>

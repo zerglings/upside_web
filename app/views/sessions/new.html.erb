@@ -3,7 +3,9 @@
   <head>
     <title>Welcome to StockPlay</title>
     <%= stylesheet_link_tag 'layout', 'welcome', :cache => 'welcome_cache' %>
-    <%= javascript_include_tag :defaults, :cache => 'js_cache' %>
+	  <%= javascript_include_tag 'prototype', 'effects', 'dragdrop', 'controls',
+	                             'lowpro', 'application', 'welcome',
+	                             :cache => 'js_cache' %>
   </head>
   <body>
     <div id="page">
