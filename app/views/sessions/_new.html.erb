@@ -7,20 +7,10 @@
 <% form_tag :controller => :sessions, :action => :create do %>
 	
 	<fieldset>
-	  <legend>Please Sign In</legend>	
-	  
-	  <p>
-	  	<label for="name">Username:</label>
-		<%= text_field_tag :name, params[:name] %>
-	  </p>	
-	  
-	  <p>
-	  	<label for="password">Password:</label>
-		<%= password_field_tag :password, params[:password] %>
-	  </p>
-	  
-	  <p id="submit_button">
-	  	<%= image_submit_tag "welcome/login_button_98.png" %>
+	  <p class= "login_field initial_gray">
+		  <span id="username"><%= text_field_tag :name, params[:name] %></span>
+		  <span id="password"><%= password_field_tag :password, params[:password] %></span>
+      <span id="submit_button"><%= image_submit_tag "welcome/header_login_button.png" %></span>
 	  </p>
 	</fieldset>
 	
