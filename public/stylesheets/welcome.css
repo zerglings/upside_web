@@ -4,141 +4,158 @@
 	width: 100%;
 	background-color: #4BA50F;
 	background-image: url(/images/welcome/welcome_header.png);
-	background-repeat: repeat-x;;
+	background-repeat: repeat-x;
   overflow: hidden;
 }
 
 #copyright {
-	font-size: 12px;
-	line-height: 36px;
-	vertical-align: text-bottom;	
-	text-align: center;
-	color: #fff;
+  font-size: 12px;
+  line-height: 36px;
+  vertical-align: text-bottom;	
+  text-align: center;
+  color: #fff;
 }
 
 .welcome_body_left {
 	width: 628px; 
+  padding-left: 40px;
 }
 
 .welcome_body_right {
 	width: 275px;
 	float: right;
-	margin: 0 44px 0 0;
+	margin: 0px;
 	display: inline-block;
-}
-
-#sign_in {	
-	background-color: #DADAC9;
-}
-
-#header_graph {
-	width: 324px;
-	float: right;
-}
-
-#header_quote {
-	width: 250px;
-	float: left;
+  padding-right: 40px;
 }
 
 #logo {
   float: left;
   width: 410px;
-  height: 108px;
+  line-height: 108px;
   color: #fff;
-  padding-left: 30px;
-  position: relative;
+  padding-left: 40px;
 }
 
 #logowork {
-  position: absolute;
-	bottom: 0px;
+	vertical-align: text-bottom;
   padding-top: 0px;
-  padding-bottom: 15px; 
 }
 
 #app_name {
-	position: absolute;
-	bottom: 0px;
-  left: 120px;
+  padding-left: 30px;
   font-size: 50px;
-	line-height: 60px;
-	padding-bottom: 20px;
+  vertical-align: middle;  
+  padding-bottom: 55px;
 }
 
-/* sign in box */
-#sign_in fieldset {
-	border: none;
-	margin: 0px;
-	padding: 0px;
+/* header sign in box */
+#header_sign_in {
+  width: 355px;
+  float: right;
+  padding-top: 10px;
 }
 
-#sign_in legend {
-	font-size: 28px;
-	line-height: 32px;
-	width: 248px;
-	padding: 8px 0px 7px 38px;
+#header_sign_in fieldset {
+  border: none;
+  margin: 0px;
+  padding: 0px;
 }
 
-#sign_in fieldset p {
-	padding: 3px 3px 3px 8px;
+.login_field input {
+  width: 110px;
+  margin: 0px 5px;
+  padding: 0px;
 }
 
-#sign_in fieldset p label {
-	width: 68px;
-	padding: 3px 5px;
-	display: inline-block;
-	font-size: 14px;
+input.grayed_out {
+  color: gray; 
 }
 
 #submit_button input {
-	border: none;
-	padding: 8px 0px 8px 80px;
+  border: none;
+  padding: 0px;
+  width: 66px;
+  height: 24px; 
+  vertical-align: middle;
 }
 
 /* sell */
 #sell {
-	margin-top: 25px;
+  margin-top: 0px;
   font: 23px "Myriad Pro", "Verdana", sans-serif;
-  padding: 12px;
+  padding: 0px 0px 20px 20px;
   font-style: italic;
-  line-height: 30px;
-  text-align:center;
+  background: #FDFCF4;
+  vertical-align: middle;
+}
+
+/* app store badge */
+#app_store_badge {
+  border: none;
+  margin-top: -15px; 
+  margin-left: -5px;
+  padding-bottom: 10px;
 }
 
 /* screenshots */
 #screenshots {
 	width: 580px;
 	height: 318px;
-	margin: 0px 18px 0px 44px;
+	margin: 0px 18px 0px 0px;
 	padding: 10px 0 5px 0;
 	text-align:center;
 }
 
-/* introduction and sign up */
+/* publicity links */
+#publicity_links {
+  background-color: #e4f9d7;
+  padding: 0px;
+  margin: 0px; 
+}
+
+.nav_item {
+  height: 60px;
+  padding: 0px;
+}
+
+.nav_item:hover {
+  background-color: #f4fcef;
+}
+
+.nav_pic_box {
+  padding-top: 6px;
+  float: left; 
+  width: 65px;
+  height: 54px;
+  text-align: center;
+}
+
+.nav_item a {
+  display: block;
+  text-decoration:none;
+  font-variant:small-caps;
+  padding-top: 5px;
+}
+
+.nav_name {
+  padding: 5px 0px 0px 65px;
+}
+
+.nav_item_description {
+  font-size: 12px;
+  padding: 1px 0px 0px 65px;
+}
+
+.nav_divider {
+  width: 254px;
+  margin: 0 auto;
+  border-top: 1px solid #a8a878; 
+  border-bottom: 1px solid #edede4;
+}  
+
+/* introduction */
 .introduction {
-	padding: 0px 15px 0px 55px;	
-	line-height: 24px;
-}
-
-#sign_up {
-  font-size: 15px;  
-  text-align: center;
-  padding: 3px 0px 0px 0px;
-}
-
-#app_store_badge img {
-  border: none;
-	margin: -5px 0px -25px 0px;
-}
-
-#publicity {
-  padding-bottom: 20px;
-  padding-top: 0px;
-}
-
-#contact {
-  font-size: 15px;
-  text-align: center;
-  padding: 3px 0px 0px 0px;  
+  padding: 0px 15px 0px 55px; 
+  line-height: 24px;
 }

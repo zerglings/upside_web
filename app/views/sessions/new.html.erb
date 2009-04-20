@@ -2,70 +2,92 @@
 <html>
   <head>
     <title>Welcome to StockPlay</title>
-		<%= stylesheet_link_tag 'layout', 'welcome', :cache => 'welcome_cache' %>
-		<%= javascript_include_tag :defaults, :cache => 'js_cache' %>
+    <%= stylesheet_link_tag 'layout', 'welcome', :cache => 'welcome_cache' %>
+	  <%= javascript_include_tag 'prototype', 'effects', 'dragdrop', 'controls',
+	                             'lowpro', 'application', 'welcome',
+	                             :cache => 'js_cache' %>
   </head>
   <body>
     <div id="page">
       <div id="welcome_header">
         <div id="logo">
-          <%= link_to image_tag('welcome/zergling_logowork.png', 
-                                :height => '75px', :width => '62px',
-                                :alt => 'Zergling.Net Logo',
-                                :title => 'by Zergling.Net'),
-                      'http://www.zergling.net', :id => 'logowork' %>
-          <div id="app_name">StockPlay</div>
+          <span id="app_name">StockPlay</span>
         </div>
-        <div id="header_quote">
-        </div>
-        <div id="header_graph">
+        <div id="header_sign_in">
+          <%= render :partial => 'sessions/new' %>
         </div>
       </div>
       <div class="body">
         <div class="welcome_body_right">
-          <div id="sign_in" class="border">
-            <%= render :partial => 'sessions/new' %>
+          <%= link_to image_tag('welcome/app_store_badge.png',
+                                :id => 'app_store_badge',
+                                :alt => 'link to app store'), "http://itunes.com/apps/stockplay" %>
+          <div id="publicity_links" class="border">
+              <ul>
+                <li class="nav_item">
+                  <div class="nav_pic_box">
+                    <%= link_to image_tag('welcome/iphone_icon.png',
+                    :height => '42px', :width => '42px',
+                    :alt => 'iphone icon'), 'http://blog.istockplay.com/' %>
+                  </div>
+                  <%= link_to 'Blog', "http://blog.istockplay.com/", :class => "nav_name" %>
+                  <div class="nav_item_description">
+                    Your official go-to guide.
+                  </div>
+                </li>
+                <li class="nav_item">
+                  <div class="nav_divider">
+                  </div>
+                  <div class="nav_pic_box">
+                    <%= link_to image_tag('welcome/twitter_bird.png',
+                    :height => '33px', :width => '46px',
+                    :alt => 'logo for twitter'), 'http://twitter.com/zerglings' %>
+                  </div>
+                  <%= link_to 'Twitter', "http://twitter.com/zerglings", :class => "nav_name" %>
+                  <div class="nav_item_description">
+                    Tweet! Development as it happens.
+                  </div>
+                </li>
+                <li class="nav_item">
+                  <div class="nav_divider">
+                  </div>
+                  <div class="nav_pic_box">
+                    <%= link_to image_tag('welcome/envelope_icon.png',
+                    :height => '27px', :width => '42px',
+                    :alt => 'Image for email link'), 'mailto:stockplay@zergling.net' %>
+                  </div>
+                  <a class="nav_name",  href="mailto:stockplay@zergling.net">Contact Us</a>
+                  <div class="nav_item_description">
+                    Comments? Send us an email.
+                  </div>
+                </li>
+                <li class="nav_item">
+                  <div class="nav_divider">
+                  </div>
+                  <div class="nav_pic_box">
+                    <%= link_to image_tag('welcome/zergling_pillbox.png',
+                    :height => '42px', :width => '35px',
+                    :alt => 'logo for zergling.net'), 'http://www.zergling.net' %>
+                  </div>
+                  <%= link_to 'Zerglings', "http://www.zergling.net/", :class => "nav_name" %>
+                  <div class="nav_item_description">
+                    The authors of StockPlay.
+                  </div>
+                </li>
+              </ul>   
           </div>
-          <p id="sell" class="border">
-            ...the leading virtual stock trading game for the iPhone and iPod Touch
-          </p>
         </div>
         <div class="welcome_body_left">
+          <div id="sell">
+          the leading stock trading game for iPhone and iPod Touch
+          </div>
           <div id="screenshots" class="border">
-          	<%= link_to image_tag('welcome/screenshots.png',
-                          :height => '325px', :width => '552px',
-                          :alt => 'screenshots of iPhone app'), "http://itunes.com/apps/stockplay" %>
+            <%= link_to image_tag('welcome/screenshots.png',
+            :height => '325px', :width => '552px',
+            :alt => 'screenshots of iPhone app'), "http://itunes.com/apps/stockplay" %>
           </div>
         </div>
       </div>
-      <div class="body">
-        <div class="welcome_body_right">
-          <p id="sign_up">
-            Don't have an account? Get the app!                            
-						<%= link_to image_tag('welcome/app_store_badge.png',
-                                  :id => 'app_store_badge',
-                                  :alt => 'link to app store'), "http://itunes.com/apps/stockplay" %>
-          </p>
-        </div>
-        <div class="welcome_body_left">
-          <p class="introduction">
-            Can you beat the market? Try StockPlay, the iPhone application that 
-            lets you test out your skills with no risks involved.  We give you $250,000 
-            and the rest is up to you.  We wish you good luck!
-          </p>
-        </div>
-      </div>
-      <div class="body" id="publicity">
-        <div class="welcome_body_right" id="contact">
-          Questions or comments? <a href="mailto:stockplay@zergling.net">Contact us!</a>
-        </div>
-        <div class="welcome_body_left">
-          <p class="introduction">
-            Please check out our <a href="http://blog.istockplay.com/">blog</a> where we provide you with updates and 
-            improvements that we are making to StockPlay. 
-          </p>
-        </div>
-      </div> 
       <div id="footer">
         <p id="copyright">
           Copyright &copy; 2009 <%= link_to 'Zergling.net', "http://www.zergling.net/" %>, all rights reserved.
