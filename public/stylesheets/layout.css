@@ -70,3 +70,9 @@ a:visited img {
   display: block;
   margin: 0 auto -10px auto;
 }
+
+#page_error {
+  padding-top: 20px;
+  display: block;
+  margin: 0 auto;
+}
