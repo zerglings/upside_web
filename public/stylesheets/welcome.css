@@ -50,13 +50,13 @@
 }
 
 /* header sign in box */
-#header_sign_in {
+#sign_in {
   width: 355px;
   float: right;
   padding-top: 10px;
 }
 
-#header_sign_in fieldset {
+#sign_in fieldset {
   border: none;
   margin: 0px;
   padding: 0px;
@@ -80,7 +80,7 @@
   vertical-align: middle;
 }
 
-/* sell */
+/* tagline/quote we use to market stockplay */
 #sell {
   margin-top: 0px;
   font: 23px "Myriad Pro", "Verdana", sans-serif;
@@ -90,7 +90,7 @@
   vertical-align: middle;
 }
 
-/* app store badge */
+/* app store badge/link to itunes store */
 #app_store_badge {
   border: none;
   margin-top: -15px; 
@@ -98,16 +98,16 @@
   padding-bottom: 10px;
 }
 
-/* screenshots */
+/* main picture: screenshots of stockplay on iphone */
 #screenshots {
 	width: 580px;
 	height: 318px;
 	margin: 0px 18px 0px 0px;
 	padding: 10px 0 5px 0;
-	text-align:center;
+	text-align: center;
 }
 
-/* publicity links */
+/* links to the stockplay blog, twitter, zergling, and contact us */
 #publicity_links {
   background-color: #e4f9d7;
   padding: 0px;
@@ -133,8 +133,8 @@
 
 .nav_item a {
   display: block;
-  text-decoration:none;
-  font-variant:small-caps;
+  text-decoration: none;
+  font-variant: small-caps;
   padding-top: 5px;
 }
 
@@ -153,9 +153,3 @@
   border-top: 1px solid #a8a878; 
   border-bottom: 1px solid #edede4;
 }  
-
-/* introduction */
-.introduction {
-  padding: 0px 15px 0px 55px; 
-  line-height: 24px;
-}
