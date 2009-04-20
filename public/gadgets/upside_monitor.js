@@ -59,10 +59,17 @@ var spStatsError = function() {
 var processStats = function(stats) {		
 	var tpl = '<div class="stat_div" id="${key}"><span class="stat_name">${title}</span><span class="stat_value">${value}</span></div>';
 	var stat_schema = [['Devices', 'devices'], ['Users', 'users'],
-	                   ['Orders', 'orders'], ['Trades', 'trades']];
+	                   ['Orders', 'orders'], ['Trades', 'trades'],
+										 ['Stocks', 'stocks'], ['Sys Load', 'load']];
   var html = "";	
 	dojo.forEach(stat_schema, function(stat_set) {
-		html += dojo.string.substitute(tpl, {title: stat_set[0], key: stat_set[1], value: stats[stat_set[1]]});
+		if (dojo.isArray(stats[stat_set[1]])) {
+			var statValue = stats[stat_set[1]].join(' ');
+		}
+		else {
+			var statValue = stats[stat_set[1]];
+		}
+		html += dojo.string.substitute(tpl, {title: stat_set[0], key: stat_set[1], value: statValue});
 	});
 	
   var container = dijit.byId('stats_container');
