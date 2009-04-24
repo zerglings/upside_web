@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 
-# load Rails
+# Load Rails.
 RAILS_ENV = ARGV[1] || 'development'
 require File.dirname(__FILE__) + '/../../config/environment.rb'
 
-require 'simple-daemon'
+# More setup.
+
 
 # Restore timestamps in the log.
 class Logger
@@ -13,6 +14,7 @@ class Logger
   end
 end
 
+require 'simple-daemon'
 class TradeMatcher < SimpleDaemon::Base
   SimpleDaemon::WORKING_DIRECTORY = "#{RAILS_ROOT}/log"
   
@@ -43,6 +45,10 @@ class TradeMatcher < SimpleDaemon::Base
         
         @logger.error "Error in matching - #{e.class.name}: #{e}"
         @logger.info e.backtrace.join("\n")
+        
+        # If something bad happened, it usually makes sense to wait for some
+        # time, so any external issues can settle.
+        Kernel.sleep 5        
       end
       
       # NOTE: these controllers are executed in the same loop to get consistency
@@ -53,15 +59,19 @@ class TradeMatcher < SimpleDaemon::Base
       begin
         @ranking_controller.round
         @logger.debug "Completed round" if RAILS_ENV == 'test'
+
+        Kernel.sleep 1
       rescue Exception => e
         # This gets thrown when we need to get out.
         break if e.kind_of? SystemExit
         
         @logger.error "Error in ranking - #{e.class.name}: #{e}"
         @logger.info e.backtrace.join("\n")
-      end
 
-      Kernel.sleep 1
+        # If something bad happened, it usually makes sense to wait for some
+        # time, so any external issues can settle.
+        Kernel.sleep 5
+      end
     end
   end
   
