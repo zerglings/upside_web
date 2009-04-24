@@ -3,13 +3,14 @@ require 'test_helper'
 class DeviceTest < ActiveSupport::TestCase
 
   def setup
-    @device = Device.new :unique_id => '12345' * 8,    
+    @device = Device.new :unique_id => '12345' * 8,
                          :hardware_model => 'iPod1,1',
                          :os_name => 'iPhone OS',
                          :os_version => '2.1',
                          :app_version => '1.0',
                          :last_activation => Time.now - 2.days,
-                         :user_id => users(:rich_kid).id
+                         :user_id => users(:rich_kid).id,
+                         :last_ip => '127.9.5.33'
   end
   
   def test_setup_valid
@@ -83,6 +84,16 @@ class DeviceTest < ActiveSupport::TestCase
   
   def test_user_id_presence
     @device.user_id = nil
+    assert !@device.valid?
+  end
+  
+  def test_last_ip_presence
+    @device.last_ip = nil
+    assert !@device.valid?    
+  end
+
+  def test_last_ip_length
+    @device.last_ip = "12345" * 13
     assert !@device.valid?
   end
 end

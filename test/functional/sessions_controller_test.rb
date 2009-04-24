@@ -4,6 +4,7 @@ class SessionsControllerTest < ActionController::TestCase
   fixtures :users
   
   def setup
+    @request.remote_addr = @remote_ip = '666.13.37.911'
     @user = users :rich_kid
     @password = 'password'
     @device = devices :iphone_3g
@@ -68,7 +69,8 @@ class SessionsControllerTest < ActionController::TestCase
     impossible_device_info = { :hardware_model => 'iPhone3,1',
                                :unique_id => @device.unique_id,
                                :os_name => 'Awesome OS',
-                               :os_version => 'V1' } 
+                               :os_version => 'V1',
+                               :last_ip => 'fail' }
     
     post :create, :name => @user.name, :password => @password, :format => 'xml',
          :device => { :model_id => 0 }.merge(impossible_device_info)
@@ -80,9 +82,16 @@ class SessionsControllerTest < ActionController::TestCase
     end
     @device.reload
     impossible_device_info.each do |key, value|
+      # last_ip is set to some bogus value, to ensure that the controller will
+      # overwrite any bogus values it receives. The proper value is checked
+      # right after the loop.
+      next if key == :last_ip
+      
       assert_equal value, @device.send(key),
                    "Logging in did not update device #{key}"
     end
+    assert_equal @remote_ip, @device.last_ip,
+                 "Logging in did not update device last_ip correctly"
     
     impossible_device_info[:unique_id] = @other_device.unique_id
     post :create, :name => @user.name, :password => "wrong", :format => 'xml',

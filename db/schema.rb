@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090414171653) do
+ActiveRecord::Schema.define(:version => 20090424025419) do
 
   create_table "config_variables", :force => true do |t|
     t.string   "name",       :limit => 64,   :null => false
@@ -21,15 +21,16 @@ ActiveRecord::Schema.define(:version => 20090414171653) do
   add_index "config_variables", ["name", "instance"], :name => "index_config_variables_on_name_and_instance", :unique => true
 
   create_table "devices", :force => true do |t|
-    t.string   "unique_id",       :limit => 64, :null => false
-    t.string   "hardware_model",  :limit => 32, :null => false
-    t.string   "os_name",         :limit => 32, :null => false
-    t.string   "os_version",      :limit => 32, :null => false
-    t.string   "app_version",     :limit => 16, :null => false
-    t.datetime "last_activation",               :null => false
-    t.integer  "user_id",                       :null => false
+    t.string   "unique_id",       :limit => 64,                        :null => false
+    t.string   "hardware_model",  :limit => 32,                        :null => false
+    t.string   "os_name",         :limit => 32,                        :null => false
+    t.string   "os_version",      :limit => 32,                        :null => false
+    t.string   "app_version",     :limit => 16,                        :null => false
+    t.datetime "last_activation",                                      :null => false
+    t.integer  "user_id",                                              :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "last_ip",         :limit => 64, :default => "unknown", :null => false
   end
 
   add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true
