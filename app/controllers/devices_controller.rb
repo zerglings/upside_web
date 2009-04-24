@@ -94,6 +94,10 @@ class DevicesController < ApplicationController
     
     respond_to do |format|
       if @device
+        @device.last_ip = request.remote_ip
+        @device.last_activation = Time.now
+        @device.save!
+        
         format.html { redirect_to(@device) }
         format.xml # register.xml.builder 
       else
@@ -114,6 +118,7 @@ class DevicesController < ApplicationController
                                  :os_version => 'unknown'
             @device.unique_id = params[:unique_id]
           end
+          @device.last_ip = request.remote_ip
           @device.last_activation = Time.now
           @device.user = @user
           @device.save!

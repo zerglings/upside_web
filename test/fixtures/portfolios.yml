@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090414171653
+# Schema version: 20090424025419
 #
 # Table name: portfolios
 #

@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090414171653
+# Schema version: 20090424025419
 #
 # Table name: devices
 #
@@ -13,6 +13,7 @@
 #  user_id         :integer(4)      not null
 #  created_at      :datetime
 #  updated_at      :datetime
+#  last_ip         :string(64)      default("unknown"), not null
 #
 
 class Device < ActiveRecord::Base
@@ -34,10 +35,13 @@ class Device < ActiveRecord::Base
   # application version (e.g. 1.0)
   validates_length_of :app_version, :in => 1..16, :allow_nil => false
   
-  # last time game used
+  # last IP that the device was seen at
+  validates_length_of :last_ip, :in => 1..64, :allow_nil => false
+  
+  # last time the game was activated
   validates_presence_of :last_activation
   validates_datetime :last_activation    
   
-  # user id to link to user
+  # user id pointing to the last user on this device
   validates_presence_of :user_id
 end

@@ -124,7 +124,8 @@ end
 class DevicesControllerTest < ActionController::TestCase
   fixtures :devices, :users
   
-  def setup
+  def setup    
+    @request.remote_addr = @remote_ip = '666.13.37.911'
     device1 = devices(:iphone_3g)
     device1.user = users(:rich_kid)
     device1.save!
@@ -145,6 +146,8 @@ class DevicesControllerTest < ActionController::TestCase
     device = Device.find_by_unique_id unique_id
     assert_not_nil device, "Device not created when registering a new device"
     assert_equal unique_id, device.unique_id
+    assert_equal @remote_ip, device.last_ip,
+                 "Device's last IP recorded incorrectly"    
     user = device.user
     assert_not_nil user, "User not created when registering a new device"
     assert user.pseudo_user?, "New device's user should be a pseudo-user"
@@ -171,13 +174,15 @@ class DevicesControllerTest < ActionController::TestCase
   end  
 
   test "register new device with v0.1" do
-    unique_id = '88888' * 8
+    unique_id = '88888' * 8    
     post :register, :unique_id => unique_id, :format => 'xml',
                     :device_sig => IphoneAuthFilters.signature(unique_id),
                     :device_sig_v => IphoneAuthFilters.signature_version
     device = Device.find_by_unique_id unique_id
     assert_not_nil device, "Device not created when registering a new device"
     assert_equal unique_id, device.unique_id
+    assert_equal @remote_ip, device.last_ip,
+                 "Device's last IP recorded incorrectly"
     user = device.user
     assert_not_nil user, "User not created when registering a new device"
     assert user.pseudo_user?, "New device's user should be a pseudo-user"
@@ -193,6 +198,9 @@ class DevicesControllerTest < ActionController::TestCase
                     :device_sig_v => IphoneAuthFilters.signature_version
     assert_equal old_device_count, Device.count, "Registering an existing device created a new device"
     assert_equal old_user_count, User.count, "Registering an existing device created a new user"
+   
+    assert_equal @remote_ip, iphone_3g.reload.last_ip,
+                 "Device's last IP updated incorrectly"
     
     assert_select "device" do
       assert_select "model_id", iphone_3g.id.to_s
