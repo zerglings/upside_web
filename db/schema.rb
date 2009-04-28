@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090424025419) do
+ActiveRecord::Schema.define(:version => 20090428015642) do
 
   create_table "config_variables", :force => true do |t|
     t.string   "name",       :limit => 64,   :null => false
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(:version => 20090424025419) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "last_ip",         :limit => 64, :default => "unknown", :null => false
+    t.string   "last_app_fprint", :limit => 64, :default => "",        :null => false
   end
 
   add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true

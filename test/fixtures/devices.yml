@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090424025419
+# Schema version: 20090428015642
 #
 # Table name: devices
 #
@@ -14,6 +14,7 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  last_ip         :string(64)      default("unknown"), not null
+#  last_app_fprint :string(64)      default(""), not null
 #
 
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
@@ -23,7 +24,7 @@ iphone_3g:
   hardware_model: iPhone1,2
   os_name: iPhone OS
   os_version: 2.0
-  app_version: 1.0
+  app_version: 1.2
   last_activation: 2009-01-01 16:44:49
   user: rich_kid
 

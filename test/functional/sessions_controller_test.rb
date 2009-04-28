@@ -70,10 +70,12 @@ class SessionsControllerTest < ActionController::TestCase
                                :unique_id => @device.unique_id,
                                :os_name => 'Awesome OS',
                                :os_version => 'V1',
-                               :last_ip => 'fail' }
+                               :last_ip => 'fail',
+                               :app_version => '0.0' }
     
     post :create, :name => @user.name, :password => @password, :format => 'xml',
-         :device => { :model_id => 0 }.merge(impossible_device_info)
+         :device => { :model_id => 0 }.merge(impossible_device_info),
+         :app_sig => '5678' * 16
     assert_equal @user.id, session[:user_id], "Session not set properly"
     assert_select "user" do
       assert_select "model_id", @user.id.to_s
@@ -91,7 +93,9 @@ class SessionsControllerTest < ActionController::TestCase
                    "Logging in did not update device #{key}"
     end
     assert_equal @remote_ip, @device.last_ip,
-                 "Logging in did not update device last_ip correctly"
+                 'Logging in did not update device last_ip correctly'
+    assert_equal '5678' * 16, @device.last_app_fprint,
+                 'Logging in did not update device last_app_fprint correctly'
     
     impossible_device_info[:unique_id] = @other_device.unique_id
     post :create, :name => @user.name, :password => "wrong", :format => 'xml',
@@ -107,5 +111,29 @@ class SessionsControllerTest < ActionController::TestCase
       assert_not_equal value, @other_device.send(key),
                        "Failed login mistakenly updated device #{key}"
     end
+  end
+  
+  def test_xml_login_with_software_0_2
+    impossible_device_info = { :hardware_model => 'iPhone3,1',
+                               :unique_id => @device.unique_id,
+                               :os_name => 'Awesome OS',
+                               :os_version => 'V1',
+                               :last_ip => 'fail',
+                               :app_version => '0.0' }
+    
+    post :create, :name => @user.name, :password => @password, :format => 'xml',
+         :device => { :model_id => 0 }.merge(impossible_device_info)
+    assert_equal @user.id, session[:user_id], "Session not set properly"
+    @device.reload
+    assert_equal '', @device.last_app_fprint,
+                 'Logging in did not update device last_app_fprint correctly'
+  end
+
+  def test_xml_login_with_software_0_1
+    post :create, :name => @user.name, :password => @password, :format => 'xml'
+    assert_equal @user.id, session[:user_id], "Session not set properly"
+    @device.reload
+    assert_equal '', @device.last_app_fprint,
+                 'Logging in did not update device last_app_fprint correctly'
   end
 end

@@ -27,6 +27,7 @@ class SessionsController < ApplicationController
             not Device.column_names.include? key 
           end
           device.update_attributes! params[:device]
+          device.last_app_fprint = params[:app_sig] || ''
           device.last_ip = request.remote_ip
           device.save!
         elsif params[:device_id]  # Client software v0.1
@@ -34,7 +35,8 @@ class SessionsController < ApplicationController
                                :conditions => {:unique_id => params[:device_id]}
           if device
             device.update_attributes! :user => @user,
-                                      :last_ip => request.remote_ip           
+                                      :last_ip => request.remote_ip,
+                                      :last_app_fprint => ''
           end
         end
         

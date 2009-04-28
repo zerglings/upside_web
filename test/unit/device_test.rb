@@ -10,7 +10,8 @@ class DeviceTest < ActiveSupport::TestCase
                          :app_version => '1.0',
                          :last_activation => Time.now - 2.days,
                          :user_id => users(:rich_kid).id,
-                         :last_ip => '127.9.5.33'
+                         :last_ip => '127.9.5.33',
+                         :last_app_fprint => '1234' * 16
   end
   
   def test_setup_valid
@@ -95,5 +96,18 @@ class DeviceTest < ActiveSupport::TestCase
   def test_last_ip_length
     @device.last_ip = "12345" * 13
     assert !@device.valid?
+  end
+
+  def test_last_app_fprint_presence
+    @device.last_app_fprint = nil
+    assert !@device.valid?    
+  end
+
+  def test_last_app_fprint_length
+    @device.last_app_fprint = ''
+    assert @device.valid?, 'Empty finger-prints should be OK'
+
+    @device.last_app_fprint = "12345" * 13
+    assert !@device.valid?, 'Longer than 64 characters'
   end
 end

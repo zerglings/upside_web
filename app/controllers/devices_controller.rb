@@ -87,45 +87,47 @@ class DevicesController < ApplicationController
     end
   end
   
+  def update_device_fields
+    @device.last_ip = request.remote_ip
+    @device.last_app_fprint = params[:app_sig] || ''
+    @device.last_activation = Time.now    
+  end
+  private :update_device_fields
+  
   # registering a device
   def register
     @device = Device.find(:first, 
               :conditions => {:unique_id => params[:unique_id]})
+
+    if @device  
+      update_device_fields
+      @device.save!
+    else
+      User.transaction do
+        @user = User.new_pseudo_user(params[:unique_id])
+        @user.save!
+        if params[:device]  # Client software newer than v0.1
+          # Clients will send some attributes that they use internally.
+          # We need to remove them so ActiveRecord doesn't throw an exception.
+          params[:device].delete_if do |key, value|
+            not Device.column_names.include? key 
+          end
+          @device = Device.new params[:device]
+        else
+          @device = Device.new :hardware_model => 'unknown',
+                               :app_version => '1.0',
+                               :os_name => 'iPhone OS',
+                               :os_version => 'unknown'
+          @device.unique_id = params[:unique_id]
+        end
+        @device.user = @user
+        update_device_fields
+        @device.save!
+      end
+    end
     
     respond_to do |format|
-      if @device
-        @device.last_ip = request.remote_ip
-        @device.last_activation = Time.now
-        @device.save!
-        
-        format.html { redirect_to(@device) }
-        format.xml # register.xml.builder 
-      else
-        User.transaction do
-          @user = User.new_pseudo_user(params[:unique_id])
-          @user.save!
-          if params[:device]  # Client software newer than v0.1
-            # Clients will send some attributes that they use internally.
-            # We need to remove them so ActiveRecord doesn't throw an exception.
-            params[:device].delete_if do |key, value|
-              not Device.column_names.include? key 
-            end
-            @device = Device.new params[:device]
-          else
-            @device = Device.new :hardware_model => 'unknown',
-                                 :app_version => '1.0',
-                                 :os_name => 'iPhone OS',
-                                 :os_version => 'unknown'
-            @device.unique_id = params[:unique_id]
-          end
-          @device.last_ip = request.remote_ip
-          @device.last_activation = Time.now
-          @device.user = @user
-          @device.save!
-        end
-        
-        format.xml # register.xml.builder
-      end
+      format.xml # register.xml.builder
     end
   end
 end

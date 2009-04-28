@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090424025419
+# Schema version: 20090428015642
 #
 # Table name: devices
 #
@@ -14,6 +14,7 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  last_ip         :string(64)      default("unknown"), not null
+#  last_app_fprint :string(64)      default(""), not null
 #
 
 class Device < ActiveRecord::Base
@@ -37,6 +38,9 @@ class Device < ActiveRecord::Base
   
   # last IP that the device was seen at
   validates_length_of :last_ip, :in => 1..64, :allow_nil => false
+  
+  # last application finger-print sent from the device
+  validates_length_of :last_app_fprint, :in => 0..64, :allow_nil => false
   
   # last time the game was activated
   validates_presence_of :last_activation

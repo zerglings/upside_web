@@ -130,8 +130,8 @@ class DevicesControllerTest < ActionController::TestCase
     device1.user = users(:rich_kid)
     device1.save!
   end
-
-  test "register new device with v0.2" do
+  
+  test "register new device with v0.3" do
     unique_id = '88888' * 8
     post :register, :unique_id => unique_id, :format => 'xml',
                     :device_sig => IphoneAuthFilters.signature(unique_id),
@@ -142,12 +142,15 @@ class DevicesControllerTest < ActionController::TestCase
                                  :hardware_model => 'iPhone1,1',
                                  :app_version => '1.0',
                                  :os_name => 'iPhone OS',
-                                 :os_version => '2.1' } 
+                                 :os_version => '2.1' },
+                    :app_sig => '1234' * 16
     device = Device.find_by_unique_id unique_id
     assert_not_nil device, "Device not created when registering a new device"
     assert_equal unique_id, device.unique_id
     assert_equal @remote_ip, device.last_ip,
-                 "Device's last IP recorded incorrectly"    
+                 "Device's last IP recorded incorrectly"
+    assert_equal '1234' * 16, device.last_app_fprint,
+                 "Device's last app finger-print not updated correctly"
     user = device.user
     assert_not_nil user, "User not created when registering a new device"
     assert user.pseudo_user?, "New device's user should be a pseudo-user"
@@ -173,6 +176,52 @@ class DevicesControllerTest < ActionController::TestCase
     end
   end  
 
+  test "register new device with v0.2" do
+    # TODO(overmind): this is an almost-duplicate of the code above; remove it
+    #                 when 0.3 is in store and we can retire 0.1 and 0.2
+    
+    unique_id = '88888' * 8
+    post :register, :unique_id => unique_id, :format => 'xml',
+                    :device_sig => IphoneAuthFilters.signature(unique_id),
+                    :device_sig_v => IphoneAuthFilters.signature_version,
+                    :device => { :unique_id => unique_id,
+                                 :model_id => 0,
+                                 :user_id => 0,
+                                 :hardware_model => 'iPhone1,1',
+                                 :app_version => '1.0',
+                                 :os_name => 'iPhone OS',
+                                 :os_version => '2.1' } 
+    device = Device.find_by_unique_id unique_id
+    assert_not_nil device, "Device not created when registering a new device"
+    assert_equal unique_id, device.unique_id
+    assert_equal @remote_ip, device.last_ip,
+                 "Device's last IP recorded incorrectly"
+    assert_equal '', device.last_app_fprint, "Device's last app finger-print"
+    user = device.user
+    assert_not_nil user, "User not created when registering a new device"
+    assert user.pseudo_user?, "New device's user should be a pseudo-user"
+    assert_equal Digest::SHA2.hexdigest(unique_id), user.name,
+                 "New user's name should be the SHA2 of the device's UDID."
+    assert_operator (Time.now - device.last_activation).abs, :<=, 2,
+                    "Last activation time was not set properly"
+    
+    assert_select "device" do
+      assert_select "model_id", device.id.to_s
+      assert_select "unique_id", unique_id
+      assert_select "user_id", user.id.to_s
+      assert_select "hardware_model", 'iPhone1,1'
+      assert_select "app_version", '1.0'
+      assert_select "os_name", 'iPhone OS'
+      assert_select "os_version", '2.1'
+    end
+    
+    assert_select "user" do
+      assert_select "model_id", user.id.to_s
+      assert_select "name", user.name
+      assert_select "is_pseudo_user", "true"
+    end
+  end
+
   test "register new device with v0.1" do
     unique_id = '88888' * 8    
     post :register, :unique_id => unique_id, :format => 'xml',
@@ -183,6 +232,7 @@ class DevicesControllerTest < ActionController::TestCase
     assert_equal unique_id, device.unique_id
     assert_equal @remote_ip, device.last_ip,
                  "Device's last IP recorded incorrectly"
+    assert_equal '', device.last_app_fprint, "Device's last app finger-print"                 
     user = device.user
     assert_not_nil user, "User not created when registering a new device"
     assert user.pseudo_user?, "New device's user should be a pseudo-user"
