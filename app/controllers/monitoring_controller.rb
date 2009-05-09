@@ -9,6 +9,6 @@ class MonitoringController < ApplicationController
       :users => User.count
     }
 
-    render :json => stats, :callback => params['callback']
+    render :json => stats, :callback => params[:callback]
   end
 end

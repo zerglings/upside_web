@@ -128,6 +128,24 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal true, user.is_admin
   end
   
+  def test_is_user_taken
+    @request.session[:user_id] = nil
+    get :is_user_taken, :user => { :name => 'rich_kid' },
+                        :callback => 'callbackProc', :format => 'json'
+    assert_response :success
+    p @response
+    json_match = /^callbackProc\((.*)\)$/.match @response.body
+    assert json_match, "Response not in JSONP format: #{@response.body}"    
+    response = JSON.parse json_match[1]    
+    assert_equal({'result' => {'name' => 'rich_kid', 'taken' => true}},
+                 response, 'Querying for existing user name')
+                 
+    get :is_user_taken, :user => { :name => 'poor_kid' }, :format => 'json'
+    response = JSON.parse @response.body    
+    assert_equal({'result' => {'name' => 'poor_kid', 'taken' => false}},
+                 response, 'Querying for non-existing user name')
+  end
+  
  # TODO(anyone): add this test back in once we allow users to create accounts on the web
 =begin  
   def test_is_admin_not_set_by_mass_assignment
