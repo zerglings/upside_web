@@ -140,7 +140,7 @@ class DevicesControllerTest < ActionController::TestCase
                                  :model_id => 0,
                                  :user_id => 0,
                                  :hardware_model => 'iPhone1,1',
-                                 :app_version => '1.0',
+                                 :app_version => '1.2',
                                  :os_name => 'iPhone OS',
                                  :os_version => '2.1' },
                     :app_sig => '1234' * 16
@@ -164,7 +164,7 @@ class DevicesControllerTest < ActionController::TestCase
       assert_select "unique_id", unique_id
       assert_select "user_id", user.id.to_s
       assert_select "hardware_model", 'iPhone1,1'
-      assert_select "app_version", '1.0'
+      assert_select "app_version", '1.2'
       assert_select "os_name", 'iPhone OS'
       assert_select "os_version", '2.1'
     end
@@ -188,7 +188,7 @@ class DevicesControllerTest < ActionController::TestCase
                                  :model_id => 0,
                                  :user_id => 0,
                                  :hardware_model => 'iPhone1,1',
-                                 :app_version => '1.0',
+                                 :app_version => '1.1',
                                  :os_name => 'iPhone OS',
                                  :os_version => '2.1' } 
     device = Device.find_by_unique_id unique_id
@@ -210,7 +210,7 @@ class DevicesControllerTest < ActionController::TestCase
       assert_select "unique_id", unique_id
       assert_select "user_id", user.id.to_s
       assert_select "hardware_model", 'iPhone1,1'
-      assert_select "app_version", '1.0'
+      assert_select "app_version", '1.1'
       assert_select "os_name", 'iPhone OS'
       assert_select "os_version", '2.1'
     end
