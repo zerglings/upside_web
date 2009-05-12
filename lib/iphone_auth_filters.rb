@@ -34,11 +34,13 @@ module IphoneAuthFilters
                                                          params[:device_sig_v]      
     end
     respond_to do |format|
+      error_data = { :message => 'Invalid device signature.',
+                     :reason => :device_auth }
       format.html { redirect_to :controller => :sessions, :action => :new }
-      format.xml do
-        render :xml => { :error => { :message => 'Invalid device signature.',
-                                     :reason => :device_auth } }
+      format.json do
+        render :json => { :error => error_data }, :callback => params[:callback]
       end
+      format.xml { render :xml => { :error => error_data } }
     end
     return false
   end

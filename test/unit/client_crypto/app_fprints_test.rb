@@ -23,7 +23,7 @@ class ClientCrypto::AppFprintsTest < ActiveSupport::TestCase
   end
   
   def test_file_data_fprint
-    golden = "f653ce12ff62ff3d5cc077b5380e3fb566f85c7266790b3db603501a0ed87fdf"
+    golden = "f861045b7e3f6bf2c45dbe9da8007b28819e047ce60daa939de5594bb73353ef"
     
     data = File.read "#{RAILS_ROOT}/client_fprint/iphone_os/1.2/Info.plist"
     key = (0..16).map { |i| '66547ef853f8455e6b2f99b237faa57f'[i * 2, 2] }.

@@ -74,7 +74,76 @@ module CommonPortfolioTests
         assert_select 'price', trade.price.to_s
       end
     end    
-  end  
+  end
+  
+  def test_json_sync
+    portfolio_id = @user.is_admin? ? portfolios(:rich_kid).id : 0
+    get :sync, :id => portfolio_id, :format => 'json'
+    assert_response :success    
+    result = JSON.parse(@response.body)
+    assert result, 'Sync contains JSON'
+    
+    assert_equal({'cash' => @portfolio.cash}, result['portfolio'],
+                 'Sync contains portfolio data')
+                  
+    @portfolio.positions.each do |position|
+      r_position = result['positions'].find { |p| p['model_id'] == position.id }
+      assert r_position, "Sync contain position data for #{position}"
+      assert_equal position.stock.ticker, r_position['ticker'],
+                   'Sync position data contains ticker'
+      assert_equal position.quantity, r_position['quantity'],
+                   'Sync position data contains quantity'
+      assert_equal position.is_long, r_position['is_long'],
+                   'Sync position data contains is_long'
+    end
+
+    @portfolio.trade_orders.each do |trade_order|
+      r_order = result['trade_orders'].find do |o|
+        o['model_id'] == trade_order.id
+      end
+      assert r_order, "Sync data contains trade order #{trade_order}"
+      assert_equal trade_order.stock.ticker, r_order['ticker'],
+                   'Sync order data contains ticker'
+      assert_equal trade_order.quantity, r_order['quantity'],
+                   'Sync order data contains quantity'
+      assert_equal trade_order.is_buy, r_order['is_buy'],
+                   'Sync order data contains is_buy'
+      assert_equal trade_order.is_long, r_order['is_long'],
+                   'Sync order data contains is_long'
+      if trade_order.is_limit
+        assert_equal trade_order.limit_price, r_order['limit_price'],
+                     'Sync order data contains limit_price'
+      else
+        assert_equal 0, r_order['limit_price'],        
+                   'Sync order data contains 0 for limit_price in market orders'
+      end
+      assert_equal trade_order.expiration_time,
+                   DateTime.parse(r_order['expiration_time']),
+                   'Sync order data expiration_time'
+    end
+    
+    @portfolio.stats.each do |stat|
+      r_stat = result['stats'].find { |s| s['model_id'] == stat.id }
+      assert r_stat, "Sync data contains portfolio stat #{stat}"
+      
+      assert_equal stat.frequency_string, r_stat['frequency'], 
+                   'Sync portfolio stat data contains frequency'
+      assert_equal stat.net_worth, r_stat['net_worth'],
+                   'Sync portfolio stat data contains net worth'
+      assert_equal stat.rank, r_stat['rank'],
+                   'Sync portfolio stat data contains rank'
+    end
+
+    @portfolio.trades.each do |trade|
+      r_trade = result['trades'].find { |t| t['model_id'] == trade.id }
+      assert r_trade, "Sync data contains trade #{trade}"
+
+      assert_equal trade.quantity, r_trade['quantity'],
+                   'Sync trade data contains quantity'
+      assert_equal trade.price, r_trade['price'],
+                   'Sync trade data contains price'
+    end
+  end
 end
 
 class AdminPortfoliosControllerTest < ActionController::TestCase

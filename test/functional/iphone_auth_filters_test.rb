@@ -8,6 +8,7 @@ class IphoneAuthFiltersController < ActionController::Base
   def hello_iphone
     respond_to do |format|
       format.html { render :text => "ok" }
+      format.json { render :json => {:udid => @s_unique_device_id} }
       format.xml { render :xml => {:udid => @s_unique_device_id} }
     end
   end
@@ -29,6 +30,14 @@ class IphoneAuthFiltersControllerTest < ActionController::TestCase
     assert_equal @response.body, "ok"
   end
 
+  test "valid sig works in JSON" do
+    get :hello_iphone, :format => 'json', :unique_id => @device_id,
+                       :device_sig => @signature, :device_sig_v => @version
+    assert_response :success
+    result = JSON.parse @response.body
+    assert_equal @device_id, result["udid"]
+  end
+
   test "valid sig works in XML" do
     get :hello_iphone, :format => 'xml', :unique_id => @device_id,
                        :device_sig => @signature, :device_sig_v => @version
@@ -43,6 +52,20 @@ class IphoneAuthFiltersControllerTest < ActionController::TestCase
     assert_response :redirect
   end
   
+  test "invalid sig gives JSON error" do
+    @signature[10] = '4'
+    get :hello_iphone, :format => 'json', :unique_id => @device_id,
+                       :device_sig => @signature, :device_sig_v => @version,
+                       :callback => 'callbackFn'
+    assert_response :success
+    response_match = /callbackFn\((.*)\)/.match @response.body
+    assert response_match, 'Response not in JSONP format'
+    result = JSON.parse response_match[1]
+    assert result['error'], 'JSON response does not include error'
+    assert_equal 'device_auth', result['error']['reason'],
+                 'JSON response contains wrong error reason'
+  end
+
   test "invalid sig gives XML error" do
     @signature[10] = '4'
     get :hello_iphone, :format => 'xml', :unique_id => @device_id,
