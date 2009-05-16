@@ -39,14 +39,15 @@ module UserFilters
   # This contains code common to both ensure_user_owns_portfolio and ensure_user_owns_trade_order
   def render_access_denied
     respond_to do |format|
+      error_data = { :message => 'Admin access only.', :reason => :denied } 
       format.html do
-        flash[:error] = 'Admin access only.'
+        flash[:error] = error_data[:message]
         redirect_to :controller => :welcome, :action => :dashboard
       end
-      format.xml do
-        render :sml => { :error => { :message => 'Admin access only.',
-                                     :reason => :denied } }
+      format.json do
+        render :json => { :error => error_data }, :callback => params[:callback]
       end
+      format.xml { render :xml => { :error => error_data } }
     end
     return false
   end

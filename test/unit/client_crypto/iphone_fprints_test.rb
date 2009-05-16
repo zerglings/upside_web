@@ -15,7 +15,7 @@ class ClientCrypto::IphoneFprintsTest < ActiveSupport::TestCase
   end
     
   def test_app_fprint
-    golden = "f653ce12ff62ff3d5cc077b5380e3fb566f85c7266790b3db603501a0ed87fdf"
+    golden = "f861045b7e3f6bf2c45dbe9da8007b28819e047ce60daa939de5594bb73353ef"
     assert_equal golden, ClientCrypto::IphoneFprints.app_fprint(@device_attrs)
   end
   
@@ -25,7 +25,7 @@ class ClientCrypto::IphoneFprintsTest < ActiveSupport::TestCase
   end
   
   def test_app_fprint_with_device_model
-    golden = "68b2708e6663c805df64f5ad06a553decb8f7fea3be00d9b729c59cdc3e7da47"
+    golden = "1c3c6c732f7508f0299751ec76cd3a222b524bc224131936c0ccd2935d686250"
     assert_equal golden, ClientCrypto::IphoneFprints.app_fprint(@device)
   end
 end

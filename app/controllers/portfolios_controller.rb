@@ -4,6 +4,10 @@ class PortfoliosController < ApplicationController
   before_filter :ensure_user_owns_portfolio, :except => [:index]
   protect_from_forgery :except => [:sync]
   
+  include PortfoliosHelper
+  include TradesHelper
+  include TradeOrdersHelper
+  
   # GET /portfolios
   # GET /portfolios.xml
   def index
@@ -50,6 +54,9 @@ class PortfoliosController < ApplicationController
   end
   
   def sync
+    @portfolio = Portfolio.find :first, :conditions => { :id => @portfolio.id },
+                                :include => [:positions, :stats, :trade_orders,
+                                             :trades]
     @positions = @portfolio.positions
     @trade_orders = @portfolio.trade_orders.reject { |o| o.adjusting_order_id }
     @trades = @portfolio.trades
@@ -57,6 +64,15 @@ class PortfoliosController < ApplicationController
     
     respond_to do |format|
       format.html { redirect_to @portfolio }
+      format.json do
+        result = { :positions => @positions.map { |p| position_to_json_hash p },
+                   :trade_orders => @trade_orders.map { |o|
+                       trade_order_to_json_hash o },
+                   :trades => @trades.map { |t| trade_to_json_hash t },
+                   :stats => @stats.map { |s| portfolio_stat_to_json_hash s },
+                   :portfolio => portfolio_to_json_hash(@portfolio) }
+        render :json => result, :callback => params[:callback]
+      end
       format.xml # portfolios/sync.xml.builder
     end
   end
