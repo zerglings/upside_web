@@ -18,9 +18,9 @@ module ClientCrypto::IphoneFprints
     end
     
     fp_dir = ClientCrypto::AppFprints.fprint_data_directory device_attributes 
-    manifest_path = File.join(fp_dir, 'Info.plist')
+    manifest_path = File.join(fp_dir, 'StockPlay')
     return '' unless File.exist? manifest_path
-    manifest = File.read manifest_path
+    manifest = File.open(manifest_path, 'rb') { |f| f.read }
     key = ClientCrypto::AppFprints.device_fprint device_attributes
     iv = "\0" * 16
     ClientCrypto::AppFprints.file_data_fprint manifest, key, iv
