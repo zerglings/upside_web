@@ -3,6 +3,9 @@ class DevicesController < ApplicationController
   before_filter :ensure_iphone_request, :only => [:register]
   before_filter :ensure_admin_authenticated, :except => [:register]
   
+  include DevicesHelper
+  include UsersHelper
+  
   # GET /devices
   # GET /devices.xml
   def index
@@ -90,7 +93,14 @@ class DevicesController < ApplicationController
   def update_device_fields
     @device.last_ip = request.remote_ip
     @device.last_app_fprint = params[:app_sig] || ''
-    @device.last_activation = Time.now    
+    @device.last_activation = Time.now
+    
+    if params[:device]
+      [:hardware_model, :app_version, :os_name, :os_version,
+       :unique_id].each do |attr|
+        @device.send :"#{attr}=", params[:device][attr]
+      end      
+    end
   end
   private :update_device_fields
   
@@ -104,15 +114,15 @@ class DevicesController < ApplicationController
       @device.save!
     else
       User.transaction do
-        @user = User.new_pseudo_user(params[:unique_id])
-        @user.save!
+        user = User.new_pseudo_user(params[:unique_id])
+        user.save!
         if params[:device]  # Client software newer than v0.1
           # Clients will send some attributes that they use internally.
           # We need to remove them so ActiveRecord doesn't throw an exception.
           params[:device].delete_if do |key, value|
             not Device.column_names.include? key 
           end
-          @device = Device.new params[:device]
+          @device = Device.new
         else
           @device = Device.new :hardware_model => 'unknown',
                                :app_version => '1.0',
@@ -120,13 +130,18 @@ class DevicesController < ApplicationController
                                :os_version => 'unknown'
           @device.unique_id = params[:unique_id]
         end
-        @device.user = @user
+        @device.user = user
         update_device_fields
         @device.save!
       end
     end
     
     respond_to do |format|
+      format.json do
+        result = { :device => device_to_json_hash(@device),
+                   :user => user_to_json_hash(@device.user) }
+        render :json =>  result, :callback => params[:callback]
+      end
       format.xml # register.xml.builder
     end
   end

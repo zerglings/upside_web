@@ -36,19 +36,31 @@ module UserFilters
     render_access_denied
   end
 
-  # This contains code common to both ensure_user_owns_portfolio and ensure_user_owns_trade_order
-  def render_access_denied
+  # Renders an error in any of the major supported formats (html, json, xml).
+  #
+  # The following keys are supported in the error hash:
+  #   message:: human-readable error message
+  #   reason:: code-readable error cause (e.g. auth, denied)
+  def render_error_data(error_data)
     respond_to do |format|
-      error_data = { :message => 'Admin access only.', :reason => :denied } 
       format.html do
         flash[:error] = error_data[:message]
-        redirect_to :controller => :welcome, :action => :dashboard
+        if @s_user
+          redirect_to :controller => :welcome, :action => :dashboard
+        else
+          redirect_to :controller => :sessions, :action => :new
+        end
       end
       format.json do
         render :json => { :error => error_data }, :callback => params[:callback]
       end
       format.xml { render :xml => { :error => error_data } }
     end
+  end
+  
+  # This contains code common to both ensure_user_owns_portfolio and ensure_user_owns_trade_order
+  def render_access_denied
+    render_error_data :message => 'Admin access only.', :reason => :denied
     return false
   end
 end

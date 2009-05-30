@@ -29,14 +29,12 @@ class SessionsControllerTest < ActionController::TestCase
   
   def test_bad_password
     post :create, :name => @user.name, :password => 'wrong'
-    assert_template "new"
     assert_equal "Invalid user/password combination", flash[:error]
     assert_equal nil, session[:user_id], "User entered incorrect password but session was still set"
   end
   
   def test_bad_user
     post :create, :name => "wrong", :password => 'wrong'
-    assert_template "new"
     assert_equal "Invalid user/password combination", flash[:error]
     assert_equal nil, session[:user_id], "Nonexistent user but session was still set"
   end
@@ -66,6 +64,8 @@ class SessionsControllerTest < ActionController::TestCase
   end
   
   def test_xml_login_with_device_info
+    # TODO(overmind): remove this duplicated code once a JSON-enabled version
+    #                 reaches most devices 
     impossible_device_info = { :hardware_model => 'iPhone3,1',
                                :unique_id => @device.unique_id,
                                :os_name => 'Awesome OS',
@@ -113,6 +113,58 @@ class SessionsControllerTest < ActionController::TestCase
     end
   end
   
+  def test_json_login_with_device_info
+    impossible_device_info = { :hardware_model => 'iPhone3,1',
+                               :unique_id => @device.unique_id,
+                               :os_name => 'Awesome OS',
+                               :os_version => 'V1',
+                               :last_ip => 'fail',
+                               :app_version => '0.0' }
+    
+    post :create, :name => @user.name, :password => @password,
+         :format => 'json', :app_sig => '5678' * 16,
+         :device => { :model_id => 0 }.merge(impossible_device_info)         
+    assert_equal @user.id, session[:user_id], "Session not set properly"
+
+    result = JSON.parse(@response.body)
+    assert result, 'Response contains JSON'
+    assert_equal @user.id, result['user']['model_id'], 'User id'
+    assert_equal @user.name, result['user']['name'], 'Username'
+    assert_equal false, result['user']['is_pseudo_user'], 'Pseudo-user'
+
+
+    @device.reload
+    impossible_device_info.each do |key, value|
+      # last_ip is set to some bogus value, to ensure that the controller will
+      # overwrite any bogus values it receives. The proper value is checked
+      # right after the loop.
+      next if key == :last_ip
+      
+      assert_equal value, @device.send(key),
+                   "Logging in did not update device #{key}"
+    end
+    assert_equal @remote_ip, @device.last_ip,
+                 'Logging in did not update device last_ip correctly'
+    assert_equal '5678' * 16, @device.last_app_fprint,
+                 'Logging in did not update device last_app_fprint correctly'
+    
+    impossible_device_info[:unique_id] = @other_device.unique_id
+    post :create, :name => @user.name, :password => "wrong", :format => 'json',
+         :device => { :model_id => 0 }.merge(impossible_device_info)
+    assert_equal nil, session[:user_id], "Session not set properly"
+
+    result = JSON.parse(@response.body)
+    assert result, 'Response contains JSON'
+    assert_equal 'auth', result['error']['reason'], 'Error reason'
+    assert result['error']['message'], 'The error has a reason'
+    @other_device.reload
+    impossible_device_info.each do |key, value|
+      next if key == :unique_id  # the unique ID will match, nothing else should
+      assert_not_equal value, @other_device.send(key),
+                       "Failed login mistakenly updated device #{key}"
+    end
+  end
+
   def test_xml_login_with_software_0_2
     impossible_device_info = { :hardware_model => 'iPhone3,1',
                                :unique_id => @device.unique_id,
