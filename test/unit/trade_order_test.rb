@@ -173,6 +173,24 @@ class TradeOrderTest < ActiveSupport::TestCase
     assert trade_orders(:buy_to_cover_short_with_stop_and_limit_orders).filled?,
            "filled? should be true for filled orders"
   end
+  
+  def test_client_nonce_accepted
+    @trade_order.client_nonce = "1234" * 8
+    assert @trade_order.valid?
+  end
+  
+  def test_client_nonce_length
+    @trade_order.client_nonce = "1234" * 9
+    assert !@trade_order.valid?
+  end
+  
+  def test_client_nonce_uniqueness
+    @trade_order.client_nonce = 'rich_nonce'
+    assert !@trade_order.valid?, 'No nonce uniqueness check'
+    
+    @trade_order.client_nonce = 'poor_nonce'
+    assert @trade_order.valid?, 'The nonce uniqueness check scope is too broad'
+  end
 
   def test_is_limit_order
     @trade_order.limit_price = nil 

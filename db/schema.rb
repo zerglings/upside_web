@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090428015642) do
+ActiveRecord::Schema.define(:version => 20090614203229) do
 
   create_table "config_variables", :force => true do |t|
     t.string   "name",       :limit => 64,   :null => false
@@ -99,20 +99,22 @@ ActiveRecord::Schema.define(:version => 20090428015642) do
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
-    t.integer  "portfolio_id",                                                                    :null => false
-    t.integer  "stock_id",                                                                        :null => false
-    t.boolean  "is_buy",                                                        :default => true, :null => false
-    t.boolean  "is_long",                                                       :default => true, :null => false
-    t.decimal  "stop_price",                      :precision => 8, :scale => 2
-    t.decimal  "limit_price",                     :precision => 8, :scale => 2
+    t.integer  "portfolio_id",                                                                     :null => false
+    t.integer  "stock_id",                                                                         :null => false
+    t.boolean  "is_buy",                                                         :default => true, :null => false
+    t.boolean  "is_long",                                                        :default => true, :null => false
+    t.decimal  "stop_price",                       :precision => 8, :scale => 2
+    t.decimal  "limit_price",                      :precision => 8, :scale => 2
     t.datetime "expiration_time"
-    t.integer  "quantity",                                                                        :null => false
-    t.integer  "unfilled_quantity",                                                               :null => false
+    t.integer  "quantity",                                                                         :null => false
+    t.integer  "unfilled_quantity",                                                                :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "adjusting_order_id", :limit => 8
+    t.string   "client_nonce",       :limit => 32
   end
 
+  add_index "trade_orders", ["portfolio_id", "client_nonce"], :name => "index_trade_orders_on_portfolio_id_and_client_nonce"
   add_index "trade_orders", ["portfolio_id"], :name => "index_trade_orders_on_portfolio_id"
 
   create_table "trades", :force => true do |t|

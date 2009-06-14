@@ -30,6 +30,7 @@ buy_to_cover_short_with_stop_and_limit_orders:
   expiration_time: 2020-01-10 14:42:17
   quantity: 100
   unfilled_quantity: 0
+  client_nonce: rich_nonce
 
 buy_long_with_stop_order:
   portfolio: rich_kid
@@ -63,6 +64,7 @@ sell_long_without_stop_or_limit_orders:
   expiration_time: 2010-03-10 14:42:17
   quantity: 40000
   unfilled_quantity: 0
+  client_nonce: admin_nonce
 
   
 sell_short_without_stop_or_limit_orders: 

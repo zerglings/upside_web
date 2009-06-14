@@ -55,6 +55,11 @@ class TradeOrder < ActiveRecord::Base
                         :allow_nil => true
   end
   
+  # client nonce
+  validates_length_of :client_nonce, :in=> 1..32, :allow_nil => true
+  validates_uniqueness_of :client_nonce, :scope => :portfolio_id,
+                          :allow_nil => true  
+  
   # expiration time of trade order
   validates_datetime :expiration_time,
                      :allow_nil => true,

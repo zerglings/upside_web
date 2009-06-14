@@ -9,6 +9,7 @@ module TradeOrdersHelper
       output.is_long trade_order.is_long
       output.limit_price((trade_order.is_limit) ? trade_order.limit_price : 0)
       output.expiration_time trade_order.expiration_time
+      output.client_nonce trade_order.client_nonce
     end    
   end
   
@@ -21,7 +22,8 @@ module TradeOrdersHelper
       :is_buy => trade_order.is_buy,
       :is_long => trade_order.is_long,
       :limit_price => (trade_order.is_limit ? trade_order.limit_price : 0),
-      :expiration_time => trade_order.expiration_time
+      :expiration_time => trade_order.expiration_time,
+      :client_nonce => trade_order.client_nonce
     }
   end
 end

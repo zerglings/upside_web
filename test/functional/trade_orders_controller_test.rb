@@ -38,8 +38,9 @@ module CommonTradeOrderTests
     assert_redirected_to @user.portfolio 
     assert_equal 'TradeOrder was successfully created.', flash[:notice]
   end
-  
-  def test_should_XML_create_market_order
+
+  # TODO(overmind): Remove this test when StockPlay 0.8+ becomes widespread.
+  def test_create_market_order_with_xml
     assert_difference('TradeOrder.count') do
       post :create, :trade_order => {:ticker => "JCG",
                                      :quantity => @trade_order.quantity,
@@ -58,6 +59,60 @@ module CommonTradeOrderTests
       assert_select 'limit_price', '0'
       assert_select 'model_id'
     end
+  end
+  
+  def test_create_market_order_with_json
+    client_nonce = '12345678' * 4
+    assert_difference('TradeOrder.count') do
+      post :create, :trade_order => {:ticker => "JCG",
+                                     :quantity => @trade_order.quantity,
+                                     :is_buy => true,
+                                     :is_long => true,
+                                     :is_limit => false,
+                                     :client_nonce => client_nonce,
+                                     :limit_price => 0,
+                                     :model_id => 0,
+                                     :quantity_unfilled => 0},
+                    :format => 'json'
+    end
+    assert_response :success
+    result = JSON.parse(@response.body)
+    assert result, 'Response contains JSON'
+
+    expiration_time_str = result['trade_order'].delete 'expiration_time'
+    expiration_time = expiration_time_str && DateTime.parse(expiration_time_str)
+    assert_nil expiration_time, "Expiration times should be nil for iPhones"
+    
+    # TODO(overmind): uncomment this when we enable expiration times
+    # assert_in_delta Time.now + 30.days, expiration_time, 5.seconds,
+    #                 "Default expiration time should be 30 days from now."
+    assert_not_nil result['trade_order'].delete('model_id'),
+                   'Response does not have model ID'
+    assert_equal({'ticker' => 'JCG', 'quantity' => @trade_order.quantity,
+                  'unfilled_quantity' => @trade_order.quantity,
+                  'is_buy' => true, 'is_long' => true, 'limit_price' => 0,
+                  'client_nonce' => client_nonce}, result['trade_order'],
+                 'Wrong response')
+  end
+  
+  def test_order_with_duplicate_nonce_should_be_rejected
+    assert_difference('TradeOrder.count', 0) do
+      post :create, :trade_order => {:ticker => "JCG",
+                                     :quantity => @trade_order.quantity,
+                                     :is_buy => true,
+                                     :is_long => true,
+                                     :is_limit => false,
+                                     :client_nonce => @trade_order.client_nonce,
+                                     :limit_price => 0,
+                                     :model_id => 0,
+                                     :quantity_unfilled => 0},
+                    :format => 'json'      
+    end
+    assert_response :success
+    result = JSON.parse(@response.body)
+    assert result, 'Response contains JSON'
+    assert_equal result['trade_order']['model_id'], @trade_order.id,
+                 'Wrong order returned'
   end
   
   def test_should_create_trade_order_when_using_new_ticker
