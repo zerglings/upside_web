@@ -76,7 +76,7 @@ class Matching::TradeMatchingController
   def generate_trades
     trades = []
     spreads_in_store.each do |stock_info|
-      trades += trades_for_stock * stock_info
+      trades += trades_for_stock(*stock_info)
     end
     return trades
   end
