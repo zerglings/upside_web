@@ -1,5 +1,16 @@
 class UsersController < ApplicationController
-  before_filter :ensure_admin_authenticated
+  before_filter :ensure_admin_authenticated, :except => [:is_user_taken]
+
+  # GET /users/is_name_taken.json
+  def is_user_taken
+    @name = params[:user][:name]    
+    @user = User.find :first, :conditions => { :name => @name }
+    
+    response = { :result => { :name => @name, :taken => @user ? true : false } }
+    respond_to do |format|
+      format.json { render :json => response, :callback => params[:callback] }
+    end
+  end
   
   # GET /users
   # GET /users.xml

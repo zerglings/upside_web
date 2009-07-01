@@ -6,7 +6,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :sessions
   map.resources :trade_orders
   map.resources :trades
-  map.resources :users
+  map.resources :users, :collection => { :is_user_taken => :get }
   
   # The priority is based upon order of creation: first created -> highest priority.
 
