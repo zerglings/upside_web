@@ -1,0 +1,29 @@
+# == Schema Information
+# Schema version: 20090701053535
+#
+# Table name: stock_cache_lines
+#
+#  id         :integer(4)      not null, primary key
+#  ticker     :string(16)      not null
+#  info_type  :string(8)       not null
+#  value      :string(1024)    not null
+#  updated_at :datetime
+#
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+google_spread_for_tickers:
+  ticker: GOOG
+  info_type: sft
+  value: <%= YAML.dump({:ask => 365, :bid => 360, :close => 362}).inspect %>
+
+yahoo_spread_for_tickers:
+  ticker: YHOO
+  info_type: sft
+  value: <%= YAML.dump({:ask => 20, :bid => 10, :close => 15}).inspect %>
+
+microsoft_expired_spread_for_tickers:
+  ticker: MSFT
+  info_type: sft
+  value: <%= YAML.dump({:ask => 2, :bid => 1, :close => 1.5}).inspect %>
+  updated_at: <%= Time.now - 1.day %>

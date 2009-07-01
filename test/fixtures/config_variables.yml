@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090428015642
+# Schema version: 20090701053535
 #
 # Table name: config_variables
 #
