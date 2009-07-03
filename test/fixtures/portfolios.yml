@@ -1,10 +1,10 @@
 # == Schema Information
-# Schema version: 20090701053535
+# Schema version: 20090703193226
 #
 # Table name: portfolios
 #
 #  id         :integer(4)      not null, primary key
-#  user_id    :integer(8)      not null
+#  user_id    :integer(4)      not null
 #  cash       :decimal(20, 2)  default(250000.0), not null
 #  created_at :datetime
 #  updated_at :datetime
