@@ -11,6 +11,11 @@ class DaemonsDoRanking < ActionController::IntegrationTest
   self.use_transactional_fixtures = false
 
   test "starting up the server does ranking" do
+    portfolios(:rich_kid).cash = Portfolio::MAX_CASH
+    portfolios(:rich_kid).save!
+    
+    old_flag_count = WarningFlag.count
+    
     Daemonz.with_daemons do
       # Wait 2 seconds for ranking to complete.
       @daily = portfolios(:rich_kid).stats_for DAILY
@@ -24,6 +29,10 @@ class DaemonsDoRanking < ActionController::IntegrationTest
       assert_equal 1, @daily.rank, 'Daily ranking brings rich_kid on top'
       assert_equal 1, portfolios(:rich_kid).stats_for(HOURLY).rank,
                    'Hourly ranking brings rich_kid on top'
+      assert_equal Portfolio::MAX_CASH, @daily.net_worth,
+                   'Net worth is clamped'
+      assert_operator 1, :<=, WarningFlag.count - old_flag_count,
+                      'Net worth clamping creates warning flags'
     end
   end
 end

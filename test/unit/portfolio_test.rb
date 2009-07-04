@@ -69,8 +69,8 @@ class PortfolioTest < ActiveSupport::TestCase
     spreads = { stocks(:ms) => { :close => 13.14 },
                 stocks(:gs) => { :close => 70.5 } }
     
-    # 10_000_000 + 13.14 * (500 - 300) + 70.5 * (200 - 450)
-    assert_equal 9_985_003.0, portfolios(:rich_kid).net_worth(spreads),
+    # 10_000_000 + 13.14 * (5000 - 300) + 70.5 * (200 - 450)
+    assert_equal 10_044_133.0, portfolios(:rich_kid).net_worth(spreads),
                  'Networth for rich_kid'
   end
 end

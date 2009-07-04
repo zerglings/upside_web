@@ -36,7 +36,7 @@ class RankingControllerTest < ActionController::IntegrationTest
     flexmock(@controller).should_receive(:record_stats_update).with(HOURLY)
     
     # stolen from PortfolioTest#test_net_worth
-    assert_equal 9_985_003.0, @rich_kid.stats_for(HOURLY).net_worth,
+    assert_equal 10_044_133.0, @rich_kid.stats_for(HOURLY).net_worth,
                  "rich_kid's hourly net worth incorrectly updated"
     
     assert_equal old_daily_net_worth,

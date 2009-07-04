@@ -93,4 +93,25 @@ class PortfolioStatTest < ActiveSupport::TestCase
     assert_nil device_daily.rank,
                'Stats created by PortfolioStat.for should not contain a rank'
   end
+  
+  # TODO(overmind): the code below is replicated from PortfolioTest; clean up 
+  
+  def test_clamp_net_worth
+    assert_difference 'WarningFlag.count', 0 do
+      @stat.clamp_net_worth
+    end
+    
+    @stat.net_worth = -Portfolio::MAX_CASH - 10
+    assert_difference 'WarningFlag.count', 1, 'Net worth below minimum' do
+      @stat.clamp_net_worth
+    end
+    assert_equal -Portfolio::MAX_CASH, @stat.net_worth,
+                 'Net worth below minimum'
+  
+    @stat.net_worth = Portfolio::MAX_CASH + 10
+    assert_difference 'WarningFlag.count', 1, 'Net worth above maximum' do
+      @stat.clamp_net_worth
+    end
+    assert_equal Portfolio::MAX_CASH, @stat.net_worth, 'Net worth above maximum'
+  end  
 end

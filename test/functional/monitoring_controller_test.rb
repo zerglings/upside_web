@@ -12,5 +12,7 @@ class MonitoringControllerTest < ActionController::TestCase
     assert_equal TradeOrder.count, stats['orders']
     assert_equal Trade.count, stats['trades']
     assert_equal User.count, stats['users']
+    assert_equal WarningFlag.count, stats['warnings']
+    assert_in_delta Time.now.to_f, DateTime.parse(stats['created_at']).to_f, 2.0
   end
 end

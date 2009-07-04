@@ -48,4 +48,26 @@ class PortfolioStat < ActiveRecord::Base
                                          :frequency => frequency }) ||
         PortfolioStat.new(:portfolio => portfolio, :frequency => frequency)
   end
+  
+  # TODO(overmind): the code below is replicated from Portfolio; clean up 
+  
+  # Clamps the user's net worth to the storage limits.
+  #
+  # This is a destructive operation, and should only be performed as a last
+  # resort. If clamping actually happens, we have a bug in the economy.
+  #
+  # This method creates a warning flag if clamping occurs.
+  def clamp_net_worth
+    return false if net_worth_in_range?
+    
+    WarningFlag.fatal self, 'Portfolio cash had to be clamped', 1
+    self.net_worth = -Portfolio::MAX_CASH if net_worth < -Portfolio::MAX_CASH
+    self.net_worth = Portfolio::MAX_CASH if net_worth > Portfolio::MAX_CASH
+    true
+  end
+  
+  # True if the user's net worth is within the limits of the storage system.
+  def net_worth_in_range?
+    net_worth >= -Portfolio::MAX_CASH && net_worth <= Portfolio::MAX_CASH
+  end    
 end

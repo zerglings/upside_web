@@ -20,7 +20,7 @@ ms_long:
   stock: ms
   portfolio: rich_kid
   is_long: true
-  quantity: 500
+  quantity: 5000
   average_base_cost: 15.90
   
 ms_short:  

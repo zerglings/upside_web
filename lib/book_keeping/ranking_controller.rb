@@ -17,10 +17,7 @@ class BookKeeping::RankingController
     Portfolio.find_each do |portfolio|
       stat = portfolio.stats_for frequency
       stat.net_worth = portfolio.net_worth spreads
-      unless stat.valid?
-        p stat
-        p stat.net_worth.to_f
-      end
+      stat.clamp_net_worth
       stat.save!
     end
     record_stats_update frequency
