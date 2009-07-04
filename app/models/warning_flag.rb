@@ -42,18 +42,18 @@ class WarningFlag < ActiveRecord::Base
 
 
   # An event that may lead to site instability.
-  def self.fatal(subject, description)
-    self.raise subject, 0, description, 2
+  def self.fatal(subject, description, extra_skip_frames = 0)
+    self.raise subject, 0, description, 2 + extra_skip_frames
   end
 
   # Serious cheats that may spoil the game for everyone.
-  def self.major(subject, description)
-    self.raise subect, 1, description, 2
+  def self.major(subject, description, extra_skip_frames = 0)
+    self.raise subect, 1, description, 2 + extra_skip_frames
   end
 
   # Piracy and minor cheats.
-  def self.minor(subject, description)
-    self.raise subject, 2, description, 2
+  def self.minor(subject, description, extra_skip_frames = 0)
+    self.raise subject, 2, description, 2 + extra_skip_frames
   end
   
   # Raises a warning flag.

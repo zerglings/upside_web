@@ -36,6 +36,26 @@ class Portfolio < ActiveRecord::Base
   # Convenience method for PortfolioStat#for
   def stats_for(frequency)
     PortfolioStat.for self, frequency
+  end
+    
+  # Clamps the user's cash to the storage limits.
+  #
+  # This is a destructive operation, and should only be performed as a last
+  # resort. If clamping actually happens, we have a bug.
+  #
+  # This method creates a warning flag if clamping occurs.
+  def clamp_cash
+    return false if cash_in_range?
+    
+    WarningFlag.fatal self, 'Portfolio cash had to be clamped', 1
+    self.cash = -MAX_CASH if self.cash < -MAX_CASH
+    self.cash = MAX_CASH if self.cash > MAX_CASH
+    true
+  end
+  
+  # True if the user's cash within the limits of the storage system.
+  def cash_in_range?
+    cash >= -Portfolio::MAX_CASH && cash <= Portfolio::MAX_CASH
   end  
 end
 

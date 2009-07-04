@@ -78,6 +78,7 @@ class Trade < ActiveRecord::Base
     (position.quantity != 0) ? position.save! : position.destroy
 
     portfolio.cash += portfolio_cash_delta
+    portfolio.clamp_cash
     portfolio.save!
     
     trade_order.unfilled_quantity -= quantity
