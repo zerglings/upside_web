@@ -1,10 +1,10 @@
 # == Schema Information
-# Schema version: 20090701053535
+# Schema version: 20090703193226
 #
 # Table name: portfolios
 #
 #  id         :integer(4)      not null, primary key
-#  user_id    :integer(8)      not null
+#  user_id    :integer(4)      not null
 #  cash       :decimal(20, 2)  default(250000.0), not null
 #  created_at :datetime
 #  updated_at :datetime
@@ -36,6 +36,26 @@ class Portfolio < ActiveRecord::Base
   # Convenience method for PortfolioStat#for
   def stats_for(frequency)
     PortfolioStat.for self, frequency
+  end
+    
+  # Clamps the user's cash to the storage limits.
+  #
+  # This is a destructive operation, and should only be performed as a last
+  # resort. If clamping actually happens, we have a bug in the economy.
+  #
+  # This method creates a warning flag if clamping occurs.
+  def clamp_cash
+    return false if cash_in_range?
+    
+    WarningFlag.fatal self, 'Portfolio cash had to be clamped', 1
+    self.cash = -MAX_CASH if cash < -MAX_CASH
+    self.cash = MAX_CASH if cash > MAX_CASH
+    true
+  end
+  
+  # True if the user's cash is within the limits of the storage system.
+  def cash_in_range?
+    cash >= -Portfolio::MAX_CASH && cash <= Portfolio::MAX_CASH
   end  
 end
 

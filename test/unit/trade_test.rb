@@ -206,4 +206,15 @@ class TradeTest < ActiveSupport::TestCase
     # 100 shares of gs at 49.05 => 250000 + 100 * 49.05 = 254905
     assert_equal 254905, portfolio.cash
   end
+  
+  def test_execute_trade_clamps_cash
+    boost_unfilled_quantity @sss_trade
+    @sss_trade.portfolio.cash = Portfolio::MAX_CASH
+    assert_difference('WarningFlag.count', 1,
+                      'Trading clamps cash with warning flag') do
+      @sss_trade.execute
+    end
+    portfolio = @sss_trade.trade_order.portfolio
+    assert_equal Portfolio::MAX_CASH, portfolio.cash, 'Trading clamps cash'
+  end
 end

@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090701053535
+# Schema version: 20090703193226
 #
 # Table name: devices
 #
@@ -10,7 +10,7 @@
 #  os_version      :string(32)      not null
 #  app_version     :string(16)      not null
 #  last_activation :datetime        not null
-#  user_id         :integer(8)      not null
+#  user_id         :integer(4)      not null
 #  created_at      :datetime
 #  updated_at      :datetime
 #  last_ip         :string(64)      default("unknown"), not null

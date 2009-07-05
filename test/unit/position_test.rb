@@ -68,7 +68,7 @@ class PositionTest < ActiveSupport::TestCase
     spreads = { stocks(:ms) => { :close => 13.14 },
                 stocks(:gs) => { :close => 70.5 } }
     
-    assert_equal 13.14 * 500, positions(:ms_long).net_worth(spreads),
+    assert_equal 13.14 * 5000, positions(:ms_long).net_worth(spreads),
                  'Networth for MS long'
     assert_equal 13.14 * -300, positions(:ms_short).net_worth(spreads),
                  'Networth for MS short'

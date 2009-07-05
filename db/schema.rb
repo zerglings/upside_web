@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090701053535) do
+ActiveRecord::Schema.define(:version => 20090703193226) do
 
   create_table "config_variables", :force => true do |t|
     t.string   "name",       :limit => 64,   :null => false
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(:version => 20090701053535) do
     t.string   "os_version",      :limit => 32,                        :null => false
     t.string   "app_version",     :limit => 16,                        :null => false
     t.datetime "last_activation",                                      :null => false
-    t.integer  "user_id",         :limit => 8,                         :null => false
+    t.integer  "user_id",                                              :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "last_ip",         :limit => 64, :default => "unknown", :null => false
@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(:version => 20090701053535) do
   end
 
   create_table "order_cancellations", :force => true do |t|
-    t.integer  "trade_order_id", :limit => 8, :null => false
+    t.integer  "trade_order_id", :null => false
     t.datetime "created_at"
   end
 
@@ -61,8 +61,8 @@ ActiveRecord::Schema.define(:version => 20090701053535) do
   add_index "portfolio_stats", ["portfolio_id", "frequency"], :name => "index_portfolio_stats_on_portfolio_id_and_frequency", :unique => true
 
   create_table "portfolios", :force => true do |t|
-    t.integer  "user_id",    :limit => 8,                                                      :null => false
-    t.decimal  "cash",                    :precision => 20, :scale => 2, :default => 250000.0, :null => false
+    t.integer  "user_id",                                                         :null => false
+    t.decimal  "cash",       :precision => 20, :scale => 2, :default => 250000.0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -70,10 +70,10 @@ ActiveRecord::Schema.define(:version => 20090701053535) do
   add_index "portfolios", ["user_id"], :name => "index_portfolios_on_user_id", :unique => true
 
   create_table "positions", :force => true do |t|
-    t.integer  "portfolio_id",      :limit => 8, :null => false
-    t.integer  "stock_id",                       :null => false
-    t.boolean  "is_long",                        :null => false
-    t.integer  "quantity",          :limit => 8, :null => false
+    t.integer  "portfolio_id",      :null => false
+    t.integer  "stock_id",          :null => false
+    t.boolean  "is_long",           :null => false
+    t.integer  "quantity",          :null => false
     t.float    "average_base_cost"
     t.float    "decimal"
     t.datetime "created_at"
@@ -108,15 +108,15 @@ ActiveRecord::Schema.define(:version => 20090701053535) do
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
-    t.integer  "portfolio_id",       :limit => 8,                                                  :null => false
+    t.integer  "portfolio_id",                                                                     :null => false
     t.integer  "stock_id",                                                                         :null => false
     t.boolean  "is_buy",                                                         :default => true, :null => false
     t.boolean  "is_long",                                                        :default => true, :null => false
     t.decimal  "stop_price",                       :precision => 8, :scale => 2
     t.decimal  "limit_price",                      :precision => 8, :scale => 2
     t.datetime "expiration_time"
-    t.integer  "quantity",           :limit => 8,                                                  :null => false
-    t.integer  "unfilled_quantity",  :limit => 8,                                                  :null => false
+    t.integer  "quantity",                                                                         :null => false
+    t.integer  "unfilled_quantity",                                                                :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "adjusting_order_id", :limit => 8
@@ -127,11 +127,11 @@ ActiveRecord::Schema.define(:version => 20090701053535) do
   add_index "trade_orders", ["portfolio_id"], :name => "index_trade_orders_on_portfolio_id"
 
   create_table "trades", :force => true do |t|
-    t.datetime "time",                                                      :null => false
-    t.integer  "quantity",       :limit => 8,                               :null => false
-    t.integer  "trade_order_id", :limit => 8,                               :null => false
-    t.integer  "counterpart_id", :limit => 8
-    t.decimal  "price",                       :precision => 8, :scale => 2, :null => false
+    t.datetime "time",                                         :null => false
+    t.integer  "quantity",                                     :null => false
+    t.integer  "trade_order_id",                               :null => false
+    t.integer  "counterpart_id"
+    t.decimal  "price",          :precision => 8, :scale => 2, :null => false
     t.datetime "created_at"
   end
 
@@ -148,5 +148,20 @@ ActiveRecord::Schema.define(:version => 20090701053535) do
   end
 
   add_index "users", ["name"], :name => "index_users_on_name", :unique => true
+
+  create_table "warning_flags", :force => true do |t|
+    t.integer  "subject_id",   :limit => 8
+    t.string   "subject_type", :limit => 64
+    t.integer  "severity",     :limit => 1,        :null => false
+    t.string   "description",  :limit => 256,      :null => false
+    t.string   "source_file",  :limit => 256,      :null => false
+    t.integer  "source_line",                      :null => false
+    t.text     "stack",        :limit => 16777215, :null => false
+    t.datetime "created_at"
+  end
+
+  add_index "warning_flags", ["severity", "source_file", "source_line"], :name => "index_warning_flags_on_severity_and_source_file_and_source_line"
+  add_index "warning_flags", ["source_file", "source_line"], :name => "index_warning_flags_on_source_file_and_source_line"
+  add_index "warning_flags", ["subject_type", "subject_id"], :name => "index_warning_flags_on_subject_type_and_subject_id"
 
 end

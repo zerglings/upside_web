@@ -60,7 +60,8 @@ var processStats = function(stats) {
 	var tpl = '<div class="stat_div" id="${key}"><span class="stat_name">${title}</span><span class="stat_value">${value}</span></div>';
 	var stat_schema = [['Devices', 'devices'], ['Users', 'users'],
 	                   ['Orders', 'orders'], ['Trades', 'trades'],
-                     ['Stocks', 'stocks'], ['Sys Load', 'load']];
+                     ['Stocks', 'stocks'], ['Sys Load', 'load'],
+										 ['Warnings', 'warnings'], ['Reported at', 'created_at']];
   var html = "";	
 	dojo.forEach(stat_schema, function(stat_set) {
 		if (dojo.isArray(stats[stat_set[1]])) {

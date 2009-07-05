@@ -1,13 +1,13 @@
 # == Schema Information
-# Schema version: 20090701053535
+# Schema version: 20090703193226
 #
 # Table name: trades
 #
 #  id             :integer(4)      not null, primary key
 #  time           :datetime        not null
-#  quantity       :integer(8)      not null
-#  trade_order_id :integer(8)      not null
-#  counterpart_id :integer(8)
+#  quantity       :integer(4)      not null
+#  trade_order_id :integer(4)      not null
+#  counterpart_id :integer(4)
 #  price          :decimal(8, 2)   not null
 #  created_at     :datetime
 #

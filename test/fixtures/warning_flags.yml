@@ -1,0 +1,26 @@
+# == Schema Information
+# Schema version: 20090703193226
+#
+# Table name: warning_flags
+#
+#  id           :integer(4)      not null, primary key
+#  subject_id   :integer(8)
+#  subject_type :string(64)
+#  severity     :integer(1)      not null
+#  description  :string(256)     not null
+#  source_file  :string(256)     not null
+#  source_line  :integer(4)      not null
+#  stack        :text(16777215)  default(""), not null
+#  created_at   :datetime
+#
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+rich_kid_doing_well:
+  subject_id: rich_kid
+  subject_type: Portfolio
+  severity: 2
+  description: This player is doing suspiciously well.
+  source_file: "./test/fixtures/warning_flags.yml"
+  source_line: 10
+  stack: <%= YAML.dump(Kernel.caller).inspect %>

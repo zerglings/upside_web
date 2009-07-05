@@ -1,13 +1,13 @@
 # == Schema Information
-# Schema version: 20090701053535
+# Schema version: 20090703193226
 #
 # Table name: trades
 #
 #  id             :integer(4)      not null, primary key
 #  time           :datetime        not null
-#  quantity       :integer(8)      not null
-#  trade_order_id :integer(8)      not null
-#  counterpart_id :integer(8)
+#  quantity       :integer(4)      not null
+#  trade_order_id :integer(4)      not null
+#  counterpart_id :integer(4)
 #  price          :decimal(8, 2)   not null
 #  created_at     :datetime
 #
@@ -78,6 +78,7 @@ class Trade < ActiveRecord::Base
     (position.quantity != 0) ? position.save! : position.destroy
 
     portfolio.cash += portfolio_cash_delta
+    portfolio.clamp_cash
     portfolio.save!
     
     trade_order.unfilled_quantity -= quantity
