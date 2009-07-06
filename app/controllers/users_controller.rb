@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   before_filter :ensure_admin_authenticated, :except => [:is_user_taken,
                                                          :update]
   before_filter :ensure_user_owns_account, :only => [:update]
+  protect_from_forgery :except => [:is_user_taken, :update]
   
   include UsersHelper
   
