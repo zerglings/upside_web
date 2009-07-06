@@ -140,7 +140,7 @@ class DevicesController < ApplicationController
       format.json do
         result = { :device => device_to_json_hash(@device),
                    :user => user_to_json_hash(@device.user) }
-        render :json =>  result, :callback => params[:callback]
+        render :json => result, :callback => params[:callback]
       end
       format.xml # register.xml.builder
     end

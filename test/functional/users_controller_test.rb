@@ -101,15 +101,102 @@ class UsersControllerTest < ActionController::TestCase
   end
   
   test "user not authorized to get edit" do
-    get :edit, :id => users(:rich_kid).id
+    get :edit, :id => @user.id
     assert_access_denied
   end
 
-  test "user not authorized to update user" do
-    put :update, :id => users(:rich_kid).id, :user => { }
+  test "user not authorized to update other user" do
+    put :update, :id => users(:short_lover).id, :user => { }
+    assert_access_denied
+  end
+  
+  test "user can change its password" do
+    password = 'l33t_k0d3'
+    put :update, :id => @user.id, :user => { :password => password }
+    assert_redirected_to @portfolio
+    
+    @user.reload
+    assert_equal @user, User.authenticate(@user.name, password),
+                 'Password change failed'
+  end
+
+  test "named user cannot change its name" do
+    put :update, :id => @user.id, :user => { :name => 'rich_kid^^' }
     assert_access_denied
   end
 
+  test "unnamed iphone user upgrades to named" do
+    name, password = 'noname', 'pa55w0rd'
+    @user = users(:device_user)
+    @request.session[:user_id] = @user.id
+    put :update, :id => 0, :format => 'json', :callback => 'callbackProc',
+        :user => { :name => name, :password => password, :model_id => @user.id }        
+
+    json_match = /^callbackProc\((.*)\)$/.match @response.body
+    assert json_match, "Response not in JSONP format: #{@response.body}"
+    response = JSON.parse json_match[1]
+    
+    golden_response = { 'user' => { 'name' => name, 'model_id' => @user.id,
+                                    'is_pseudo_user' => false } }
+    assert_equal golden_response, response, 'Bad response data'
+    
+    @user.reload
+    assert_equal name, @user.name, 'User rename failed'
+    assert_equal @user, User.authenticate(name, password),
+                 'Password change failed'
+  end
+  
+  test "unnamed iphone user cannot upgrade to used name" do
+    name, password = 'rich_kid', 'pa55w0rd'
+    @user = users(:device_user)
+    @request.session[:user_id] = @user.id
+    put :update, :id => 0, :format => 'json',
+        :user => { :name => name, :password => password, :model_id => @user.id }        
+
+    response = JSON.parse @response.body
+    assert_equal 'validation', response['error']['reason'],
+                 'Reusing a user name should fail validation'
+    
+    @user.reload
+    assert @user.pseudo_user?, 'User should not become named'
+  end
+
+  test "named iphone user cannot change name" do
+    old_name, old_password = 'rich_kid', 'password'
+    name, password = 'noname', 'pa55w0rd'
+    put :update, :id => 0, :format => 'json', :callback => 'callbackProc',
+        :user => { :name => name, :password => password, :model_id => @user.id }
+
+    json_match = /^callbackProc\((.*)\)$/.match @response.body
+    assert json_match, "Response not in JSONP format: #{@response.body}"
+    response = JSON.parse json_match[1]
+    assert_equal 'denied', response['error']['reason'],
+                 'Renaming should be rejected'
+    
+    @user.reload
+    assert_equal old_name, @user.name, 'User name should not change'
+    assert_equal @user, User.authenticate(old_name, old_password),
+                 'User password should not change'
+  end
+
+  test "named iphone user changes password" do
+    password = 'l33t_k0d3'
+    put :update, :id => 0, :format => 'json', :callback => 'callbackProc',
+        :user => { :password => password }
+
+    json_match = /^callbackProc\((.*)\)$/.match @response.body
+    assert json_match, "Response not in JSONP format: #{@response.body}"
+    response = JSON.parse json_match[1]
+    
+    golden_user = { 'name' => @user.name, 'model_id' => @user.id,
+                    'is_pseudo_user' => false }
+    assert_equal golden_user, response['user'], 'Response user data'
+    
+    @user.reload
+    assert_equal @user, User.authenticate(@user.name, password),
+                 'Password change failed'
+  end
+  
   test "user not authorized to destroy user" do
     assert_difference('User.count', 0) do
       delete :destroy, :id => users(:rich_kid).id
@@ -118,7 +205,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_access_denied
   end
 
-  def test_is_admin_set_to_true_if_user_name_is_admin
+  test "is_admin set to true if user_name is admin" do
     @request.session[:user_id] = nil
     post :create, :user => {:name => "admin",
                             :password => "moof",
@@ -133,7 +220,6 @@ class UsersControllerTest < ActionController::TestCase
     get :is_user_taken, :user => { :name => 'rich_kid' },
                         :callback => 'callbackProc', :format => 'json'
     assert_response :success
-    p @response
     json_match = /^callbackProc\((.*)\)$/.match @response.body
     assert json_match, "Response not in JSONP format: #{@response.body}"    
     response = JSON.parse json_match[1]    
@@ -146,7 +232,7 @@ class UsersControllerTest < ActionController::TestCase
                  response, 'Querying for non-existing user name')
   end
   
- # TODO(anyone): add this test back in once we allow users to create accounts on the web
+  # TODO(anyone): add this test back in once we allow users to create accounts on the web
 =begin  
   def test_is_admin_not_set_by_mass_assignment
     post :create, :user => {:name => "orange",

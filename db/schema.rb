@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
     t.string   "os_version",      :limit => 32,                        :null => false
     t.string   "app_version",     :limit => 16,                        :null => false
     t.datetime "last_activation",                                      :null => false
-    t.integer  "user_id",                                              :null => false
+    t.integer  "user_id",         :limit => 8,                         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "last_ip",         :limit => 64, :default => "unknown", :null => false
@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
   end
 
   create_table "order_cancellations", :force => true do |t|
-    t.integer  "trade_order_id", :null => false
+    t.integer  "trade_order_id", :limit => 8, :null => false
     t.datetime "created_at"
   end
 
@@ -61,8 +61,8 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
   add_index "portfolio_stats", ["portfolio_id", "frequency"], :name => "index_portfolio_stats_on_portfolio_id_and_frequency", :unique => true
 
   create_table "portfolios", :force => true do |t|
-    t.integer  "user_id",                                                         :null => false
-    t.decimal  "cash",       :precision => 20, :scale => 2, :default => 250000.0, :null => false
+    t.integer  "user_id",    :limit => 8,                                                      :null => false
+    t.decimal  "cash",                    :precision => 20, :scale => 2, :default => 250000.0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -70,10 +70,10 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
   add_index "portfolios", ["user_id"], :name => "index_portfolios_on_user_id", :unique => true
 
   create_table "positions", :force => true do |t|
-    t.integer  "portfolio_id",      :null => false
-    t.integer  "stock_id",          :null => false
-    t.boolean  "is_long",           :null => false
-    t.integer  "quantity",          :null => false
+    t.integer  "portfolio_id",      :limit => 8, :null => false
+    t.integer  "stock_id",                       :null => false
+    t.boolean  "is_long",                        :null => false
+    t.integer  "quantity",          :limit => 8, :null => false
     t.float    "average_base_cost"
     t.float    "decimal"
     t.datetime "created_at"
@@ -108,15 +108,15 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
-    t.integer  "portfolio_id",                                                                     :null => false
+    t.integer  "portfolio_id",       :limit => 8,                                                  :null => false
     t.integer  "stock_id",                                                                         :null => false
     t.boolean  "is_buy",                                                         :default => true, :null => false
     t.boolean  "is_long",                                                        :default => true, :null => false
     t.decimal  "stop_price",                       :precision => 8, :scale => 2
     t.decimal  "limit_price",                      :precision => 8, :scale => 2
     t.datetime "expiration_time"
-    t.integer  "quantity",                                                                         :null => false
-    t.integer  "unfilled_quantity",                                                                :null => false
+    t.integer  "quantity",           :limit => 8,                                                  :null => false
+    t.integer  "unfilled_quantity",  :limit => 8,                                                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "adjusting_order_id", :limit => 8
@@ -127,11 +127,11 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
   add_index "trade_orders", ["portfolio_id"], :name => "index_trade_orders_on_portfolio_id"
 
   create_table "trades", :force => true do |t|
-    t.datetime "time",                                         :null => false
-    t.integer  "quantity",                                     :null => false
-    t.integer  "trade_order_id",                               :null => false
-    t.integer  "counterpart_id"
-    t.decimal  "price",          :precision => 8, :scale => 2, :null => false
+    t.datetime "time",                                                      :null => false
+    t.integer  "quantity",       :limit => 8,                               :null => false
+    t.integer  "trade_order_id", :limit => 8,                               :null => false
+    t.integer  "counterpart_id", :limit => 8
+    t.decimal  "price",                       :precision => 8, :scale => 2, :null => false
     t.datetime "created_at"
   end
 

@@ -1,16 +1,10 @@
 class UsersController < ApplicationController
-  before_filter :ensure_admin_authenticated, :except => [:is_user_taken]
-
-  # GET /users/is_name_taken.json
-  def is_user_taken
-    @name = params[:user][:name]    
-    @user = User.find :first, :conditions => { :name => @name }
-    
-    response = { :result => { :name => @name, :taken => @user ? true : false } }
-    respond_to do |format|
-      format.json { render :json => response, :callback => params[:callback] }
-    end
-  end
+  before_filter :ensure_admin_authenticated, :except => [:is_user_taken,
+                                                         :update]
+  before_filter :ensure_user_owns_account, :only => [:update]
+  
+  include UsersHelper
+  
   
   # GET /users
   # GET /users.xml
@@ -71,17 +65,32 @@ class UsersController < ApplicationController
   # PUT /users/1
   # PUT /users/1.xml
   def update
-    @user = User.find(params[:id])
+    params[:user].delete_if { |key, value| !['name', 'password'].include?(key) }
+    if params[:user][:password]
+      params[:user][:password_confirmation] ||= params[:user][:password]
+    end
+    
+    if !@user.pseudo_user && !@s_user.is_admin? && params[:user][:name] &&
+       params[:user][:name] != @user.name
+      render_access_denied
+      return
+    end    
     @user.pseudo_user = false
     
     respond_to do |format|
       if @user.update_attributes(params[:user])
+        response = { :user => user_to_json_hash(@user) }
         flash[:notice] = "User #{@user.name} was successfully updated."
-        format.html { redirect_to(:controller => :portfolios, :action => @user.portfolio.id) }
-        format.xml  { head :ok }
+        format.html do
+          redirect_to :controller => :portfolios, :action => @user.portfolio.id
+        end
+        format.json { render :json => response, :callback => params[:callback] }
       else
+        flash[:error] = "User update not accepted."
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
+        format.json do
+          render_error_data :message => flash[:error], :reason => :validation          
+        end
       end
     end
   end
@@ -97,4 +106,15 @@ class UsersController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  # GET /users/is_name_taken.json
+  def is_user_taken
+    @name = params[:user][:name]    
+    @user = User.find :first, :conditions => { :name => @name }
+    
+    response = { :result => { :name => @name, :taken => @user ? true : false } }
+    respond_to do |format|
+      format.json { render :json => response, :callback => params[:callback] }
+    end
+  end  
 end
