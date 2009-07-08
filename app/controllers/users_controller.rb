@@ -66,7 +66,9 @@ class UsersController < ApplicationController
   # PUT /users/1
   # PUT /users/1.xml
   def update
-    params[:user].delete_if { |key, value| !['name', 'password'].include?(key) }
+    params[:user].delete_if do |key, value| 
+      !['name', 'password', 'password_confirmation'].include?(key)
+    end
     if params[:user][:password]
       params[:user][:password_confirmation] ||= params[:user][:password]
     end
