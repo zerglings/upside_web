@@ -20,7 +20,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 iphone_3g:
-  unique_id: <%= '11111' * 8 %>
+  unique_id: <%= ('11111' * 8).inspect %>
   hardware_model: iPhone1,2
   os_name: iPhone OS
   os_version: 2.0
@@ -29,7 +29,7 @@ iphone_3g:
   user: rich_kid
 
 ipod_touch_2g:
-  unique_id: <%= '22222' * 8 %>
+  unique_id: <%= ('22222' * 8).inspect %>
   hardware_model: iPod2,1
   os_name: iPhone OS
   os_version: 2.0

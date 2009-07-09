@@ -16,14 +16,16 @@ google_spread_for_tickers:
   ticker: GOOG
   info_type: sft
   value: <%= YAML.dump({:ask => 365, :bid => 360, :close => 362}).inspect %>
+  updated_at: <%= Time.now.to_s :db %>
 
 yahoo_spread_for_tickers:
   ticker: YHOO
   info_type: sft
   value: <%= YAML.dump({:ask => 20, :bid => 10, :close => 15}).inspect %>
+  updated_at: <%= Time.now.to_s :db %>
 
 microsoft_expired_spread_for_tickers:
   ticker: MSFT
   info_type: sft
   value: <%= YAML.dump({:ask => 2, :bid => 1, :close => 1.5}).inspect %>
-  updated_at: <%= Time.now - 1.day %>
+  updated_at: <%= (Time.now - 1.day).to_s :db %>
