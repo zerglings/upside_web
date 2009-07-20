@@ -52,14 +52,14 @@ class TradeMatchingControllerTest < ActionController::IntegrationTest
     @controller.sync_store
 
     flexmock(YahooFetcher).should_receive(:spreads_for_tickers).
-                           with(['AAPL', 'MS', 'GS']).
-                           and_return([:not_found,
-                                       {:ask => 22.8, :bid => 20.5},
-                                       # Yes, we're testing unclean data here.
+                           with(['MS', 'AAPL', 'GS']).
+                           and_return([{:ask => 22.8, :bid => 20.5},
+                                       :not_found,
+                                       # Test for unclean data handling.
                                        {:ask => 4.204, :bid => 3.506}])    
 
-    assert_equal [[stocks(:aapl).id, [1.0, 1.0]],
-                  [stocks(:ms).id, [20.5, 22.8]],
+    assert_equal [[stocks(:ms).id, [20.5, 22.8]],
+                  [stocks(:aapl).id, [1.0, 1.0]],
                   [stocks(:gs).id, [3.51, 4.20]]],
                  @controller.spreads_in_store
   end

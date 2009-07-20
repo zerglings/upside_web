@@ -13,7 +13,7 @@ class SessionsControllerTest < ActionController::TestCase
   
   def test_index_without_user
     get :index
-    assert_redirected_to :action => :new
+    assert_redirected_to :controller => :sessions, :action => :new
   end
   
   def test_index_with_valid_user
