@@ -1,18 +1,18 @@
 # == Schema Information
-# Schema version: 20090703193226
+# Schema version: 20090728042053
 #
 # Table name: trade_orders
 #
-#  id                 :integer(4)      not null, primary key
-#  portfolio_id       :integer(4)      not null
+#  id                 :integer         not null, primary key
+#  portfolio_id       :integer(8)      not null
 #  stock_id           :integer(4)      not null
-#  is_buy             :boolean(1)      default(TRUE), not null
-#  is_long            :boolean(1)      default(TRUE), not null
+#  is_buy             :boolean         default(TRUE), not null
+#  is_long            :boolean         default(TRUE), not null
 #  stop_price         :decimal(8, 2)
 #  limit_price        :decimal(8, 2)
 #  expiration_time    :datetime
-#  quantity           :integer(4)      not null
-#  unfilled_quantity  :integer(4)      not null
+#  quantity           :integer(8)      not null
+#  unfilled_quantity  :integer(8)      not null
 #  created_at         :datetime
 #  updated_at         :datetime
 #  adjusting_order_id :integer(8)

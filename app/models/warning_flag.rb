@@ -1,16 +1,16 @@
 # == Schema Information
-# Schema version: 20090703193226
+# Schema version: 20090728042053
 #
 # Table name: warning_flags
 #
-#  id           :integer(4)      not null, primary key
+#  id           :integer         not null, primary key
 #  subject_id   :integer(8)
 #  subject_type :string(64)
 #  severity     :integer(1)      not null
 #  description  :string(256)     not null
 #  source_file  :string(256)     not null
 #  source_line  :integer(4)      not null
-#  stack        :text(16777215)  default(""), not null
+#  stack        :string(65536)   not null
 #  created_at   :datetime
 #
 

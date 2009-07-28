@@ -1,9 +1,9 @@
 # == Schema Information
-# Schema version: 20090703193226
+# Schema version: 20090728042053
 #
 # Table name: markets
 #
-#  id         :integer(4)      not null, primary key
+#  id         :integer         not null, primary key
 #  name       :string(64)      not null
 #  created_at :datetime
 #  updated_at :datetime

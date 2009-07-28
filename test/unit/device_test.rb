@@ -7,6 +7,9 @@ class DeviceTest < ActiveSupport::TestCase
                          :hardware_model => 'iPod1,1',
                          :os_name => 'iPhone OS',
                          :os_version => '2.1',
+                         :app_id => 'us.costan.ZergSupport',
+                         :app_provisioning => 'D',
+                         :app_push_token => nil,
                          :app_version => '1.0',
                          :last_activation => Time.now - 2.days,
                          :user_id => users(:rich_kid).id,
@@ -60,6 +63,44 @@ class DeviceTest < ActiveSupport::TestCase
   
   def test_os_version_presence
     @device.os_version = nil
+    assert !@device.valid?
+  end
+    
+  def test_app_id_length
+    @device.app_id ="12345" * 12
+    assert @device.valid?
+    
+    @device.app_id ="12345" * 13
+    assert !@device.valid?
+  end
+  
+  def test_app_id_presence
+    @device.app_id = nil
+    assert !@device.valid?
+  end
+  
+  def test_app_provisioning_length
+    @device.app_provisioning = 'S3x'
+    assert @device.valid?
+    
+    @device.app_provisioning = '12345'
+    assert !@device.valid?
+  end
+  
+  def test_app_provisioning_presence
+    @device.app_provisioning = nil
+    assert !@device.valid?
+  end
+  
+  def test_app_push_token_can_be_nil
+    @device.app_push_token = nil
+    assert @device.valid?
+  end
+  
+  def test_app_push_token_length
+    @device.app_push_token = "12345" * 51
+    assert @device.valid?
+    @device.app_push_token = "12345" * 52
     assert !@device.valid?
   end
 

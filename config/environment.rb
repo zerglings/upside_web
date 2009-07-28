@@ -27,13 +27,13 @@ Rails::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
-  ['json', 'rbtree', 'simple-daemon', ['sys-cpu', 'sys/cpu']].each do |name|
+  ['imobile', 'json', 'rbtree', 'simple-daemon',
+   ['sys-cpu', 'sys/cpu']].each do |name|
     if name.respond_to? :to_str
       config.gem name
     else
       config.gem name.first, :lib => name.last
-    end
-    
+    end    
   end
 
   # Only load the plugins named here, in the order given. By default, all plugins 

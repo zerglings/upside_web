@@ -1,5 +1,5 @@
 --- 
-gems: flexmock,json,rbtree,simple-daemon,starling,sys-cpu
+gems: flexmock,imobile,json,rbtree,simple-daemon,starling,sys-cpu
 # Use less frontends that the usual because 1 core will be taken by the daemons
 # doing feed parsers and order filling
 frontends_per_core: 1

@@ -1,9 +1,9 @@
 # == Schema Information
-# Schema version: 20090703193226
+# Schema version: 20090728042053
 #
 # Table name: portfolio_stats
 #
-#  id           :integer(4)      not null, primary key
+#  id           :integer         not null, primary key
 #  frequency    :integer(1)      not null
 #  portfolio_id :integer(8)      not null
 #  net_worth    :decimal(20, 2)  not null

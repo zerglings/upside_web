@@ -1,9 +1,9 @@
 # == Schema Information
-# Schema version: 20090703193226
+# Schema version: 20090728042053
 #
 # Table name: config_variables
 #
-#  id         :integer(4)      not null, primary key
+#  id         :integer         not null, primary key
 #  name       :string(64)      not null
 #  instance   :integer(4)      not null
 #  value      :string(1024)    not null

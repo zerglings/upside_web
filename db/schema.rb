@@ -9,11 +9,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090703193226) do
+ActiveRecord::Schema.define(:version => 20090728042053) do
 
   create_table "config_variables", :force => true do |t|
     t.string   "name",       :limit => 64,   :null => false
-    t.integer  "instance",                   :null => false
+    t.integer  "instance",   :limit => 4,    :null => false
     t.string   "value",      :limit => 1024, :null => false
     t.datetime "updated_at"
   end
@@ -21,17 +21,20 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
   add_index "config_variables", ["name", "instance"], :name => "index_config_variables_on_name_and_instance", :unique => true
 
   create_table "devices", :force => true do |t|
-    t.string   "unique_id",       :limit => 64,                        :null => false
-    t.string   "hardware_model",  :limit => 32,                        :null => false
-    t.string   "os_name",         :limit => 32,                        :null => false
-    t.string   "os_version",      :limit => 32,                        :null => false
-    t.string   "app_version",     :limit => 16,                        :null => false
-    t.datetime "last_activation",                                      :null => false
-    t.integer  "user_id",         :limit => 8,                         :null => false
+    t.string   "unique_id",        :limit => 64,                         :null => false
+    t.string   "hardware_model",   :limit => 32,                         :null => false
+    t.string   "os_name",          :limit => 32,                         :null => false
+    t.string   "os_version",       :limit => 32,                         :null => false
+    t.string   "app_version",      :limit => 16,                         :null => false
+    t.datetime "last_activation",                                        :null => false
+    t.integer  "user_id",          :limit => 8,                          :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "last_ip",         :limit => 64, :default => "unknown", :null => false
-    t.string   "last_app_fprint", :limit => 64, :default => "",        :null => false
+    t.string   "last_ip",          :limit => 64,  :default => "unknown", :null => false
+    t.string   "last_app_fprint",  :limit => 64,  :default => "",        :null => false
+    t.string   "app_id",           :limit => 64,  :default => "unknown", :null => false
+    t.string   "app_push_token",   :limit => 256
+    t.string   "app_provisioning", :limit => 4,   :default => "?",       :null => false
   end
 
   add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true
@@ -71,7 +74,7 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
 
   create_table "positions", :force => true do |t|
     t.integer  "portfolio_id",      :limit => 8, :null => false
-    t.integer  "stock_id",                       :null => false
+    t.integer  "stock_id",          :limit => 4, :null => false
     t.boolean  "is_long",                        :null => false
     t.integer  "quantity",          :limit => 8, :null => false
     t.float    "average_base_cost"
@@ -92,7 +95,7 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
   add_index "stock_cache_lines", ["ticker", "info_type"], :name => "index_stock_cache_lines_on_ticker_and_info_type", :unique => true
 
   create_table "stock_infos", :force => true do |t|
-    t.integer  "stock_id",                    :null => false
+    t.integer  "stock_id",     :limit => 4,   :null => false
     t.string   "company_name", :limit => 128, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -102,14 +105,14 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
 
   create_table "stocks", :force => true do |t|
     t.string  "ticker",    :limit => 16, :null => false
-    t.integer "market_id",               :null => false
+    t.integer "market_id", :limit => 4,  :null => false
   end
 
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
     t.integer  "portfolio_id",       :limit => 8,                                                  :null => false
-    t.integer  "stock_id",                                                                         :null => false
+    t.integer  "stock_id",           :limit => 4,                                                  :null => false
     t.boolean  "is_buy",                                                         :default => true, :null => false
     t.boolean  "is_long",                                                        :default => true, :null => false
     t.decimal  "stop_price",                       :precision => 8, :scale => 2
@@ -152,11 +155,11 @@ ActiveRecord::Schema.define(:version => 20090703193226) do
   create_table "warning_flags", :force => true do |t|
     t.integer  "subject_id",   :limit => 8
     t.string   "subject_type", :limit => 64
-    t.integer  "severity",     :limit => 1,        :null => false
-    t.string   "description",  :limit => 256,      :null => false
-    t.string   "source_file",  :limit => 256,      :null => false
-    t.integer  "source_line",                      :null => false
-    t.text     "stack",        :limit => 16777215, :null => false
+    t.integer  "severity",     :limit => 1,     :null => false
+    t.string   "description",  :limit => 256,   :null => false
+    t.string   "source_file",  :limit => 256,   :null => false
+    t.integer  "source_line",  :limit => 4,     :null => false
+    t.string   "stack",        :limit => 65536, :null => false
     t.datetime "created_at"
   end
 

@@ -1,9 +1,9 @@
 # == Schema Information
-# Schema version: 20090703193226
+# Schema version: 20090728042053
 #
 # Table name: stocks
 #
-#  id        :integer(4)      not null, primary key
+#  id        :integer         not null, primary key
 #  ticker    :string(16)      not null
 #  market_id :integer(4)      not null
 #

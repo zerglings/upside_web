@@ -1,9 +1,9 @@
 # == Schema Information
-# Schema version: 20090703193226
+# Schema version: 20090728042053
 #
 # Table name: stock_infos
 #
-#  id           :integer(4)      not null, primary key
+#  id           :integer         not null, primary key
 #  stock_id     :integer(4)      not null
 #  company_name :string(128)     not null
 #  created_at   :datetime

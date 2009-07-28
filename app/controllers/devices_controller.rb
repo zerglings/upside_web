@@ -125,6 +125,8 @@ class DevicesController < ApplicationController
           @device = Device.new
         else
           @device = Device.new :hardware_model => 'unknown',
+                               :app_id => 'unknown',
+                               :app_provisioning => '?',
                                :app_version => '1.0',
                                :os_name => 'iPhone OS',
                                :os_version => 'unknown'
