@@ -122,6 +122,8 @@ class DevicesController < ApplicationController
           params[:device].delete_if do |key, value|
             not Device.column_names.include? key 
           end
+          params[:device][:app_id] ||= 'unknown'
+          params[:device][:app_provisioning] ||= '?'
           @device = Device.new
         else
           @device = Device.new :hardware_model => 'unknown',
