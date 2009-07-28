@@ -60,4 +60,9 @@ class Device < ActiveRecord::Base
 
   # user id pointing to the last user on this device
   validates_presence_of :user_id
+  
+  def app_push_token=(new_push_token)
+    new_push_token = nil if new_push_token.blank?
+    super(new_push_token)
+  end
 end

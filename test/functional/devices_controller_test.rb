@@ -131,7 +131,7 @@ class DevicesControllerTest < ActionController::TestCase
     device1.save!
   end
   
-  test "register new device with v0.7 json" do
+  test "register new device with v0.9 json" do
     unique_id = '88888' * 8
     post :register, :unique_id => unique_id, :format => 'json',
                     :device_sig => IphoneAuthFilters.signature(unique_id),
@@ -140,6 +140,9 @@ class DevicesControllerTest < ActionController::TestCase
                                  :model_id => 0,
                                  :user_id => 0,
                                  :hardware_model => 'iPhone1,1',
+                                 :app_id => 'us.costan.StockPlay',
+                                 :app_provisioning => 'D',
+                                 :app_push_token => 'cdfe' * 16,
                                  :app_version => '1.6',
                                  :os_name => 'iPhone OS',
                                  :os_version => '2.1' },
@@ -157,6 +160,10 @@ class DevicesControllerTest < ActionController::TestCase
     assert_equal user.id, result['device']['user_id'], 'User ID'
     assert_equal 'iPhone1,1', result['device']['hardware_model'],
                  'Hardware model'
+    assert_equal 'us.costan.StockPlay', result['device']['app_id'], 'App ID' 
+    assert_equal 'D', result['device']['app_provisioning'], 'App provisioning' 
+    assert_equal 'cdfe' * 16, result['device']['app_push_token'],
+                 'App push token' 
     assert_equal '1.6', result['device']['app_version'], 'App version' 
     assert_equal 'iPhone OS', result['device']['os_name'], 'OS name' 
     assert_equal '2.1', result['device']['os_version'], 'OS version' 
@@ -175,7 +182,26 @@ class DevicesControllerTest < ActionController::TestCase
                  "New user's name should be the SHA2 of the device's UDID."
     assert_operator (Time.now - device.last_activation).abs, :<=, 2,
                     "Last activation time was not set properly"    
-  end  
+  end
+  
+  test "register new device with v0.7 json" do
+    unique_id = '88888' * 8
+    post :register, :unique_id => unique_id, :format => 'json',
+                    :device_sig => IphoneAuthFilters.signature(unique_id),
+                    :device_sig_v => IphoneAuthFilters.signature_version,
+                    :device => { :unique_id => unique_id,
+                                 :model_id => 0,
+                                 :user_id => 0,
+                                 :hardware_model => 'iPhone1,1',
+                                 :app_version => '1.6',
+                                 :os_name => 'iPhone OS',
+                                 :os_version => '2.1' },
+                    :app_sig => '1234' * 16
+    result = JSON.parse(@response.body)
+    assert result, 'Response is JSON-formatted'
+    
+    assert_response :success
+  end
   
   test "xml register new device with v0.3" do
     # TODO(overmind): remove this code when the JSON-enabled version has been
@@ -285,7 +311,7 @@ class DevicesControllerTest < ActionController::TestCase
     user = device.user
     assert_not_nil user, "User not created when registering a new device"
     assert user.pseudo_user?, "New device's user should be a pseudo-user"
-  end  
+  end
   
   test "try registering existing device with xml" do
     # TODO(overmind): remove this code when the JSON-enabled version has been
@@ -316,9 +342,61 @@ class DevicesControllerTest < ActionController::TestCase
     end    
   end
 
-  test "try registering existing device" do
+  test "try registering existing device with v0.9" do
     old_user_count = User.count
     old_device_count = Device.count
+    iphone_3g = devices(:iphone_3g)
+    unique_id = iphone_3g.unique_id
+    post :register, :unique_id => unique_id, :format => 'json',
+                    :device_sig => IphoneAuthFilters.signature(unique_id),
+                    :device_sig_v => IphoneAuthFilters.signature_version,
+                    :device => { :app_id => 'randomness',
+                                 :app_provisioning => 'S',
+                                 :app_push_token => 'c001d00d' * 8,
+                                 :app_version => '1.1',
+                                 :unique_id => unique_id,
+                                 :hardware_model => 'iPhone1,1',
+                                 :os_name => 'iPhone OSX',
+                                 :os_version => '1.9',
+                                 :model_id => 0,
+                                 :user_id => 0 }
+    result = JSON.parse(@response.body)
+    assert result, 'Response is JSON-formatted'
+    
+    assert_equal iphone_3g.id, result['device']['model_id'], "Device's model_id"
+    assert_equal iphone_3g.user.id, result['device']['user_id'], 'User ID'
+    assert_equal 'randomness', result['device']['app_id'],
+                 'Device info not updated (app id)'
+    assert_equal 'S', result['device']['app_provisioning'],
+                 'Device info not updated (app provisioning)'
+    assert_equal 'c001d00d' * 8, result['device']['app_push_token'],
+                 'Device info not updated (push token)'
+    assert_equal '1.1', result['device']['app_version'],
+                 'Device info not updated (app version)'
+    assert_equal 'iPhone1,1', result['device']['hardware_model'],
+                 'Device info not updated (hardware model)'
+    assert_equal 'iPhone OSX', result['device']['os_name'],
+                 'Device info not updated (OS name)'
+    assert_equal '1.9', result['device']['os_version'],
+                 'Device info not updated (OS version)'
+    assert_equal unique_id, result['device']['unique_id'], 'UDID'
+    
+    assert_equal iphone_3g.user.id, result['user']['model_id'],
+                 "User's model_id"
+    assert_equal iphone_3g.user.name, result['user']['name'], 'User name' 
+    assert_equal false, result['user']['is_pseudo_user'],
+                 'User should remain regular user'
+                 
+    assert_equal old_device_count, Device.count,
+                 'Registering an existing device created a new device'
+    assert_equal old_user_count, User.count,
+                 'Registering an existing device created a new user'
+    assert_equal @remote_ip, iphone_3g.reload.last_ip,
+                 "Device's last IP updated incorrectly"    
+  end
+
+
+  test "try registering existing device with v0.7" do
     iphone_3g = devices(:iphone_3g)
     unique_id = iphone_3g.unique_id
     post :register, :unique_id => unique_id, :format => 'json',
@@ -333,31 +411,6 @@ class DevicesControllerTest < ActionController::TestCase
                                  :os_version => '1.9' }     
     result = JSON.parse(@response.body)
     assert result, 'Response is JSON-formatted'
-    
-    assert_equal iphone_3g.id, result['device']['model_id'], "Device's model_id"
-    assert_equal unique_id, result['device']['unique_id'], 'UDID'
-    assert_equal iphone_3g.user.id, result['device']['user_id'], 'User ID'
-    assert_equal 'iPhone1,1', result['device']['hardware_model'],
-                 'Device info not updated (hardware model)'
-    assert_equal '1.1', result['device']['app_version'],
-                 'Device info not updated (app version)'
-    assert_equal 'iPhone OSX', result['device']['os_name'],
-                 'Device info not updated (OS name)'
-    assert_equal '1.9', result['device']['os_version'],
-                 'Device info not updated (OS version)'
-    
-    assert_equal iphone_3g.user.id, result['user']['model_id'],
-                 "User's model_id"
-    assert_equal iphone_3g.user.name, result['user']['name'], 'User name' 
-    assert_equal false, result['user']['is_pseudo_user'],
-                 'User should remain regular user'
-                 
-    assert_equal old_device_count, Device.count,
-                 'Registering an existing device created a new device'
-    assert_equal old_user_count, User.count,
-                 'Registering an existing device created a new user'
-    assert_equal @remote_ip, iphone_3g.reload.last_ip,
-                 "Device's last IP updated incorrectly"
   end
   
   test "xml registration bounces without signature" do

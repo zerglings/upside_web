@@ -97,6 +97,14 @@ class DeviceTest < ActiveSupport::TestCase
     assert @device.valid?
   end
   
+  def test_app_push_token_can_be_empty
+    @device.app_push_token = ''
+    assert @device.valid?
+    
+    assert_equal nil, @device.app_push_token,
+                 'Empty push token should be converted to nil'
+  end
+  
   def test_app_push_token_length
     @device.app_push_token = "12345" * 51
     assert @device.valid?

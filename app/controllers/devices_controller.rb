@@ -96,8 +96,12 @@ class DevicesController < ApplicationController
     @device.last_activation = Time.now
     
     if params[:device]
-      [:hardware_model, :app_version, :os_name, :os_version,
-       :unique_id].each do |attr|
+      # Fill in defaults for device attributes that are mandatory, but aren't
+      # filled in by older client code. 
+      params[:device][:app_id] ||= 'unknown'  # v0.9
+      params[:device][:app_provisioning] ||= '?'  # v0.9
+      
+      Imobile::CryptoSupportAppFprint.device_fprint_attributes.each do |attr|
         @device.send :"#{attr}=", params[:device][attr]
       end      
     end
@@ -122,8 +126,7 @@ class DevicesController < ApplicationController
           params[:device].delete_if do |key, value|
             not Device.column_names.include? key 
           end
-          params[:device][:app_id] ||= 'unknown'
-          params[:device][:app_provisioning] ||= '?'
+                    
           @device = Device.new
         else
           @device = Device.new :hardware_model => 'unknown',
