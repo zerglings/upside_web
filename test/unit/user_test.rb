@@ -1,6 +1,6 @@
 require 'test_helper'
 
-module CommonUserTests
+module CommonUserTests  
   def test_setup_valid
     assert @user.valid?
   end
@@ -51,6 +51,8 @@ module CommonUserTests
 end
 
 class UserTest < ActiveSupport::TestCase
+  fixtures :devices, :portfolios, :users
+
   include CommonUserTests
   
   def setup
@@ -121,7 +123,42 @@ class UserTest < ActiveSupport::TestCase
   def test_login_wrong_user_name
     user = User.authenticate( 'inexistent', 'password')
     assert_equal user, nil, 'Inexistent user was authenticated'
-  end  
+  end
+  
+  def test_notify_devices_with_zerocast
+    assert_equal [], users(:short_lover).notify_devices({'apn' => true})
+  end
+  
+  def test_notify_devices_with_unicast_and_subject
+    user = users(:rich_kid)
+    subject = portfolios(:rich_kid)
+    payload = { 'apn' => { 'alert' => "Today's weather is awesome!" } }
+    notifications = user.notify_devices payload, subject
+    
+    assert_equal 1, notifications.length, 'Expected one notification'
+    notification = notifications.first    
+    assert_equal ImobilePushNotification, notification.class,
+                 'Wrong model created'
+    assert_equal payload, notification.payload, 'Wrong payload'
+    assert_equal subject, notification.subject, 'Wrong subject'
+    assert !notification.new_record?, 'Notification not saved'
+  end
+  
+  def test_notify_devices_with_multicast
+    user = users(:admin)
+    payload = { 'apn' => { 'alert' => "Today's weather is awesome!" } }
+    notifications = user.notify_devices payload
+    
+    assert_equal 2, notifications.length, 'Admin has 2 devices'
+    notifications.each do |notification|
+      assert_equal payload, notification.payload, 'Wrong payload'
+      assert_equal user, notification.subject, 'Wrong subject'      
+      assert !notification.new_record?, 'Notification not saved'
+    end
+    assert_equal notifications.map { |n| n.device }.sort_by(&:id),
+                 [:ipod_touch_2g, :iphone_2g_on_prod].map { |d| devices(d) }.
+                 sort_by(&:id), 'Notifications created for the wrong devices'
+  end
 end
 
 class PseudoUserTest < ActiveSupport::TestCase

@@ -102,11 +102,29 @@ class User < ActiveRecord::Base
      user.password = device_id
      return user
   end 
- 
-  protected 
- 
+  
   def set_admin_false
     self.is_admin = (name == 'admin') if is_admin.nil?
     true
+  end
+  protected :set_admin_false
+  
+  # Sends a notification to the user's mobile devices.
+  #
+  # Args:
+  #   notification_payload:: a Hash with the notification data
+  #                          (e.g. { 'apn' => { 'alert' => 'Boom!' } })
+  #   subject:: the notification's subject (default value: the user)
+  #
+  # Returns an array with the notifications that were queued to be pushed to
+  # the user's devices.
+  def notify_devices(notification_payload, subject = nil)
+    subject ||= self
+    devices = Device.find(:all, :conditions => { :user_id => id })
+    notifications = devices.map do |device|
+      ImobilePushNotification.new :device => device, :subject => subject,
+                                  :payload => notification_payload
+    end
+    notifications.each { |notification| notification.save! }
   end
 end

@@ -150,7 +150,7 @@ class TradeOrder
   end
   
   # Trade order transaction type
-  def transaction_type    
+  def transaction_type
     if is_buy == true && is_long == false 
       return "Short"
     elsif is_buy == true && is_long == true  

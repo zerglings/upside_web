@@ -14,6 +14,7 @@
 
 class Trade < ActiveRecord::Base
   include ModelLimits
+  include ActionView::Helpers::NumberHelper
   
   belongs_to :trade_order
   
@@ -87,6 +88,7 @@ class Trade < ActiveRecord::Base
     
     if changed?
       (quantity != 0) ? save! : destroy
+      send_execution_notification
     end
     
     overflow_trade.execute_without_transaction! if overflow_trade
@@ -161,4 +163,18 @@ class Trade < ActiveRecord::Base
   end
   private :adjust_position_average_base_cost!
   
+  # The payload for a push notification stating this trade has been executed.
+  def execution_notification_payload
+    text = "Executed: #{trade_order.transaction_type} #{quantity} " +
+           "#{trade_order.stock.ticker} @ #{number_to_currency price}/ea. " +
+           "Cash balance: #{number_to_currency trade_order.portfolio.cash}"
+    { :apn => { :alert => text, :badge => 1 },
+      :trade_order_id => trade_order.id }
+  end
+  
+  # Queues notifications telling the user that this trade has completed.
+  def send_execution_notification
+    payload = execution_notification_payload
+    trade_order.portfolio.user.notify_devices payload, self
+  end
 end
