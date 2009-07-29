@@ -201,6 +201,8 @@ class DevicesControllerTest < ActionController::TestCase
     assert result, 'Response is JSON-formatted'
     
     assert_response :success
+    assert_equal '', result['device']['app_push_token'],
+                 "Null push token will crash clients <= 0.8"    
   end
   
   test "xml register new device with v0.3" do
@@ -240,6 +242,7 @@ class DevicesControllerTest < ActionController::TestCase
       assert_select "user_id", user.id.to_s
       assert_select "hardware_model", 'iPhone1,1'
       assert_select "app_version", '1.2'
+      assert_select "app_push_token", ''
       assert_select "os_name", 'iPhone OS'
       assert_select "os_version", '2.1'
     end
