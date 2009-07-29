@@ -232,7 +232,7 @@ class TradeTest < ActiveSupport::TestCase
     payload = @trade.execution_notification_payload
     golden_text =
         'Executed: Short 450 GS @ $67.67/ea. Cash balance: $9,330,067.00'
-    assert_equal golden_text, payload[:apn][:alert], "Wrong notification text"
+    assert_equal golden_text, payload[:aps][:alert], "Wrong notification text"
     assert_equal @trade.trade_order.id, payload[:trade_order_id],
                  "Wrong trade order"
   end
@@ -248,7 +248,7 @@ class TradeTest < ActiveSupport::TestCase
                  "The notification should go to rich_kid's device"
     golden_text =
         'Executed: Short 450 GS @ $67.67/ea. Cash balance: $9,330,067.00'
-    assert_equal golden_text, notification.payload[:apn][:alert],
+    assert_equal golden_text, notification.payload[:aps][:alert],
                  'The notification reflects the wrong order'
   end
 end

@@ -168,7 +168,7 @@ class Trade < ActiveRecord::Base
     text = "Executed: #{trade_order.transaction_type} #{quantity} " +
            "#{trade_order.stock.ticker} @ #{number_to_currency price}/ea. " +
            "Cash balance: #{number_to_currency trade_order.portfolio.cash}"
-    { :apn => { :alert => text, :badge => 1 },
+    { :aps => { :alert => text, :badge => 1 },
       :trade_order_id => trade_order.id }
   end
   
