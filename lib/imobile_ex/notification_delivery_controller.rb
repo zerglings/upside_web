@@ -17,6 +17,7 @@ class ImobileEx::NotificationDeliveryController
       break if notifications.empty?
       push_notifications notifications      
     end
+    flush_contexts
   end
   
   def initialize
@@ -94,13 +95,22 @@ class ImobileEx::NotificationDeliveryController
   # This is called if exceptions are raised during pushing. 
   def restore_contexts
     [:production, :sandbox].each do |server_type|
-      @contexts[server_type].close if @contexts[server_type]
+      if @contexts[server_type]
+        @contexts[server_type].flush
+        @contexts[server_type].close
+      end
       @contexts[server_type] = create_apns_context server_type
     end
-  end
+  end  
   
   # Establishes a new Push Notification context for one of Apple's servers.
   def create_apns_context(server_type)
     Context.new apns_certificate_path(server_type)
+  end
+  
+  def flush_contexts
+    @contexts.each do |server_type, context|
+      context.flush
+    end
   end
 end

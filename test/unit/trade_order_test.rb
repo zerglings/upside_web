@@ -211,9 +211,9 @@ class TradeOrderTest < ActiveSupport::TestCase
     @trade_order.is_buy = false
     assert_equal "Sell", @trade_order.transaction_type
     @trade_order.is_long = false
-    assert_equal "Buy to Cover", @trade_order.transaction_type
-    @trade_order.is_buy = true
     assert_equal "Short", @trade_order.transaction_type
+    @trade_order.is_buy = true
+    assert_equal "Buy to Cover", @trade_order.transaction_type
   end
   
   def test_ticker_is_set_by_stock_id

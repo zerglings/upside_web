@@ -140,6 +140,14 @@ class TradeTest < ActiveSupport::TestCase
   end
   
   def test_execute_trade_sends_notification
+    @lbl_trade.trade_order.portfolio = portfolios(:rich_kid)
+    boost_unfilled_quantity @lbl_trade
+    assert_difference 'ImobilePushNotification.count', 1 do
+      @lbl_trade.execute
+    end
+  end
+
+  def test_execute_trade_sends_notification_x2
     boost_unfilled_quantity @trade
     # The trade gets broken into 2 because of overflow.
     assert_difference 'ImobilePushNotification.count', 2 do
@@ -231,7 +239,7 @@ class TradeTest < ActiveSupport::TestCase
     @trade.execute
     payload = @trade.execution_notification_payload
     golden_text =
-        'Executed: Short 450 GS @ $67.67/ea. Cash balance: $9,330,067.00'
+        'Executed: Buy to Cover 450 GS @ $67.67/ea. Cash balance: $9,330,067.00'
     assert_equal golden_text, payload[:aps][:alert], "Wrong notification text"
     assert_equal @trade.trade_order.id, payload[:trade_order_id],
                  "Wrong trade order"
@@ -247,7 +255,7 @@ class TradeTest < ActiveSupport::TestCase
     assert_equal devices(:iphone_3g), notification.device,
                  "The notification should go to rich_kid's device"
     golden_text =
-        'Executed: Short 450 GS @ $67.67/ea. Cash balance: $9,330,067.00'
+        'Executed: Buy to Cover 450 GS @ $67.67/ea. Cash balance: $9,330,067.00'
     assert_equal golden_text, notification.payload[:aps][:alert],
                  'The notification reflects the wrong order'
   end

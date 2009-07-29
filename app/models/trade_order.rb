@@ -151,16 +151,9 @@ class TradeOrder
   
   # Trade order transaction type
   def transaction_type
-    if is_buy == true && is_long == false 
-      return "Short"
-    elsif is_buy == true && is_long == true  
-      return "Buy"
-    elsif is_buy == false && is_long == false
-      return "Buy to Cover"
-    elsif is_buy == false && is_long == true
-      return "Sell"
-    else
-      return nil
-    end  
+    {
+      true => { true => 'Buy', false => 'Sell' },
+      false => { true => 'Buy to Cover', false => 'Short' }
+    }[is_long][is_buy]
   end
 end

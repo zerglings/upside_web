@@ -15,13 +15,19 @@ class NotificationDeliveryControllerTest < ActionController::IntegrationTest
     class StubbedContext
       def initialize(server_context)
         @server_context = server_context
+        @flushed = false
       end
       
       def inspect
         "#{@server_context} mock context"
       end
       
-      def close          
+      def flush
+        @flushed = true
+      end
+      
+      def close
+        raise 'Suspicious: context closed without flushing.' unless @flushed
       end
     end
     def create_apns_context(server_context)

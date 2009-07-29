@@ -88,9 +88,9 @@ class Trade < ActiveRecord::Base
     
     if changed?
       (quantity != 0) ? save! : destroy
-      send_execution_notification
     end
-    
+        
+    send_execution_notification if quantity != 0
     overflow_trade.execute_without_transaction! if overflow_trade
   end
   protected :execute_without_transaction!
