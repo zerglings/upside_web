@@ -1,0 +1,21 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+bounced:
+  device: iphone_3g
+  payload: <%= YAML.dump({'aps' => {'alert' => 'Boom headshot!'}}).inspect %>
+  subject: rich_kid
+  subject_type: Portfolio
+
+notify_victors_ipod:
+  device: ipod_touch_2g
+  payload: <%= YAML.dump({'aps' => {'alert' => 'StockPlay functional test'}}).
+                    inspect %>
+  subject: admin
+  subject_type: Portfolio
+
+notify_victors_prod_phone:
+  device: iphone_2g_on_prod
+  payload: <%= YAML.dump({'aps' => {'alert' => 'StockPlay boom headshot'}}).
+                    inspect %>
+  subject: admin
+  subject_type: Portfolio

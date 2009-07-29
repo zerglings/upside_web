@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090728042053) do
+ActiveRecord::Schema.define(:version => 20090728173418) do
 
   create_table "config_variables", :force => true do |t|
     t.string   "name",       :limit => 64,   :null => false
@@ -39,6 +39,14 @@ ActiveRecord::Schema.define(:version => 20090728042053) do
 
   add_index "devices", ["unique_id"], :name => "index_devices_on_unique_id", :unique => true
   add_index "devices", ["user_id"], :name => "index_devices_on_user_id"
+
+  create_table "imobile_push_notifications", :force => true do |t|
+    t.integer  "device_id",    :limit => 8,    :null => false
+    t.string   "payload",      :limit => 4096
+    t.integer  "subject_id",   :limit => 8,    :null => false
+    t.string   "subject_type", :limit => 64,   :null => false
+    t.datetime "created_at"
+  end
 
   create_table "markets", :force => true do |t|
     t.string   "name",       :limit => 64, :null => false
