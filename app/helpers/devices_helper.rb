@@ -3,7 +3,7 @@ module DevicesHelper
     parent_node.device do |output|
       output.app_id device.app_id
       output.app_provisioning device.app_provisioning
-      output.app_push_token device.app_push_token
+      output.app_push_token(device.app_push_token || '') 
       output.app_version device.app_version
       output.hardware_model device.hardware_model
       output.os_name device.os_name
@@ -19,7 +19,7 @@ module DevicesHelper
     {
       :app_id => device.app_id,
       :app_provisioning => device.app_provisioning,
-      :app_push_token => device.app_push_token,
+      :app_push_token => device.app_push_token || '',
       :app_version => device.app_version,
       :hardware_model => device.hardware_model,
       :os_name => device.os_name,
