@@ -6,6 +6,13 @@ class DevicesController < ApplicationController
   include DevicesHelper
   include UsersHelper
   
+  # Registration will not work with clients older than this version.
+  # The number represents the bundle version, not the marketing version.
+  # For example, use 1.8 for StockPlay version 0.9.
+  MIN_APP_VERSION = 0.0
+  # NOTE: Current versions of StockPlay can't handle service errors during
+  #       registration, so we have to bounce them at login time.
+  
   # GET /devices
   # GET /devices.xml
   def index
@@ -143,13 +150,18 @@ class DevicesController < ApplicationController
       end
     end
     
-    respond_to do |format|
-      format.json do
-        result = { :device => device_to_json_hash(@device),
-                   :user => user_to_json_hash(@device.user) }
-        render :json => result, :callback => params[:callback]
+    if @device.app_version.to_f >= MIN_APP_VERSION    
+      respond_to do |format|
+        format.json do
+          result = { :device => device_to_json_hash(@device),
+                     :user => user_to_json_hash(@device.user) }
+          render :json => result, :callback => params[:callback]
+        end
+        format.xml # register.xml.builder
       end
-      format.xml # register.xml.builder
+    else
+        render_error_data :message => 'Your version of StockPlay is too old. ' +
+            'Please use the App Store to update StockPlay.', :reason => :auth
     end
   end
 end
