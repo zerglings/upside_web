@@ -17,7 +17,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 rich_kid_doing_well:
-  subject_id: rich_kid
+  subject: rich_kid
   subject_type: Portfolio
   severity: 2
   description: This player is doing suspiciously well.
