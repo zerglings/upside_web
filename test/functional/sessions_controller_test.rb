@@ -44,7 +44,8 @@ class SessionsControllerTest < ActionController::TestCase
   def test_logout
     delete :destroy
     assert_redirected_to :action => :new
-    assert_equal nil, session[:user_id], "Session not set to nil even though user logged out"
+    assert_equal nil, session[:user_id],
+                 "Session not set to nil even though user logged out"
     assert_equal "Logged out", flash[:notice]
   end
   
@@ -91,13 +92,37 @@ class SessionsControllerTest < ActionController::TestCase
     result = JSON.parse(@response.body)
     assert result, 'Response contains JSON'
     assert_equal 'auth', result['error']['reason'], 'Error reason'
-    assert result['error']['message'], 'The error has a reason'
+    assert result['error']['message'], 'The error has a message'
     @other_device.reload
     impossible_device_info.each do |key, value|
       next if key == :unique_id  # the unique ID will match, nothing else should
       assert_not_equal value, @other_device.send(key),
                        "Failed login mistakenly updated device #{key}"
     end
+  end
+  
+  def test_json_login_with_software_0_9
+    # TODO(overmind): remove this once client 0.9 is phased out by 0.10, and
+    #                 we don't need to test for the server-side hack    
+    impossible_device_info = { :hardware_model => 'iPhone3,1',
+                               :unique_id => @device.unique_id,
+                               :os_name => 'Awesome OS',
+                               :os_version => 'V1',
+                               :last_ip => 'fail',
+                               :app_provisioning => 'h',
+                               :app_version => '1.8' }
+    
+    post :create, :name => @user.name, :password => @password,
+         :format => 'json', :app_sig => '5678' * 16,
+         :device => { :model_id => 0 }.merge(impossible_device_info)         
+    assert_equal @user.id, session[:user_id], "Session not set properly"
+
+    result = JSON.parse(@response.body)
+    assert result, 'Response contains JSON'
+
+    @device.reload
+    assert_equal 'D', @device.app_provisioning,
+                 'App provisioning for StockPlay 0.9 was not hotfixed'
   end
   
   def test_json_login_with_software_0_7

@@ -35,6 +35,18 @@ class SessionsController < ApplicationController
         device.update_attributes! params[:device]
         device.last_app_fprint = params[:app_sig] || ''
         device.last_ip = request.remote_ip
+        
+        # HACK(overmind): remove this once client 0.9 is phased out by 0.10
+        if device.app_version == '1.8' and device.app_provisioning == 'h'
+          # Server-side fix for a bug in StockPlay 0.9 - ZergSupport
+          # provisioning detection wasn't very robust, and StockPlay had bad
+          # settings for the Release and Distribution builds.
+          #
+          # This gross hack should be removed once StockPlay 0.10 is approved
+          # and reaches some distribution.
+          device.app_provisioning = 'D'
+        end
+        
         device.save!        
       elsif params[:device_id]  # Client software v0.1
         device = Device.find :first,
