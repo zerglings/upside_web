@@ -4,6 +4,7 @@ class MonitoringController < ApplicationController
       :created_at => Time.now.to_s(:rfc822),
       :devices => Device.count,
       :load => Sys::CPU.load_avg.map { |i| (i * 1000.0).round / 1000.0 },
+      :push_notifications => ImobilePushNotification.count,
       :orders => TradeOrder.count,
       :stocks => Stock.count,
       :trades => Trade.count,
