@@ -1,0 +1,28 @@
+<!-- HACK(overmind): Someone should move this in a CSS file -->
+<style type="text/css">
+th { text-align: left; }
+</style>
+
+<h1>Listing Warning Flags</h1>
+
+<table>
+  <tr>
+  	<th>Severity</th>
+		<th>Source</th>
+		<th>Description</th>
+		<th>Subject</th>
+		<th colspan="3">Manage</th>
+  </tr>
+
+<% @warning_flags.each do |warning_flag| %>
+  <tr>
+  	<td><%= warning_flag.severity %></td>
+    <td><%=h warning_flag.source_file %>:<%= warning_flag.source_line %></td>
+    <td><%=h warning_flag.description %></td>
+		<td><%= link_to h(warning_flag.subject.to_s), warning_flag.subject %>
+    <td><%= link_to 'Details', warning_flag %></td>
+    <td><%= link_to 'Destroy', warning_flag, :confirm => 'Are you sure?',
+                    :method => :delete %></td>
+  </tr>
+<% end %>
+</table>

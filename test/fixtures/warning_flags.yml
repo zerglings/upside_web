@@ -23,4 +23,4 @@ rich_kid_doing_well:
   description: This player is doing suspiciously well.
   source_file: "./test/fixtures/warning_flags.yml"
   source_line: 10
-  stack: <%= YAML.dump(Kernel.caller).inspect %>
+  stack: <%= YAML.dump(Kernel.caller(0)).inspect %>

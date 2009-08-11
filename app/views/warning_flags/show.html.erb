@@ -1,0 +1,23 @@
+<h1>Warning Flag for <%=h @warning_flag.subject.to_s %></h1>
+
+<table>
+	<tr>
+		<th>Severity</th>
+		<td><%= @warning_flag.severity %></td>
+	</tr>
+	<tr>
+		<th>Source</th>
+		<td><%=h @warning_flag.source_file %>:<%= @warning_flag.source_line %></td>
+	</tr>
+  <tr>
+    <th>Description</th>
+    <td><%=h @warning_flag.source_file %>:<%= @warning_flag.source_line %></td>
+  </tr>	
+</table>
+
+<h2>Stack trace</h2>
+<pre>
+<%=h @warning_flag.stack.join("\n") %>
+</pre>
+
+<%= link_to 'Back', warning_flags_path %>
