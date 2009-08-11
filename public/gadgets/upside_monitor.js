@@ -61,9 +61,9 @@ var processStats = function(stats) {
 	var stat_schema = [['Devices', 'devices'], ['Users', 'users'],
 	                   ['Orders', 'orders'], ['Trades', 'trades'],
                      ['Stocks', 'stocks'],
-										 ['APNs Outbox', 'push_notifications'],
+										 ['APNs', 'push_notifications'],
 										 ['Sys Load', 'load'],
-										 ['Warnings', 'warnings'], ['Reported at', 'created_at']];
+										 ['Warnings', 'warnings']];
   var html = "";	
 	dojo.forEach(stat_schema, function(stat_set) {
 		if (dojo.isArray(stats[stat_set[1]])) {
@@ -74,6 +74,8 @@ var processStats = function(stats) {
 		}
 		html += dojo.string.substitute(tpl, {title: stat_set[0], key: stat_set[1], value: statValue});
 	});
+	
+	html += '<div class="stat_div" id="created_at">' + stats['created_at'] + '</div>'
 	
   var container = dijit.byId('stats_container');
 	container.setContent(html);

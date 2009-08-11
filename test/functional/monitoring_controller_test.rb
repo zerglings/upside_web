@@ -14,6 +14,7 @@ class MonitoringControllerTest < ActionController::TestCase
     assert_equal User.count, stats['users']
     assert_equal WarningFlag.count, stats['warnings']
     assert_equal ImobilePushNotification.count, stats['push_notifications']
-    assert_in_delta Time.now.to_f, DateTime.parse(stats['created_at']).to_f, 2.0
+    assert_in_delta Time.now.to_f,
+        DateTime.strptime(stats['created_at'], '%H:%M:%S %d-%b-%Y %Z').to_f, 2.0
   end
 end
