@@ -19,7 +19,14 @@ th { text-align: left; }
   	<td><%= warning_flag.severity %></td>
     <td><%=h warning_flag.source_file %>:<%= warning_flag.source_line %></td>
     <td><%=h warning_flag.description %></td>
-		<td><%= link_to h(warning_flag.subject.to_s), warning_flag.subject %>
+		<td>
+	  <% url = url_to(warning_flag.subject) rescue nil %>
+	  <% if url %>
+	    <%= link_to h(warning_flag.subject.inspect), warning_flag.subject %>
+		<% else %>
+      <%= link_to h(warning_flag.subject.inspect), warning_flag.subject %>
+		<% end %>
+		</td>
     <td><%= link_to 'Details', warning_flag %></td>
     <td><%= link_to 'Destroy', warning_flag, :confirm => 'Are you sure?',
                     :method => :delete %></td>

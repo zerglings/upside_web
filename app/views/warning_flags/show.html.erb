@@ -11,8 +11,19 @@
 	</tr>
   <tr>
     <th>Description</th>
-    <td><%=h @warning_flag.source_file %>:<%= @warning_flag.source_line %></td>
-  </tr>	
+    <td><%=h @warning_flag.description %></td>
+  </tr>
+	<tr>
+		<th>Subject</th>
+		<td>
+    <% url = url_to(@warning_flag.subject) rescue nil %>
+    <% if url %>
+      <%= link_to h(@warning_flag.subject.inspect), @warning_flag.subject %>
+    <% else %>
+      <%= link_to h(@warning_flag.subject.inspect), @warning_flag.subject %>
+    <% end %>			
+		</td>
+	</tr>
 </table>
 
 <h2>Stack trace</h2>
