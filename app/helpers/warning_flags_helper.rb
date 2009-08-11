@@ -1,0 +1,2 @@
+module WarningFlagsHelper
+end

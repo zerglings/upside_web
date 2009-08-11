@@ -51,6 +51,10 @@ class WarningFlagTest < ActiveSupport::TestCase
     assert @flag.valid?
     @flag.subject = nil
     assert @flag.valid?
+    
+    assert_equal portfolios(:rich_kid),
+                 warning_flags(:rich_kid_doing_well).subject,
+                 'Polymorphic subject was incorrectly decoded'
   end
   
   def test_raise
