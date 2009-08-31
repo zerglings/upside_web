@@ -26,7 +26,7 @@ test_sqlite3: &test_sqlite3
 
 # use *dev_sqlite3 or *dev_mysql, depending on which db engine you want
 development:
-  <<: *dev_sqlite3
+  <<: *dev_mysql
 
 # Warning: The database defined as 'test' will be erased and
 # re-generated from your development database when you run 'rake'.

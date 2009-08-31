@@ -13,7 +13,7 @@ ActiveRecord::Schema.define(:version => 20090728173418) do
 
   create_table "config_variables", :force => true do |t|
     t.string   "name",       :limit => 64,   :null => false
-    t.integer  "instance",   :limit => 4,    :null => false
+    t.integer  "instance",                   :null => false
     t.string   "value",      :limit => 1024, :null => false
     t.datetime "updated_at"
   end
@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(:version => 20090728173418) do
 
   create_table "positions", :force => true do |t|
     t.integer  "portfolio_id",      :limit => 8, :null => false
-    t.integer  "stock_id",          :limit => 4, :null => false
+    t.integer  "stock_id",                       :null => false
     t.boolean  "is_long",                        :null => false
     t.integer  "quantity",          :limit => 8, :null => false
     t.float    "average_base_cost"
@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(:version => 20090728173418) do
   add_index "stock_cache_lines", ["ticker", "info_type"], :name => "index_stock_cache_lines_on_ticker_and_info_type", :unique => true
 
   create_table "stock_infos", :force => true do |t|
-    t.integer  "stock_id",     :limit => 4,   :null => false
+    t.integer  "stock_id",                    :null => false
     t.string   "company_name", :limit => 128, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -113,14 +113,14 @@ ActiveRecord::Schema.define(:version => 20090728173418) do
 
   create_table "stocks", :force => true do |t|
     t.string  "ticker",    :limit => 16, :null => false
-    t.integer "market_id", :limit => 4,  :null => false
+    t.integer "market_id",               :null => false
   end
 
   add_index "stocks", ["ticker"], :name => "index_stocks_on_ticker", :unique => true
 
   create_table "trade_orders", :force => true do |t|
     t.integer  "portfolio_id",       :limit => 8,                                                  :null => false
-    t.integer  "stock_id",           :limit => 4,                                                  :null => false
+    t.integer  "stock_id",                                                                         :null => false
     t.boolean  "is_buy",                                                         :default => true, :null => false
     t.boolean  "is_long",                                                        :default => true, :null => false
     t.decimal  "stop_price",                       :precision => 8, :scale => 2
@@ -163,11 +163,11 @@ ActiveRecord::Schema.define(:version => 20090728173418) do
   create_table "warning_flags", :force => true do |t|
     t.integer  "subject_id",   :limit => 8
     t.string   "subject_type", :limit => 64
-    t.integer  "severity",     :limit => 1,     :null => false
-    t.string   "description",  :limit => 256,   :null => false
-    t.string   "source_file",  :limit => 256,   :null => false
-    t.integer  "source_line",  :limit => 4,     :null => false
-    t.string   "stack",        :limit => 65536, :null => false
+    t.integer  "severity",     :limit => 1,        :null => false
+    t.string   "description",  :limit => 256,      :null => false
+    t.string   "source_file",  :limit => 256,      :null => false
+    t.integer  "source_line",                      :null => false
+    t.text     "stack",        :limit => 16777215, :null => false
     t.datetime "created_at"
   end
 
