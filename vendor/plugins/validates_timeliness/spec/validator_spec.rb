@@ -66,7 +66,7 @@ describe ValidatesTimeliness::Validator do
 
     it "should return array of Time objects when restriction is array of strings" do
       time1, time2 = "2000-01-02", "2000-01-01"
-      evaluate_option_value([time1, time2], :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
+      evaluate_option_value([time1, time2], :datetime).should == [parse(time2, :datetime), parse(time1, :datetime)]
     end
 
     it "should return array of Time objects when restriction is Range of Time objects" do
@@ -76,7 +76,7 @@ describe ValidatesTimeliness::Validator do
 
     it "should return array of Time objects when restriction is Range of time strings" do
       time1, time2 = "2000-01-02", "2000-01-01"
-      evaluate_option_value(time1..time2, :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
+      evaluate_option_value(time1..time2, :datetime).should == [parse(time2, :datetime), parse(time1, :datetime)]
     end
     def evaluate_option_value(restriction, type)
       configure_validator(:type => type)
@@ -346,6 +346,67 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "instance with :equal_to restriction" do
+
+    describe "for datetime type" do
+      before do
+        configure_validator(:equal_to => Time.now)
+      end
+
+      it "should have error when value not equal to :equal_to restriction" do
+        validate_with(:birth_date_and_time, Time.now + 1)
+        should_have_error(:birth_date_and_time, :equal_to)
+      end
+
+      it "should be valid when value is equal to :equal_to restriction" do
+        validate_with(:birth_date_and_time, Time.now)
+        should_have_no_error(:birth_date_and_time, :equal_to)
+      end
+    end
+
+    describe "for date type" do
+      before do
+        configure_validator(:type => :date, :equal_to => Date.today)
+      end
+
+      it "should have error when value is not equal to :equal_to restriction" do
+        validate_with(:birth_date, Date.today + 1)
+        should_have_error(:birth_date, :equal_to)
+      end
+
+      it "should be valid when value is equal to :equal_to restriction" do
+        validate_with(:birth_date, Date.today)
+        should_have_no_error(:birth_date, :equal_to)
+      end
+    end
+
+    describe "for time type" do
+      before do
+        configure_validator(:type => :time, :equal_to => "09:00:00")
+      end
+
+      it "should have error when value is not equal to :equal_to restriction" do
+        validate_with(:birth_time, "09:00:01")
+        should_have_error(:birth_time, :equal_to)
+      end
+
+      it "should be valid when value is equal to :equal_to restriction" do
+        validate_with(:birth_time, "09:00:00")
+        should_have_no_error(:birth_time, :equal_to)
+      end
+    end
+  end
+
+  describe "instance with :ignore_usec option" do
+
+    it "should ignore usec on time values when evaluated" do
+      configure_validator(:equal_to => Time.utc(2000, 1, 1, 0, 0, 0, 0), :ignore_usec => true)
+      validate_with(:birth_date_and_time, Time.utc(2000, 1, 1, 0, 0, 0, 500))
+      should_have_no_error(:birth_date_and_time, :equal_to)
+    end
+
+  end
+
   describe "instance with :with_time option" do
 
     it "should validate date attribute as datetime combining value of :with_time against restrictions " do
@@ -360,20 +421,31 @@ describe ValidatesTimeliness::Validator do
       should_have_no_error(:birth_date, :on_or_before)
     end
 
+    it "should should ignore usec value on combined value if :ignore_usec option is true" do
+      configure_validator(:type => :date, :with_time => Time.mktime(2000,1,1,12,30,0,500), :equal_to => Time.mktime(2000,1,1,12,30), :ignore_usec => true)
+      validate_with(:birth_date, "2000-01-01")
+      should_have_no_error(:birth_date, :equal_to)
+    end
   end
 
   describe "instance with :with_date option" do
 
     it "should validate time attribute as datetime combining value of :with_date against restrictions " do
       configure_validator(:type => :time, :with_date => '2009-01-01', :on_or_before => Time.mktime(2000,1,1,12,30))
-      validate_with(:birth_date, "12:30")
-      should_have_error(:birth_date, :on_or_before)
+      validate_with(:birth_time, "12:30")
+      should_have_error(:birth_time, :on_or_before)
     end
 
     it "should skip restriction validation if :with_date value is nil" do
       configure_validator(:type => :time, :with_date => nil, :on_or_before => Time.mktime(2000,1,1,12,30))
-      validate_with(:birth_date, "12:30")
-      should_have_no_error(:birth_date, :on_or_before)
+      validate_with(:birth_time, "12:30")
+      should_have_no_error(:birth_time, :on_or_before)
+    end
+
+    it "should should ignore usec value on combined value if :ignore_usec option is true" do
+      configure_validator(:type => :time, :with_date => Date.new(2000,1,1), :on_or_before => Time.mktime(2000,1,1,12,30), :ignore_usec => true)
+      validate_with(:birth_time, Time.mktime(2000,1,1,12,30,0,50))
+      should_have_no_error(:birth_time, :on_or_before)
     end
   end
 
@@ -410,6 +482,20 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "instance with format option" do
+    it "should validate attribute when value matches format" do
+      configure_validator(:type => :time, :format => 'hh:nn:ss')
+      validate_with(:birth_time, "12:00:00")
+      should_have_no_error(:birth_time, :invalid_time)
+    end
+
+    it "should not validate attribute when value does not match format" do
+      configure_validator(:type => :time, :format => 'hh:nn:ss')
+      validate_with(:birth_time, "12:00")
+      should_have_error(:birth_time, :invalid_time)
+    end
+  end
+
   describe "custom_error_messages" do
     it "should return hash of custom error messages from configuration with _message truncated from keys" do
       configure_validator(:type => :date, :invalid_date_message => 'thats no date')
@@ -428,12 +514,6 @@ describe ValidatesTimeliness::Validator do
         before = '1900-01-01'
         configure_validator(:type => :date, :before => before)
         validator.send(:interpolation_values, :before, before.to_date).should == {:restriction => before}
-      end
-
-      it "should return empty hash if no interpolation keys are in message" do
-        before = '1900-01-01'
-        configure_validator(:type => :date, :before => before, :before_message => 'too late')
-        validator.send(:interpolation_values, :before, before.to_date).should be_empty
       end
     else
       it "should return array of interpolation values" do
@@ -491,12 +571,18 @@ describe ValidatesTimeliness::Validator do
     describe "custom formats" do
 
       before :all do
-        @@formats = ValidatesTimeliness::Validator.error_value_formats
-        ValidatesTimeliness::Validator.error_value_formats = {
+        custom = {
           :time     => '%H:%M %p',
           :date     => '%d-%m-%Y',
           :datetime => '%d-%m-%Y %H:%M %p'
         }
+
+        if defined?(I18n)
+          I18n.backend.store_translations 'en', :validates_timeliness => { :error_value_formats => custom }
+        else
+          @@formats = ValidatesTimeliness::Validator.error_value_formats
+          ValidatesTimeliness::Validator.error_value_formats = custom
+        end
       end
 
       it "should format datetime value of restriction" do
@@ -518,10 +604,18 @@ describe ValidatesTimeliness::Validator do
       end
 
       after :all do
-        ValidatesTimeliness::Validator.error_value_formats = @@formats
+        if defined?(I18n)
+          I18n.reload!
+        else
+          ValidatesTimeliness::Validator.error_value_formats = @@formats
+        end
       end
     end
 
+  end
+
+  def parse(*args)
+    ValidatesTimeliness::Parser.parse(*args)
   end
 
   def configure_validator(options={})

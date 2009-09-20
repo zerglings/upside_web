@@ -21,6 +21,26 @@ module ValidatesTimeliness
                    :format_tokens,
                    :format_proc_args
     
+
+    # Set the threshold value for a two digit year to be considered last century
+    #
+    # Default: 30
+    #
+    #   Example:
+    #     year = '29' is considered 2029
+    #     year = '30' is considered 1930
+    # 
+    cattr_accessor :ambiguous_year_threshold
+    self.ambiguous_year_threshold = 30
+
+    # Set the dummy date part for a time type value. Should be an array of 3 values
+    # being year, month and day in that order.
+    #
+    # Default: [ 2000, 1, 1 ] same as ActiveRecord
+    # 
+    cattr_accessor :dummy_date_for_time_type
+    self.dummy_date_for_time_type = [ 2000, 1, 1 ]
+
     # Format tokens:   
     #       y = year
     #       m = month
@@ -46,7 +66,7 @@ module ValidatesTimeliness
     #      
     # Special Cases:
     #      yy = 2 or 4 digit year
-    #   yyyyy = exactly 4 digit year
+    #    yyyy = exactly 4 digit year
     #     mmm = month long name (e.g. 'Jul' or 'July')
     #     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
     #       u = microseconds matches 1 to 6 digits
@@ -85,6 +105,7 @@ module ValidatesTimeliness
     @@datetime_formats = [
       'yyyy-mm-dd hh:nn:ss',
       'yyyy-mm-dd h:nn',
+      'yyyy-mm-dd h:nn_ampm',
       'yyyy-mm-dd hh:nn:ss.u',
       'm/d/yy h:nn:ss',
       'm/d/yy h:nn_ampm',
@@ -124,13 +145,13 @@ module ValidatesTimeliness
       { 's'    => [ /s{1}/,  '(\d{1,2})', :sec ] },
       { 'u'    => [ /u{1,}/, '(\d{1,6})', :usec ] },
       { 'ampm' => [ /ampm/,  '((?:[aApP])\.?[mM]\.?)', :meridian ] },
-      { 'zo'   => [ /zo/,    '(?:[+-]\d{2}:?\d{2})'] },
+      { 'zo'   => [ /zo/,    '([+-]\d{2}:?\d{2})', :offset ] },
       { 'tz'   => [ /tz/,    '(?:[A-Z]{1,4})' ] }, 
       { '_'    => [ /_/,     '\s?' ] }
     ]
     
-    # Arguments whichs will be passed to the format proc if matched in the 
-    # time string. The key must should the key from the format tokens. The array 
+    # Arguments which will be passed to the format proc if matched in the 
+    # time string. The key must be the key from the format tokens. The array 
     # consists of the arry position of the arg, the arg name, and the code to 
     # place in the time array slot. The position can be nil which means the arg
     # won't be placed in the array.
@@ -146,6 +167,7 @@ module ValidatesTimeliness
       :min      => [4,   'n', 'n'],
       :sec      => [5,   's', 's'],
       :usec     => [6,   'u', 'microseconds(u)'],
+      :offset   => [7,   'z', 'offset_in_seconds(z)'],
       :meridian => [nil, 'md', nil]
     }
     
@@ -160,21 +182,34 @@ module ValidatesTimeliness
       # Loop through format expressions for type and call proc on matches. Allow
       # pre or post match strings to exist if strict is false. Otherwise wrap
       # regexp in start and end anchors.
-      # Returns 7 part time array.
-      def parse(string, type, strict=true)
+      # Returns time array if matches a format, nil otherwise.
+      def parse(string, type, options={})
         return string unless string.is_a?(String)
+        options.reverse_merge!(:strict => true)
+
+        sets = if options[:format]
+          options[:strict] = true
+          [ send("#{type}_expressions").assoc(options[:format]) ]
+        else
+          expression_set(type, string)
+        end
 
         matches = nil
-        exp, processor = expression_set(type, string).find do |regexp, proc|
-          full = /\A#{regexp}\Z/ if strict
+        processor = sets.each do |format, regexp, proc|
+          full = /\A#{regexp}\Z/ if options[:strict]
           full ||= case type
           when :date     then /\A#{regexp}/
           when :time     then /#{regexp}\Z/
           when :datetime then /\A#{regexp}\Z/
           end
-          matches = full.match(string.strip)
+          break(proc) if matches = full.match(string.strip)
         end
-        processor.call(*matches[1..7]) if matches
+        last = options[:include_offset] ? 8 : 7
+        if matches
+          values = processor.call(*matches[1..last]) 
+          values[0..2] = dummy_date_for_time_type if type == :time
+          return values
+        end
       end   
       
       # Delete formats of specified type. Error raised if format not found.
@@ -206,8 +241,7 @@ module ValidatesTimeliness
         end
         compile_format_expressions
       end
-      
-      
+
       # Removes formats where the 1 or 2 digit month comes first, to eliminate
       # formats which are ambiguous with the European style of day then month. 
       # The mmm token is ignored as its not ambigous.
@@ -218,6 +252,49 @@ module ValidatesTimeliness
         compile_format_expressions
       end
     
+      def full_hour(hour, meridian)
+        hour = hour.to_i
+        return hour if meridian.nil?
+        if meridian.delete('.').downcase == 'am'
+          hour == 12 ? 0 : hour
+        else
+          hour == 12 ? hour : hour + 12
+        end
+      end
+
+      def unambiguous_year(year)
+        if year.length <= 2
+          century = Time.now.year.to_s[0..1].to_i
+          century -= 1 if year.to_i >= ambiguous_year_threshold
+          year = "#{century}#{year.rjust(2,'0')}"
+        end
+        year.to_i
+      end
+
+      def month_index(month)
+        return month.to_i if month.to_i.nonzero?
+        abbr_month_names.index(month.capitalize) || month_names.index(month.capitalize)
+      end
+
+      def month_names
+        defined?(I18n) ? I18n.t('date.month_names') : Date::MONTHNAMES
+      end
+
+      def abbr_month_names
+        defined?(I18n) ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
+      end
+
+      def microseconds(usec)
+        (".#{usec}".to_f * 1_000_000).to_i
+      end
+
+      def offset_in_seconds(offset)
+        sign = offset =~ /^-/ ? -1 : 1
+        parts = offset.scan(/\d\d/).map {|p| p.to_f }
+        parts[1] = parts[1].to_f / 60
+        (parts[0] + parts[1]) * sign * 3600
+      end
+
     private
       
       # Compile formats into validation regexps and format procs    
@@ -246,22 +323,22 @@ module ValidatesTimeliness
       # argument in the position indicated by the first element of the proc arg
       # array.
       #
-      # Examples:
-      #
-      #   'yyyy-mm-dd hh:nn'     => lambda {|y,m,d,h,n| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|i| i.to_i } }
-      #   'dd/mm/yyyy h:nn_ampm' => lambda {|d,m,y,h,n,md| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|i| i.to_i } }
-      #
       def format_proc(order)
         arg_map = format_proc_args
         args = order.invert.sort.map {|p| arg_map[p[1]][1] }
         arr = [nil] * 7
         order.keys.each {|k| i = arg_map[k][0]; arr[i] = arg_map[k][2] unless i.nil? }
-        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|i| i.to_i } }"
+        proc_string = <<-EOL
+          lambda {|#{args.join(',')}| 
+              md ||= nil
+              [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|i| i.is_a?(Float) ? i : i.to_i }
+          }
+        EOL
         eval proc_string
       end
       
       def compile_formats(formats)
-        formats.map { |format| regexp, format_proc = format_expression_generator(format) }
+        formats.map { |format| [ format, *format_expression_generator(format) ] }
       end
   
       # Pick expression set and combine date and datetimes for 
@@ -282,37 +359,6 @@ module ValidatesTimeliness
         end
       end
  
-      def full_hour(hour, meridian)
-        hour = hour.to_i
-        return hour if meridian.nil?
-        if meridian.delete('.').downcase == 'am'
-          hour == 12 ? 0 : hour
-        else
-          hour == 12 ? hour : hour + 12
-        end
-      end
-      
-      def unambiguous_year(year, threshold=30)
-        year = "#{year.to_i < threshold ? '20' : '19'}#{year}" if year.length == 2
-        year.to_i
-      end
-      
-      def month_index(month)
-        return month.to_i if month.to_i.nonzero?
-        abbr_month_names.index(month.capitalize) || month_names.index(month.capitalize)
-      end
-
-      def month_names
-        defined?(I18n) ? I18n.t('date.month_names') : Date::MONTHNAMES
-      end
-
-      def abbr_month_names
-        defined?(I18n) ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
-      end
-
-      def microseconds(usec)
-        (".#{usec}".to_f * 1_000_000).to_i
-      end
     end
   end
 end

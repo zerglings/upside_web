@@ -1,7 +1,7 @@
 = validates_timeliness
 
 * Source:  http://github.com/adzap/validates_timeliness
-* Bugs:    http://adzap.lighthouseapp.com/projects/14111-validates_timeliness
+* Bugs:    http://github.com/adzap/validates_timeliness/issues
 
 == DESCRIPTION:
 
@@ -22,9 +22,9 @@ think should be a valid date or time string.
 * Restores ability to see raw value entered for date/time attributes with
   _before_type_cast modifier, which was lost in Rails 2.1.
 
-* Respects new timezone features of Rails 2.1.
+* Supports Rails timezone handling
 
-* Supports Rails 2.2 I18n for the error messages
+* Supports Rails I18n for the error messages
 
 * Rspec matcher for testing model validation of dates and times
 
@@ -63,6 +63,7 @@ The validation methods take the usual options plus some specific ones to restric
 the valid range of dates or times allowed
 
 Temporal options (or restrictions):
+  :equal_to     - Attribute must be equal to value to be valid
   :before       - Attribute must be before this value to be valid
   :on_or_before - Attribute must be equal to or before this value to be valid
   :after        - Attribute must be after this value to be valid
@@ -78,11 +79,14 @@ Regular validation options:
 Special options:
   :with_time    - Validate a date attribute value combined with a time value against any temporal restrictions
   :with_date    - Validate a time attribute value combined with a date value against any temporal restrictions 
+  :ignore_usec  - Ignores microsecond value on datetime restrictions
+  :format       - Limit validation to a single format for special cases. Takes plugin format value.
   
 Message options: - Use these to override the default error messages
   :invalid_date_message
   :invalid_time_message
   :invalid_datetime_message
+  :equal_to_message
   :before_message
   :on_or_before_message
   :after_message
@@ -103,7 +107,7 @@ temporal options.
 
 == EXAMPLES:
 
-  validates_date :date_of_birth :before => Proc.new { 18.years.ago },
+  validates_date :date_of_birth :before => lambda { 18.years.ago },
                                 :before_message => "must be at least 18 years old"
   
   validates_time :breakfast_time, :on_or_after => '6:00am',
@@ -111,7 +115,7 @@ temporal options.
                                   :before => :second_breakfast_time,
                                   :allow_nil => true
 
-  validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
+  validates_datetime :appointment_date, :before => lambda { 1.week.from_now }
 
   validates_date :entry_date, :with_time => '17:00', :on_or_before => :competition_closing
  
@@ -186,7 +190,7 @@ Here is what each format token means:
       
   Special Cases:
       yy = 2 or 4 digit year
-   yyyyy = exactly 4 digit year
+    yyyy = exactly 4 digit year
      mmm = month long name (e.g. 'Jul' or 'July')
      ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
        u = microseconds matches 1 to 3 digits
@@ -202,7 +206,7 @@ To see all defined formats look in lib/validates_timeliness/formats.rb.
 
 The perenial problem for non-US developers or applications not primarily for the
 US, is the US date format of m/d/yy. This is ambiguous with the European format
-of d/my/yy. By default the plugin uses the US formats as this is the Ruby default
+of d/m/yy. By default the plugin uses the US formats as this is the Ruby default
 when it does date interpretation, and is in keeping PoLS (principle of least
 surprise). 
 
@@ -246,6 +250,31 @@ Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves
 you adding a new one and deleting an old one to get it to work.
 
 
+=== AMBIGUOUS YEAR THRESHOLD
+
+When dealing with 2 digit year values, by default a year is interpreted as being
+in the last century at or above 30. You can customize this however
+
+  ValidatesTimeliness::Formats.ambiguous_year_threshold = 20
+
+Now you get:
+
+  year of 19 is considered 2019
+  year of 20 is considered 1920
+
+
+=== DUMMY DATE FOR TIME TYPES
+
+Given that Ruby has no support for a time-only type, all time type columns are evaluated
+as a regular Time class objects with a dummy date value set. Rails defines the dummy date as
+2000-01-01. So a time of '12:30' is evaluated as a Time value of '2000-01-01 12:30'. If you
+need to customize this for some reason you can do so as follows
+
+  ValidatesTimeliness::Formats.dummy_date_for_time_type = [2009, 1, 1]
+
+The value should be an array of 3 values being year, month and day in that order.
+
+
 === TEMPORAL RESTRICTION ERRORS:
 
 When using the validation temporal restrictions there are times when the restriction
@@ -262,6 +291,20 @@ A word of warning though, as this may hide issues with the model and make those
 corner cases a little harder to test. In general if you are using procs or 
 model methods and you only care when they return  a value, then they should 
 return nil in all other situations. Restrictions are skipped if they are nil.
+
+
+=== DISPLAY INVALID VALUES IN DATE HELPERS:
+
+The plugin has some extensions to ActionView and ActiveRecord by allowing invalid
+date and time values to be redisplayed to the user as feedback, instead of
+a blank field which happens by default in Rails. Though the date helpers make this a
+pretty rare occurence, given the select dropdowns for each date/time component, but
+it may be something of interest.
+
+To activate it, put this in an initializer:
+
+  ValidatesTimeliness.enable_datetime_select_extension!
+
 
 === OTHER CUSTOMISATION:
 
@@ -299,11 +342,21 @@ will be inserted.
 And for something a little more specific you can override the format of the interpolation
 values inserted in the error messages for temporal restrictions like so
 
+For Rails 2.0/2.1:
+
   ValidatesTimeliness::Validator.error_value_formats.update(
     :time     => '%H:%M:%S',
     :date     => '%Y-%m-%d',
     :datetime => '%Y-%m-%d %H:%M:%S'
   )
+
+Rails 2.2+ using the I18n system to define new defaults:
+
+  validates_timeliness:
+    error_value_formats:
+      date: '%Y-%m-%d'
+      time: '%H:%M:%S'
+      datetime: '%Y-%m-%d %H:%M:%S'
 
 Those are Ruby strftime formats not the plugin formats.
 
@@ -314,9 +367,15 @@ To sweeten the deal that little bit more, you have an Rspec matcher available fo
 you model specs. Now you can easily test the validations you have just written 
 with the plugin or better yet *before* you write them! You just use the 
 validation options you want as you would with the validation method. Those 
-options are then verified and reported if they fail. Use it like so:
+options are then verified and reported if they fail.
 
-   @person.should validate_date(:birth_date, :before => Time.now, :before_message => 'should be before today')
+First require it in your spec_helper.rb
+
+  require 'validates_timeliness/matcher'
+
+Use it like so:
+
+  @person.should validate_date(:birth_date, :before => Time.now, :before_message => 'should be before today')
 
 
 The matcher names are just the singular of the validation methods.

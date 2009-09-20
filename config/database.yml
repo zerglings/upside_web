@@ -32,11 +32,11 @@ development:
 # re-generated from your development database when you run 'rake'.
 # Do not set this db to the same as development or production.
 test:
-  <<: *test_sqlite3
+  <<: *test_mysql
 
 # This section is rewritten by rpwn, don't bother :)
 production:
   adapter: mysql
-  database: six_prod
-  username: six
+  database: upside_prod
+  username: upside
   password: superpass

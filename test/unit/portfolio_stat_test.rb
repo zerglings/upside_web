@@ -16,6 +16,7 @@ class PortfolioStatTest < ActiveSupport::TestCase
   end
   
   def test_setup_valid
+    @stat.save!
     assert @stat.valid?
   end
   

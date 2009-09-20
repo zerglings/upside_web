@@ -1,6 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe ValidatesTimeliness::ActionView::InstanceTag, :type => :helper do
+ValidatesTimeliness.enable_datetime_select_extension!
+
+describe 'ValidatesTimeliness::ActionView::InstanceTag' do
+  include ActionView::Helpers::DateHelper
+  include ActionController::Assertions::SelectorAssertions
   
   before do
     @person = Person.new

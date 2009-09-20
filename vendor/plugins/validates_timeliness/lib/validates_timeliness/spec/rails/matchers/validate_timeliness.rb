@@ -10,6 +10,7 @@ module Spec
         }
 
         OPTION_TEST_SETTINGS = {
+          :equal_to     => { :method => :+, :modify_on => :invalid },
           :before       => { :method => :-, :modify_on => :valid },
           :after        => { :method => :+, :modify_on => :valid },
           :on_or_before => { :method => :+, :modify_on => :invalid },
@@ -27,13 +28,12 @@ module Spec
           
           valid = test_validity
 
-          valid = test_option(:before) if @options[:before] && valid
-          valid = test_option(:after) if @options[:after] && valid
-          
-          valid = test_option(:on_or_before) if @options[:on_or_before] && valid
-          valid = test_option(:on_or_after) if @options[:on_or_after] && valid
-
-          valid = test_between if @options[:between] && valid
+          valid = test_option(:equal_to)     if valid && @options[:equal_to]
+          valid = test_option(:before)       if valid && @options[:before]
+          valid = test_option(:after)        if valid && @options[:after]
+          valid = test_option(:on_or_before) if valid && @options[:on_or_before]
+          valid = test_option(:on_or_after)  if valid && @options[:on_or_after]
+          valid = test_between               if valid && @options[:between]
 
           return valid
         end
@@ -116,16 +116,21 @@ module Spec
         end
 
         def error_message_for(option)
-          msg = @validator.send(:error_messages)[option]
+          msg = @validator.error_messages[option]
           restriction = @validator.class.send(:evaluate_option_value, @validator.configuration[option], @type, @record)
 
           if restriction 
             restriction = [restriction] unless restriction.is_a?(Array)
             restriction.map! {|r| @validator.class.send(:type_cast_value, r, @type) }
             interpolate = @validator.send(:interpolation_values, option, restriction )
+
             # get I18n message if defined and has interpolation keys in msg
             if defined?(I18n) && !@validator.send(:custom_error_messages).include?(option)
-              msg = @record.errors.generate_message(@expected, option, interpolate)
+              msg = if defined?(ActiveRecord::Error)
+                ActiveRecord::Error.new(@record, @expected, option, interpolate).message
+              else
+                @record.errors.generate_message(@expected, option, interpolate)
+              end
             else
               msg = msg % interpolate
             end
@@ -135,7 +140,7 @@ module Spec
         
         def format_value(value)
           return value if value.is_a?(String)
-          value.strftime(ValidatesTimeliness::Validator.error_value_formats[@type])
+          value.strftime(@validator.class.error_value_formats[@type])
         end
       end
 

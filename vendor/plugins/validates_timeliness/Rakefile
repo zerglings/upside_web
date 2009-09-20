@@ -3,9 +3,10 @@ require 'rake/gempackagetask'
 require 'rubygems/specification'
 require 'date'
 require 'spec/rake/spectask'
+require 'lib/validates_timeliness/version'
 
 GEM = "validates_timeliness"
-GEM_VERSION = "1.1.5"
+GEM_VERSION = ValidatesTimeliness::VERSION
 AUTHOR = "Adam Meehan"
 EMAIL = "adam.meehan@gmail.com"
 HOMEPAGE = "http://github.com/adzap/validates_timeliness"
@@ -24,9 +25,6 @@ spec = Gem::Specification.new do |s|
   s.email = EMAIL
   s.homepage = HOMEPAGE
   
-  # Uncomment this to add a dependency
-  # s.add_dependency "foo"
-  
   s.require_path = 'lib'
   s.autorequire = GEM
   s.files = %w(LICENSE README.rdoc Rakefile TODO CHANGELOG) + Dir.glob("{lib,spec}/**/*")
@@ -37,7 +35,7 @@ task :default => :spec
 desc "Run specs"
 Spec::Rake::SpecTask.new do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
-  t.spec_opts = %w(-fs --color)
+  t.spec_opts = %w(--color)
 end
 
 

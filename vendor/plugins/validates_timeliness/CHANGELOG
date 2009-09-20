@@ -1,3 +1,44 @@
+= 2.2.2 [2009-09-19]
+- Fixed dummy_time using make_time to respect timezone. Fixes 1.9.1 bug. 
+
+= 2.2.1 [2009-09-12]
+- Fixed dummy date part for time types in Validator.type_cast_value
+- No more core extensions! Removed dummy_time methods.
+
+= 2.2.0 [2009-09-12]
+- Ruby 1.9 support!
+- Customise dummy date values for time types. See DUMMY DATE FOR TIME TYPES.
+- Fixed matcher conflict with Shoulda. Load plugin matcher manually now see matcher section in README 
+- Fixed :ignore_usec when used with :with_time or :with_date
+- Some clean up and refactoring
+
+= 2.1.0 [2009-06-20]
+- Added ambiguous year threshold setting in Formats class to customize the threshold for 2 digit years (See README)
+- Fixed interpolation values in custom error message for Rails 2.2+
+- Fixed custom I18n local override of en locale
+- Dramatically simplified ActiveRecord monkey patching and hackery
+
+= 2.0.0 [2009-04-12]
+- Error value formats are now specified in the i18n locale file instead of updating plugin hash. See OTHER CUSTOMISATION section in README.
+- Date/time select helper extension is disabled by default. To enable see DISPLAY INVALID VALUES IN DATE HELPERS section in README to enable.
+- Added :format option to limit validation to a single format if desired
+- Matcher now supports :equal_to option
+- Formats.parse can take :include_offset option to include offset value from string in seconds, if string contains an offset. Offset not used in rest of plugin yet.
+- Refactored to remove as much plugin code from ActiveRecord as possible.
+
+= 1.1.7 [2009-03-26]
+- Minor change to multiparameter attributes which I had not properly implemented for chaining
+
+= 1.1.6 [2009-03-19]
+- Rail 2.3 support
+- Added :with_date and :with_time options. They allow an attribute to be combined with another attribute or value to make a datetime value for validation against the temporal restrictions
+- Added :equal_to option
+- Option key validation
+- Better behaviour with other plugins using alias_method_chain on read_attribute and define_attribute_methods
+- Added option to enable datetime_select extension for future use to optionally enable. Enabled by default until version 2.
+- Added :ignore_usec option for datetime restrictions to be compared without microsecond
+- some refactoring
+
 = 1.1.5 [2009-01-21]
 - Fixed regex for 'yy' format token which wasn't greedy enough for date formats ending with year when a datetime string parsed as date with a 4 digit year
 
