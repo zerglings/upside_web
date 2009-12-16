@@ -13,6 +13,8 @@ class NotificationDeliveryControllerTest < ActionController::IntegrationTest
   # are expensive to establish for every test.
   class StubbedDeliveryController < Controller
     class StubbedContext
+      attr_reader :flushed
+            
       def initialize(server_context)
         @server_context = server_context
         @flushed = false
@@ -51,82 +53,127 @@ class NotificationDeliveryControllerTest < ActionController::IntegrationTest
   def test_round_fetches_notifications_correctly
     [@notifications[0, 2], @notifications[2, 1]].each do |notifications|
       flexmock(@controller).should_receive(:push_notifications).
-                            with(notifications).
-                            and_return { |n| n.each(&:destroy) }
+                            with(notifications, 5).
+                            and_return { |n, t| n.each(&:destroy) }
     end
-    @controller.round 2
+    @controller.round 2, 5
   end
   
-  def test_push_notifications_normal_flow
+  def test_push_notifications_buckets_correctly
+    prod = imobile_push_notifications(:notify_victors_prod_phone)
+    dev = imobile_push_notifications(:notify_victors_ipod)
+    bounce = imobile_push_notifications(:bounced)
+    notifications = [prod, dev, prod, bounce, prod, dev]
+    
+    flexmock(@controller).should_receive(:push_notifications_atomic).
+                          with([prod, prod], :production).once
+    flexmock(@controller).should_receive(:push_notifications_atomic).
+                          with([dev, dev], :sandbox).once
+    flexmock(@controller).should_receive(:push_notifications_atomic).
+                          with([prod], :production).once
+      
+    assert_equal [prod, prod, dev, dev, prod],
+                 @controller.push_notifications(notifications, 2),
+                 'push_notifications return value'
+    assert bounce.frozen?, 'Destination-less notification not destroyed'
+  end
+  
+  def test_push_notifications_atomic_flow
+    context = @contexts[:production]
+    flexmock(context).should_receive(:flush).once
     @notifications.each do |notification|
       flexmock(@controller).should_receive(:push_notification!).
-                            with(notification).once.and_return(nil)      
+                            with(notification, context).once.and_return(nil)      
     end
-    @controller.push_notifications @notifications    
+    
+    assert_difference('ImobilePushNotification.count',
+                      -@notifications.length) do
+      @controller.push_notifications_atomic @notifications, :production
+    end
   end
   
-  def test_push_notifications_reraises_errors_correctly
-    notifications_count = @notifications.length
+  def test_push_notifications_atomic_reraises_errors_correctly
+    context = @contexts[:production]
     flexmock(@controller).should_receive(:push_notification!).
-                          with(@notifications[0]).never
+                          with(@notifications[0], context).times(3).
+                          and_return(nil)
     flexmock(@controller).should_receive(:push_notification!).
-                          with(@notifications[1]).twice.and_raise(StubbedError)
+                          with(@notifications[1], context).times(3).
+                          and_raise(StubbedError)
     flexmock(@controller).should_receive(:push_notification!).
-                          with(@notifications[2]).once.and_return(nil)
-    assert_raise(StubbedError) { @controller.push_notifications @notifications }
+                          with(@notifications[2], context).never
+    flexmock(@controller).should_receive(:restore_context).
+                          with(:production).times(3).and_return(nil)
+    flexmock(@contexts[:production]).should_receive(:flush).never
     
-    assert_equal notifications_count, ImobilePushNotification.count,
-                 "Undelivered notifications got removed from the database"
+    assert_no_difference('ImobilePushNotification.count') do
+      assert_raise(StubbedError) do
+        @controller.push_notifications_atomic @notifications, :production
+      end
+    end
+  end
+
+  def test_push_notifications_retries_correctly
+    context = @contexts[:production]
+    context_exception_bit = true
+    flexmock(context).should_receive(:flush).times(2).and_return do
+      next nil unless context_exception_bit
+      context_exception_bit = false
+      raise StubbedError
+    end
+    
+    flexmock(@controller).should_receive(:push_notification!).
+                          with(@notifications[0], context).times(3).
+                          and_return(nil)
+    push_exception_bit = true
+    flexmock(@controller).should_receive(:push_notification!).
+                          with(@notifications[1], context).times(3).
+                          and_return do
+      next nil unless push_exception_bit
+      push_exception_bit = false
+      raise StubbedError
+    end
+    flexmock(@controller).should_receive(:push_notification!).
+                          with(@notifications[2], context).times(2).
+                          and_return(nil)
+    flexmock(@controller).should_receive(:restore_context).
+                          with(:production).times(2).and_return(nil)
+
+    assert_difference('ImobilePushNotification.count',
+                      -@notifications.length) do
+      assert_equal @notifications,
+                   @controller.push_notifications_atomic(@notifications,
+                                                         :production),
+                   'push_notifications_atomic return value'
+    end
   end
   
   def test_push_notification
+    context = @contexts[:sandbox]
     notification = imobile_push_notifications(:notify_victors_ipod)
     golden_token =
         Imobile.pack_hex_push_token devices(:ipod_touch_2g).app_push_token
     golden_payload = { 'aps' => {'alert' => 'StockPlay functional test'},
                        :push_token =>  golden_token }
-    flexmock(@contexts[:sandbox]).should_receive(:push).with(golden_payload)
-    @controller.push_notification! notification
-    
-    assert_equal @notifications.length - 1, ImobilePushNotification.count,
-                 "Pushing a notification didn't remove it from the database"
+    flexmock(context).should_receive(:push).with(golden_payload)
+    @controller.push_notification! notification, context
   end
   
-  def test_push_notification_without_token
-    notification = imobile_push_notifications(:bounced)
-    flexmock(@contexts[:sandbox]).should_receive(:push).never
-    @controller.push_notification! notification 
-
-    assert_equal @notifications.length - 1, ImobilePushNotification.count,
-                 "Pushing a notification didn't remove it from the database"
-  end
-  
-  def test_push_notification_with_transmission_error
-    notification = imobile_push_notifications(:notify_victors_ipod)
-    flexmock(@contexts[:sandbox]).should_receive(:push).once.
-                                  and_raise(StubbedError)
-    assert_raises(StubbedError) { @controller.push_notification! notification }
-    assert_equal @notifications.length, ImobilePushNotification.count,
-                 "Undelivered notification got removed from the database"
-  end
-  
-  def test_context_for_notification
-    contexts = @controller.instance_variable_get :@contexts
-    
-    assert_equal contexts[:production], @controller.context_for_notification(
+  def test_notification_server_type
+    assert_equal :production, @controller.notification_server_type(
         imobile_push_notifications(:notify_victors_prod_phone)),
         "Failed to recognize production context"
-    assert_equal contexts[:sandbox], @controller.context_for_notification(
+    assert_equal :sandbox, @controller.notification_server_type(
         imobile_push_notifications(:notify_victors_ipod)),
         "Failed to recognize sandbox context"
-    assert_equal contexts[:development], @controller.context_for_notification(
-        imobile_push_notifications(:bounced)),
+    assert_equal nil, @controller.notification_server_type(
+                 imobile_push_notifications(:bounced)),
         "Returned context for device without push token"
   end
   
   def test_smoke
     @controller = ImobileEx::NotificationDeliveryController.new
     # Small max_step_size to go through two loop iterations.
-    @controller.round 2
+    @controller.round 2, 1
   end
 end
