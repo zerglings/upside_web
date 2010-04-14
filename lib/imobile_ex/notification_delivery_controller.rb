@@ -9,20 +9,25 @@ class ImobileEx::NotificationDeliveryController
   #                   from the database at once; increasing this makes the
   #                   process less taxing on the database, but also increases
   #                   memory usage
-  def round(max_step_size = 1000)
+  #   transaction_size:: (tuning parameter) the number of notifications to batch
+  #                      in an APNs "transaction" -- if the APNs communication
+  #                      breaks down, these notifications will be retransmitted;
+  #                      higher numbers decrease bandwidth, but increase the
+  #                      chance that users will get duplicate notifications
+  def round(max_step_size = 1000, transaction_size = 50)
     loop do
       notifications = ImobilePushNotification.find :all,
                                                    :limit => max_step_size,
                                                    :include => [:device]
       break if notifications.empty?
-      push_notifications notifications      
+      push_notifications notifications, transaction_size
     end
     flush_contexts
   end
   
   def initialize
     @contexts = {}
-    restore_contexts
+    [:sandbox, :production].each { |bucket| restore_context bucket }
   end  
   
   # The path to the APNs push certificate.
@@ -37,70 +42,90 @@ class ImobileEx::NotificationDeliveryController
     end
   end
   
-  # The context (connection to APNs) for a Push Notification.
+  # The server type for a Push Notification.
   #
-  # The context is guessed based on the destination device's provisioning
-  # information
-  def context_for_notification(notification)
+  # The server type is guessed based on the destination device's provisioning
+  # information.
+  def notification_server_type(notification)
     return nil unless notification.device.app_push_token
     
     case notification.device.app_provisioning
     when 'D', '?'
-      @contexts[:production]
+      :production
     else
-      @contexts[:sandbox]
+      :sandbox
     end
   end
   
   # Pushes a batch of notifications to Apple's Push Notification servers.
-  def push_notifications(notifications)
-    restored_contexts = false
-    loop do
-      begin
-        return push_notifications!(notifications)
-      rescue
-        raise if restored_contexts
-        restore_contexts
-        restored_contexts = true
+  def push_notifications(notifications, transaction_size)
+    pushed_notifications = []
+    queues = { :production => [], :sandbox => [] }
+    
+    notifications.each do |notification|
+      server_type = notification_server_type notification
+      unless server_type
+        notification.destroy
+        next
       end
-    end    
+    
+      queues[server_type] << notification
+      if queues[server_type].length == transaction_size        
+        push_notifications_atomic queues[server_type], server_type
+        pushed_notifications += queues[server_type]
+        queues[server_type] = []
+      end
+    end
+    
+    queues.each do |server_type, queue|
+      next if queue.empty?
+      push_notifications_atomic queue, server_type
+      pushed_notifications += queue
+    end
+    pushed_notifications
+  end
+
+  # Pushes a batch of notifications atomically to a single APN server.
+  #
+  # If there is an error during the batch push, the entire batch is re-pushed.
+  def push_notifications_atomic(notifications, server_type)
+    2.downto(0) do |attempt|
+      begin
+        return push_notifications_atomic!(notifications, @contexts[server_type])
+      rescue
+        restore_context server_type
+        raise if attempt == 0
+      end
+    end
   end
   
-  # Pushes a batch of notifications to Apple's Push Notification servers.
+  # Pushes a batch of notifications to a single APN server.
   #
   # This method doesn't handle exceptions.
-  def push_notifications!(notifications)
-    until notifications.empty?
-      notification = notifications.last
-      push_notification! notification
-      notifications.pop
+  def push_notifications_atomic!(notifications, context)
+    notifications.each do |notification|
+      push_notification! notification, context
     end
+    context.flush
+    ImobilePushNotification.destroy notifications
   end
 
   # Pushes a single notificatin to Apple's Push Notifiation servers.
-  def push_notification!(notification)
-    unless context = context_for_notification(notification)
-      notification.destroy
-      return
-    end
+  def push_notification!(notification, context)
     hex_push_token = notification.device.app_push_token
     payload = notification.payload    
     payload[:push_token] = Imobile.pack_hex_push_token hex_push_token
     context.push payload
-    notification.destroy
   end
   
-  # Re-creates Push Notifications contexts for Apple's servers.
+  # Re-creates a context for an Apple Push Notification server.
   #
-  # This is called if exceptions are raised during pushing. 
-  def restore_contexts
-    [:production, :sandbox].each do |server_type|
-      if @contexts[server_type]
-        @contexts[server_type].flush
-        @contexts[server_type].close
-      end
-      @contexts[server_type] = create_apns_context server_type
+  # Called on initialization, and if exceptions are raised during pushing. 
+  def restore_context(server_type)
+    if @contexts[server_type]
+      @contexts[server_type].close rescue nil
     end
+    @contexts[server_type] = create_apns_context server_type
   end  
   
   # Establishes a new Push Notification context for one of Apple's servers.
